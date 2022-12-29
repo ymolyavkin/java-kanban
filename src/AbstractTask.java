@@ -1,6 +1,13 @@
 public abstract class AbstractTask {
-    private String title;
-    private String description;
-    private int id;
-    private Status status;
+    protected String title;
+    protected String description;
+    protected int id;
+    protected Status status;
+
+    public AbstractTask(String title, String description, int id) {
+        this.title = title;
+        this.description = description;
+        this.id = id;
+        status = Status.NEW;
+    }
 }
