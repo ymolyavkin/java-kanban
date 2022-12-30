@@ -13,7 +13,7 @@ public final class TaskManager {
 
     private TaskManager() {
         taskId = 0;
-        standardTasks = new HashMap<>();
+        //standardTasks = new HashMap<>();
         epicTasks = new HashMap<>();
         scanner = new Scanner(System.in);
 
@@ -100,7 +100,8 @@ public final class TaskManager {
         int id = taskId;
         taskId++;
         StandardTask standardTask = new StandardTask(title, description, id);
-        standardTasks.put(id, standardTask);
+        standardTask.addTask(id, standardTask);
+        //standardTasks.put(id, standardTask);
         System.out.println("Создана стадартная задача с id = " + id);
         System.out.println();
     }
