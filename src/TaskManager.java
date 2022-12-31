@@ -116,18 +116,7 @@ public final class TaskManager {
 
     public void createStandardTask() {
         System.out.println("createStandardTask");
-        /*System.out.println("Введите название задачи");
-        String title = scanner.nextLine();
-        System.out.println("Введите описание задачи");
-        String description = scanner.nextLine();
-
-        int id = taskId;
-        taskId++;
-
-        Task task = new Task(title, description, id);*/
-
         taskRepository.addTask(taskId, standardTasks, createTaskItem());
-        //standardTasks.put(id, standardTask);
         System.out.println("Создана стадартная задача с id = " + (taskId - 1));
         System.out.println();
     }
@@ -145,12 +134,10 @@ public final class TaskManager {
         EpicTask epicTask = new EpicTask(title, description, epicId);
 
         System.out.println("Ввод подзадач");
-        //String userInput;
         int subtaskCount = 1;
         System.out.println("Для ввода " + subtaskCount + "-й подзадачи нажмите любую клавишу, '0' - закончить ввод");
         String userInput = scanner.nextLine();
-        while (!userInput.equals("0"))
-        {
+        while (!userInput.equals("0")) {
             epicTask.addSubtask(taskId, createTaskItem());
             subtaskCount++;
             System.out.println("Для ввода " + subtaskCount + "-й подзадачи нажмите любую клавишу, '0' - закончить ввод");
@@ -179,17 +166,23 @@ public final class TaskManager {
     }
 
     public void getListOfAllTasks() {
-        System.out.println("Список обычных задач");
-        for (Map.Entry<Integer, AbstractTask> entry : standardTasks.entrySet()) {
-            int id = entry.getKey();
-            Task task = (Task) entry.getValue();
-            System.out.println(id + " -> " + task);
-        }
-        System.out.println("Список Эпиков");
-        for (Map.Entry<Integer, AbstractTask> entry : epicTasks.entrySet()) {
-            int id = entry.getKey();
-            EpicTask task = (EpicTask) entry.getValue();
-            System.out.println(id + " -> " + task);
+        if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
+            System.out.print(Color.RED);
+            System.out.println("У Вас нет задач");
+            System.out.print(Color.RESET);
+        } else {
+            System.out.println("Список обычных задач");
+            for (Map.Entry<Integer, AbstractTask> entry : standardTasks.entrySet()) {
+                int id = entry.getKey();
+                Task task = (Task) entry.getValue();
+                System.out.println(id + " -> " + task);
+            }
+            System.out.println("Список Эпиков");
+            for (Map.Entry<Integer, AbstractTask> entry : epicTasks.entrySet()) {
+                int id = entry.getKey();
+                EpicTask task = (EpicTask) entry.getValue();
+                System.out.println(id + " -> " + task);
+            }
         }
     }
 
@@ -207,7 +200,15 @@ public final class TaskManager {
     }
 
     public void deleteAllTasks() {
-        System.out.println("deleteAllTasks");
+        if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
+            System.out.print(Color.RED);
+            System.out.println("У Вас нет задач");
+            System.out.print(Color.RESET);
+        } else {
+            taskRepository.deleteAllTasks(standardTasks);
+            taskRepository.deleteAllTasks(epicTasks);
+        }
+
     }
 
 }
