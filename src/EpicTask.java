@@ -8,4 +8,17 @@ public class EpicTask extends AbstractTask {
         super(title, description, id);
         this.subtasks = new HashMap<>();
     }
+
+    public void addSubtask(int id, StandardTask task) {
+        subtasks.put(id, task);
+    }
+
+    /**
+     *
+     */
+    @Override
+    void changeStatus() {
+        if (true)
+        super.changeStatus();
+    }
 }
