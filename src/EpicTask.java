@@ -2,14 +2,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EpicTask extends AbstractTask {
-    private Map<Integer, StandardTask> subtasks;
+    private Map<Integer, Task> subtasks;
 
     public EpicTask(String title, String description, int id) {
         super(title, description, id);
         this.subtasks = new HashMap<>();
     }
 
-    public void addSubtask(int id, StandardTask task) {
+    public void addSubtask(int id, Task task) {
         subtasks.put(id, task);
     }
 
@@ -20,5 +20,16 @@ public class EpicTask extends AbstractTask {
     void changeStatus() {
         if (true)
         super.changeStatus();
+    }
+
+    @Override
+    public String toString() {
+        return "EpicTask{" +
+                "subtasks=" + subtasks +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 }
