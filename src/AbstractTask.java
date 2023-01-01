@@ -1,21 +1,23 @@
 import java.util.Objects;
 
 public abstract class AbstractTask {
-    protected String title;
-    protected String description;
-    protected int id;
-    protected Status status;
+    private int parentId;
+    private String title;
+    private String description;
+    private int id;
+    private Status status;
 
 
-    public AbstractTask(String title, String description, int id) {
+    public AbstractTask(String title, String description, int id, int parentId) {
         this.title = title;
         this.description = description;
         this.id = id;
+        this.parentId = parentId;
         status = Status.NEW;
     }
 
     void changeStatus() {
-        if (this.status == Status.NEW) this.status=Status.IN_PROGRESS;
+        if (this.status == Status.NEW) this.status = Status.IN_PROGRESS;
         else this.status = Status.DONE;
     }
 
@@ -34,11 +36,11 @@ public abstract class AbstractTask {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
+        return " Задача {" +
+                "название: '" + title + '\'' +
+                ", описание: '" + description + '\'' +
                 ", id=" + id +
-                ", status=" + status +
+                ", статус: " + status +
                 '}';
     }
 
@@ -46,5 +48,31 @@ public abstract class AbstractTask {
         return id;
     }
 
+    public int getParentId() {
+        return parentId;
+    }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
 }

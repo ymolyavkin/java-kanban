@@ -14,7 +14,12 @@ public class Main {
                 case "1" -> taskManager.getListOfAllTasks();
                 case "2" -> taskManager.createTask();
                 case "3" -> taskManager.findTaskById(1);
-                case "4" -> taskManager.updateTaskById(1);
+                case "4" -> {
+                    System.out.println("Ведите id задачи, которую хотите обновить");
+                    String stringId = scanner.nextLine();
+                    int id = Integer.parseInt(stringId);
+                    taskManager.updateTaskById(id);
+                }
                 case "5" -> taskManager.deleteTaskById(1);
                 case "6" -> taskManager.deleteAllTasks();
                 case "0" -> System.out.println("Выход");
