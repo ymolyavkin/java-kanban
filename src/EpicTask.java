@@ -2,6 +2,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EpicTask extends AbstractTask {
+
+
     private Map<Integer, Task> subtasks;
 
     public EpicTask(String title, String description, int id, int parentId) {
@@ -12,21 +14,46 @@ public class EpicTask extends AbstractTask {
     public void addSubtask(int id, Task task) {
         subtasks.put(id, task);
     }
+    public void updateSubtask(int id, Task task) {
+        subtasks.put(id, task);
+    }
+
+    public Map<Integer, Task> getSubtasks() {
+        return subtasks;
+    }
 
     @Override
     void changeStatus() {
-        if (true)
-            super.changeStatus();
+        //boolean mustChange = false;
+        if (allStatusesIsEqual(subtasks)) {
+            // Достаем любой элемент из Мар
+            Task someTask = (Task) subtasks.entrySet().iterator().next();
+            if (this.compareTo(someTask) == -1) {
+                super.changeStatus();
+            }
+        }
+    }
+
+    private boolean allStatusesIsEqual(Map<Integer, Task> tasks) {
+        if (tasks.isEmpty()) return true;
+        // Достаем любой элемент из Мар
+        Map.Entry<Integer, Task> entry = tasks.entrySet().iterator().next();
+        Status currentStatus = entry.getValue().getStatus();
+        // обходим всю мапу перебирая её значения
+        for (Task value : tasks.values()) {
+            if (currentStatus != value.getStatus()) return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "Эпик {" +
-                ", название: '" + this.getTitle() + '\'' +
+        return "Эпик { " +
+                "название: '" + this.getTitle() + '\'' +
                 ", description: '" + this.getDescription() + '\'' +
                 ", id = " + this.getId() +
-                ", статус: " + this.getStatus() +
-                "подзадача: " + subtasks +
+                ", статус: " + this.getStatus() + "}\n" +
+                "{ Подзадача: " + subtasks +
                 '}';
     }
 }

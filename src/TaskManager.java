@@ -114,7 +114,7 @@ public final class TaskManager {
         return task;
     }
 
-    public Task updateTaskItem(Task task) {
+    public AbstractTask updateTitleAndDescription(AbstractTask task) {
         String currentTitle = task.getTitle();
         System.out.println("Текущее название задачи:" + currentTitle);
         System.out.println("Новое название (если ввод будет пустым, то останется старое значение):");
@@ -133,15 +133,39 @@ public final class TaskManager {
             System.out.println("Описание не изменилось: " + currentDescription);
         } else {
             System.out.println("Новое описание: " + description);
+            task.setDescription(description);
+        }
+        return task;
+    }
+
+    public Task updateTaskItem(Task task) {
+        /*String currentTitle = task.getTitle();
+        System.out.println("Текущее название задачи:" + currentTitle);
+        System.out.println("Новое название (если ввод будет пустым, то останется старое значение):");
+        String title = scanner.nextLine();
+        if (title == "") {
+            System.out.println("Название не изменилось: " + currentTitle);
+        } else {
+            System.out.println("Новое название: " + title);
             task.setTitle(title);
         }
+        String currentDescription = task.getDescription();
+        System.out.println("Текущее описание задачи: " + currentDescription);
+        System.out.println("Новое описание (если ввод будет пустым, то останется старое значение):");
+        String description = scanner.nextLine();
+        if (description == "") {
+            System.out.println("Описание не изменилось: " + currentDescription);
+        } else {
+            System.out.println("Новое описание: " + description);
+            task.setTitle(title);
+        }*/
+        task = (Task) updateTitleAndDescription(task);
         String[] menuItems = {"Для изменения статуса нажмите '1'", "Оставить прежним - нажмите любую клавишу"};
         String userInput = userMenu("Следует изменить статус задачи?", menuItems);
         if (userInput.equals("1")) {
             task.changeStatus();
             System.out.println("Новый статус: " + task.getStatus());
         }
-
         return task;
     }
 
@@ -206,13 +230,13 @@ public final class TaskManager {
             for (Map.Entry<Integer, AbstractTask> entry : standardTasks.entrySet()) {
                 int id = entry.getKey();
                 Task task = (Task) entry.getValue();
-                System.out.println(id + " -> " + task);
+                System.out.println(task + " ");
             }
             System.out.println("Список Эпиков");
             for (Map.Entry<Integer, AbstractTask> entry : epicTasks.entrySet()) {
                 int id = entry.getKey();
                 EpicTask task = (EpicTask) entry.getValue();
-                System.out.println(id + " -> " + task);
+                System.out.println(task + " ");
             }
         }
     }
@@ -231,9 +255,32 @@ public final class TaskManager {
             Task newTask = updateTaskItem(currentTask);
             // кладём обновленную задачу обратно в HashMap
             standardTasks.put(id, newTask);
-        } /*else if (epicTasks.containsKey(id)) {
-            taskRepository.updateTask(id, epicTasks, new Task());
-        } else {
+        } else if (epicTasks.containsKey(id)) {
+            System.out.println("Введенный id принадлежит эпику");
+            EpicTask epicTask = (EpicTask) epicTasks.get(id);
+            epicTask = (EpicTask) updateTitleAndDescription(epicTask);
+
+            String[] menuItems = {"'Да' - '1', 'нет' - любая клавиша"};
+            String userInput = userMenu("Будете ли менять подзадачи данного эпика?", menuItems);
+            if (userInput.equals("1")) {
+                System.out.println(epicTask);
+                System.out.println("Введите id подзадачи");
+                String strSubtaskId = scanner.nextLine();
+                int subtaskId = Integer.parseInt(strSubtaskId);
+
+                Map<Integer, Task> subtasks = epicTask.getSubtasks();
+                if (subtasks.containsKey(subtaskId)) {
+                    // Обновляем подзадачу
+                    Task subtask = updateTaskItem(subtasks.get(subtaskId));
+                    // Кладём подзадачу обратно в мапу
+                    epicTask.updateSubtask(subtaskId, subtask);
+                    // Кладём обновлённый эпик в мапу epicTasks
+                    epicTasks.put(id, epicTask);
+                }
+
+            }
+           // taskRepository.updateTask(id, epicTasks, new Task());
+        } /*else {
             System.out.println("Извините, такой команды пока нет.");
         }*/
     }

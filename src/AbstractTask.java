@@ -1,6 +1,6 @@
 import java.util.Objects;
 
-public abstract class AbstractTask {
+public abstract class AbstractTask implements Comparable<AbstractTask> {
     private int parentId;
     private String title;
     private String description;
@@ -43,6 +43,21 @@ public abstract class AbstractTask {
                 ", статус: " + status +
                 '}';
     }
+
+    @Override
+    public int compareTo(AbstractTask anotherTask) {
+        if (this.status == anotherTask.getStatus()) {
+            return 0;
+        } else if (this.status == Status.NEW && anotherTask.getStatus() == Status.IN_PROGRESS
+                || this.status == Status.IN_PROGRESS && anotherTask.getStatus() == Status.DONE
+                || this.status == Status.NEW && anotherTask.getStatus() == Status.DONE) {
+            return -1;
+        } else {
+            return 1;
+        }
+
+    }
+
 
     public int getId() {
         return id;
