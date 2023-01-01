@@ -5,9 +5,7 @@ public class Subtask extends AbstractTask {
         super(title, description, id, parentId);
     }
 
-    /**
-     *
-     */
+
     @Override
     void changeStatus() {
         super.changeStatus();

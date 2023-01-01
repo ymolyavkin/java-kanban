@@ -41,7 +41,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
                 ", описание: '" + description + '\'' +
                 ", id=" + id +
                 ", статус: " + status +
-                '}';
+                "}";
     }
 
     @Override

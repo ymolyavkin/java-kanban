@@ -27,9 +27,11 @@ public class EpicTask extends AbstractTask {
         //boolean mustChange = false;
         if (allStatusesIsEqual(subtasks)) {
             // Достаем любой элемент из Мар
-            Task someTask = (Task) subtasks.entrySet().iterator().next();
+            Map.Entry<Integer, Task> entry = subtasks.entrySet().iterator().next();
+            Task someTask = entry.getValue();
             if (this.compareTo(someTask) == -1) {
                 super.changeStatus();
+                System.out.println("Статус эпика изменен в соответствии со статусами подзадач на " + this.getStatus());
             }
         }
     }
@@ -54,6 +56,6 @@ public class EpicTask extends AbstractTask {
                 ", id = " + this.getId() +
                 ", статус: " + this.getStatus() + "}\n" +
                 "{ Подзадача: " + subtasks +
-                '}';
+                "}\n";
     }
 }

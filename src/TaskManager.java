@@ -274,15 +274,16 @@ public final class TaskManager {
                     Task subtask = updateTaskItem(subtasks.get(subtaskId));
                     // Кладём подзадачу обратно в мапу
                     epicTask.updateSubtask(subtaskId, subtask);
+                    // Меняем статус эпика, если изменились статусы всех подзадач
+                    epicTask.changeStatus();
                     // Кладём обновлённый эпик в мапу epicTasks
                     epicTasks.put(id, epicTask);
                 }
-
             }
-           // taskRepository.updateTask(id, epicTasks, new Task());
-        } /*else {
-            System.out.println("Извините, такой команды пока нет.");
-        }*/
+        } else {
+            System.out.println("Такого задачи с таким id нет, либо это подзадача");
+            System.out.println("Для изменения подзадачи измените родительский эпик");
+        }
     }
 
     public Task updateTask(int parentId) {
