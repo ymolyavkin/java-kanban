@@ -42,8 +42,6 @@ public class EpicTask extends AbstractTask {
         return false;
     }
 
-
-
     private boolean allStatusesIsEqual(Map<Integer, Task> tasks) {
         if (tasks.isEmpty()) return true;
         // Достаем любой элемент из Мар

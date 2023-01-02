@@ -27,7 +27,9 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractTask task = (AbstractTask) o;
-        return id == task.id && title.equals(task.title) && Objects.equals(description, task.description) && status == task.status;
+        return id == task.id
+                && title.equals(task.title)
+                && Objects.equals(description, task.description) && status == task.status;
     }
 
     @Override
@@ -38,15 +40,21 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     @Override
     public String toString() {
         String result = "";
-        result = " Задача { " +
-                "название: '" + title + '\'' +
+
+        if (parentId != -1) result += "Подзадача { ";
+        else result = " Задача { ";
+
+        result += "название: '" + title + '\'' +
                 ", описание: '" + description + '\'' +
-                ", id=" + id +
+                ", id: " + id +
                 ", статус: " + status;
+
         if (parentId != -1) {
-            result += "id родителя: " + parentId;
+            result += ", id родителя: " + parentId;
         }
-        result += "}";
+
+        result += " }";
+
         return result;
     }
 

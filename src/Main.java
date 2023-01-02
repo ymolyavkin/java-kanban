@@ -33,6 +33,7 @@ public class Main {
                 }
                 case "4" -> {
                     System.out.println("Ведите id задачи, которую хотите обновить");
+                    System.out.println("Если это подзадача, то введите номер родительского эпика");
                     String stringId = scanner.nextLine();
                     int id = Integer.parseInt(stringId);
                     taskManager.updateTaskById(id);

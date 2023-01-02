@@ -5,7 +5,7 @@ public final class TaskManager {
     private final Scanner scanner;
     private final Map<Integer, AbstractTask> standardTasks;
     private final Map<Integer, AbstractTask> epicTasks;
-    private final TaskRepository taskRepository;
+
 
 
     public static TaskManager getInstance() {
@@ -17,7 +17,7 @@ public final class TaskManager {
         standardTasks = new HashMap<>();
         epicTasks = new HashMap<>();
         scanner = new Scanner(System.in);
-        taskRepository = new TaskRepository();
+        //taskRepository = new TaskRepository();
     }
 
     private static final class TaskManagerHolder {
@@ -96,9 +96,11 @@ public final class TaskManager {
 
     public void createStandardTask() {
         System.out.println("createStandardTask");
-        taskRepository.addTask(taskId, standardTasks, createTaskItem(-1));
+        standardTasks.put(taskId, createTaskItem(-1));
+        // taskRepository.addTask(taskId, standardTasks, createTaskItem(-1));
+        System.out.print(Color.GREEN);
         System.out.println("Создана стадартная задача с id = " + (taskId - 1));
-        System.out.println();
+        System.out.print(Color.RESET);
     }
 
     public void createEpic() {
@@ -124,7 +126,9 @@ public final class TaskManager {
             userInput = scanner.nextLine();
         }
         epicTasks.put(epicId, epicTask);
+        System.out.print(Color.GREEN);
         System.out.println("Создан эпик с id = " + epicId);
+        System.out.print(Color.RESET);
     }
 
 
@@ -217,15 +221,19 @@ public final class TaskManager {
                     // Меняем статус эпика, если изменились статусы всех подзадач
                     boolean statusChanged = epicTask.changeStatus();
                     if (statusChanged) {
+                        System.out.print(Color.GREEN);
                         System.out.println("Статус эпика был изменён на " + epicTask.getStatus());
+                        System.out.print(Color.RESET);
                     }
                     // Кладём обновлённый эпик в мапу epicTasks
                     epicTasks.put(id, epicTask);
                 }
             }
         } else {
-            System.out.println("Такого задачи с таким id нет, либо это подзадача");
+            System.out.print(Color.RED);
+            System.out.println("Задачи с таким id нет, либо это подзадача");
             System.out.println("Для изменения подзадачи измените родительский эпик");
+            System.out.print(Color.RESET);
         }
     }
 
@@ -263,8 +271,8 @@ public final class TaskManager {
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
             return false;
         } else {
-            taskRepository.deleteAllTasks(standardTasks);
-            taskRepository.deleteAllTasks(epicTasks);
+            standardTasks.clear();
+            epicTasks.clear();
             return true;
         }
     }
