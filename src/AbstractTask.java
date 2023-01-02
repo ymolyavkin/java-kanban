@@ -63,9 +63,9 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         return id;
     }
 
-    public int getParentId() {
+    /*public int getParentId() {
         return parentId;
-    }
+    }*/
 
     public String getTitle() {
         return title;
