@@ -215,7 +215,10 @@ public final class TaskManager {
                     // Кладём подзадачу обратно в мапу
                     epicTask.updateSubtask(subtaskId, subtask);
                     // Меняем статус эпика, если изменились статусы всех подзадач
-                    epicTask.changeStatus();
+                    boolean statusChanged = epicTask.changeStatus();
+                    if (statusChanged) {
+                        System.out.println("Статус эпика был изменён на " + epicTask.getStatus());
+                    }
                     // Кладём обновлённый эпик в мапу epicTasks
                     epicTasks.put(id, epicTask);
                 }

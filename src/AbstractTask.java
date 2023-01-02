@@ -16,9 +16,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         status = Status.NEW;
     }
 
-    void changeStatus() {
+    boolean changeStatus() {
         if (this.status == Status.NEW) this.status = Status.IN_PROGRESS;
         else this.status = Status.DONE;
+        return true;
     }
 
     @Override
@@ -36,12 +37,17 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public String toString() {
-        return " Задача {" +
+        String result = "";
+        result = " Задача { " +
                 "название: '" + title + '\'' +
                 ", описание: '" + description + '\'' +
                 ", id=" + id +
-                ", статус: " + status +
-                "}";
+                ", статус: " + status;
+        if (parentId != -1) {
+            result += "id родителя: " + parentId;
+        }
+        result += "}";
+        return result;
     }
 
     @Override
@@ -58,14 +64,13 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     }
 
-
     public int getId() {
         return id;
     }
 
-    /*public int getParentId() {
+    public int getParentId() {
         return parentId;
-    }*/
+    }
 
     public String getTitle() {
         return title;
@@ -87,7 +92,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         this.description = description;
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
