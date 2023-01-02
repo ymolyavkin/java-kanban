@@ -139,26 +139,6 @@ public final class TaskManager {
     }
 
     public Task updateTaskItem(Task task) {
-        /*String currentTitle = task.getTitle();
-        System.out.println("Текущее название задачи:" + currentTitle);
-        System.out.println("Новое название (если ввод будет пустым, то останется старое значение):");
-        String title = scanner.nextLine();
-        if (title == "") {
-            System.out.println("Название не изменилось: " + currentTitle);
-        } else {
-            System.out.println("Новое название: " + title);
-            task.setTitle(title);
-        }
-        String currentDescription = task.getDescription();
-        System.out.println("Текущее описание задачи: " + currentDescription);
-        System.out.println("Новое описание (если ввод будет пустым, то останется старое значение):");
-        String description = scanner.nextLine();
-        if (description == "") {
-            System.out.println("Описание не изменилось: " + currentDescription);
-        } else {
-            System.out.println("Новое описание: " + description);
-            task.setTitle(title);
-        }*/
         task = (Task) updateTitleAndDescription(task);
         String[] menuItems = {"Для изменения статуса нажмите '1'", "Оставить прежним - нажмите любую клавишу"};
         String userInput = userMenu("Следует изменить статус задачи?", menuItems);
@@ -202,36 +182,20 @@ public final class TaskManager {
         System.out.println("Создан эпик с id = " + epicId);
     }
 
-    public void findStandardTaskById(int id) {
 
-
-        System.out.println("findTaskById");
-    }
-
-    public void updateStandardTaskById(int id) {
-        System.out.println("updateStandardTaskById");
-    }
-
-    public void deleteStandardTaskById(int id) {
-        System.out.println("deleteStandardTaskById");
-    }
-
-    public void deleteAllStandardTasks() {
-        System.out.println("deleteAllStandardTasks");
-    }
-
-    public void getListOfAllTasks() {
+    public boolean getListOfAllTasks() {
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
-            System.out.print(Color.RED);
-            System.out.println("У Вас нет задач");
-            System.out.print(Color.RESET);
-        } else {
+            return false;
+        }
+        if (!standardTasks.isEmpty()) {
             System.out.println("Список обычных задач");
             for (Map.Entry<Integer, AbstractTask> entry : standardTasks.entrySet()) {
                 int id = entry.getKey();
                 Task task = (Task) entry.getValue();
                 System.out.println(task + " ");
             }
+        }
+        if (!epicTasks.isEmpty()) {
             System.out.println("Список Эпиков");
             for (Map.Entry<Integer, AbstractTask> entry : epicTasks.entrySet()) {
                 int id = entry.getKey();
@@ -239,16 +203,45 @@ public final class TaskManager {
                 System.out.println(task + " ");
             }
         }
+        return true;
     }
 
 
-    public void findTaskById(int id) {
-        System.out.println("findTaskById");
+    public boolean findTaskById(int id) {
+        // Ищем среди обычных задач
+        if (!standardTasks.isEmpty()) {
+            if (standardTasks.containsKey(id)) {
+                Task task = (Task) standardTasks.get(id);
+                System.out.println(task);
+                return true;
+            }
+        }
+        //Ищем среди эпиков
+        if (!epicTasks.isEmpty()) {
+            if (epicTasks.containsKey(id)) {
+                EpicTask epicTask = (EpicTask) epicTasks.get(id);
+                System.out.println(epicTask);
+                return true;
+            }
+        }
+        // Ищем среди подзадач
+        for (AbstractTask abstractTask : epicTasks.values()) {
+            // Получаем эпик
+            EpicTask epic = (EpicTask) abstractTask;
+            // Получаем подзадачи эпика
+            Map<Integer, Task> subtasks = epic.getSubtasks();
+            // Ищем среди подзадач текущего эпика
+            if (subtasks.containsKey(id)) {
+                Task task = (Task) subtasks.get(id);
+                System.out.println(task);
+                return true;
+            }
+        }
+        return false;
     }
+
 
     public void updateTaskById(int id) {
-        //standardTasks;
-        //epicTasks;
         if (standardTasks.containsKey(id)) {
             // обновляем текущую задачу
             Task currentTask = (Task) standardTasks.get(id);
@@ -258,10 +251,12 @@ public final class TaskManager {
         } else if (epicTasks.containsKey(id)) {
             System.out.println("Введенный id принадлежит эпику");
             EpicTask epicTask = (EpicTask) epicTasks.get(id);
+
             epicTask = (EpicTask) updateTitleAndDescription(epicTask);
 
             String[] menuItems = {"'Да' - '1', 'нет' - любая клавиша"};
             String userInput = userMenu("Будете ли менять подзадачи данного эпика?", menuItems);
+
             if (userInput.equals("1")) {
                 System.out.println(epicTask);
                 System.out.println("Введите id подзадачи");
@@ -286,12 +281,34 @@ public final class TaskManager {
         }
     }
 
-    public Task updateTask(int parentId) {
-        return null;
-    }
-
-    public void deleteTaskById(int id) {
-        System.out.println("deleteTaskById");
+    public boolean deleteTaskById(int id) {
+        // Ищем среди обычных задач
+        if (!standardTasks.isEmpty()) {
+            if (standardTasks.containsKey(id)) {
+                standardTasks.remove(id);
+                return true;
+            }
+        }
+        //Ищем среди эпиков
+        if (!epicTasks.isEmpty()) {
+            if (epicTasks.containsKey(id)) {
+                epicTasks.remove(id);
+                return true;
+            }
+        }
+        // Ищем среди подзадач
+        for (AbstractTask abstractTask : epicTasks.values()) {
+            // Получаем эпик
+            EpicTask epic = (EpicTask) abstractTask;
+            // Получаем подзадачи эпика
+            Map<Integer, Task> subtasks = epic.getSubtasks();
+            // Ищем среди подзадач текущего эпика
+            if (subtasks.containsKey(id)) {
+                subtasks.remove(id);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void deleteAllTasks() {

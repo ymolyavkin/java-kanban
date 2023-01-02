@@ -11,9 +11,26 @@ public class Main {
             printMenu();
             userInput = scanner.nextLine();
             switch (userInput) {
-                case "1" -> taskManager.getListOfAllTasks();
+                case "1" -> {
+                    boolean tasksAreExisting = taskManager.getListOfAllTasks();
+                    if (!tasksAreExisting) {
+                        System.out.print(Color.RED);
+                        System.out.println("У Вас нет задач");
+                        System.out.print(Color.RESET);
+                    }
+                }
                 case "2" -> taskManager.createTask();
-                case "3" -> taskManager.findTaskById(1);
+                case "3" -> {
+                    System.out.println("Ведите id задачи");
+                    String stringId = scanner.nextLine();
+                    int id = Integer.parseInt(stringId);
+                    boolean taskIsFound = taskManager.findTaskById(id);
+                    if (!taskIsFound) {
+                        System.out.print(Color.RED);
+                        System.out.println("У Вас нет задач с таким id");
+                        System.out.print(Color.RESET);
+                    }
+                }
                 case "4" -> {
                     System.out.println("Ведите id задачи, которую хотите обновить");
                     String stringId = scanner.nextLine();
