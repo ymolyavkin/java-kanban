@@ -37,8 +37,25 @@ public class Main {
                     int id = Integer.parseInt(stringId);
                     taskManager.updateTaskById(id);
                 }
-                case "5" -> taskManager.deleteTaskById(1);
-                case "6" -> taskManager.deleteAllTasks();
+                case "5" -> {
+                    System.out.println("Ведите id задачи");
+                    String stringId = scanner.nextLine();
+                    int id = Integer.parseInt(stringId);
+                    boolean taskIsFound = taskManager.deleteTaskById(id);
+                    if (!taskIsFound) {
+                        System.out.print(Color.RED);
+                        System.out.println("У Вас нет задач с таким id");
+                        System.out.print(Color.RESET);
+                    }
+                }
+                case "6" -> {
+                    boolean taskExists = taskManager.deleteAllTasks();
+                    if (!taskExists) {
+                        System.out.print(Color.RED);
+                        System.out.println("У Вас нет задач");
+                        System.out.print(Color.RESET);
+                    }
+                }
                 case "0" -> System.out.println("Выход");
                 default ->  System.out.println("Извините, такой команды пока нет. Введите число от 0 до 6");
             };

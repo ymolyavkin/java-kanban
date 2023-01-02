@@ -32,61 +32,6 @@ public final class TaskManager {
         return scanner.nextLine();
     }
 
-    public void getListOfAllSubtasks() {
-        System.out.println("getListOfAllSubtasks");
-    }
-
-    public void createSubtask() {
-
-        System.out.println("createSubtask");
-    }
-
-    public void findSubtaskById(int id) {
-        System.out.println("findSubtaskById");
-    }
-
-    public void updateSubtaskById(int id) {
-
-        System.out.println("updateSubtaskById");
-    }
-
-    public void deleteSubtaskById(int id) {
-
-        System.out.println("deleteSubtaskById");
-    }
-
-    public void deleteAllSubtasks() {
-
-        System.out.println("deleteAllSubtasks");
-    }
-
-    public void getListOfAllEpics() {
-        System.out.println("getListOfAllEpics");
-    }
-
-
-    public void findEpicById(int id) {
-        System.out.println("findEpicById");
-    }
-
-    public void updateEpicById(int id) {
-
-        System.out.println("updateEpicById");
-    }
-
-    public void deleteEpicById(int id) {
-
-        System.out.println("deleteEpicById");
-    }
-
-    public void deleteAllEpics() {
-
-        System.out.println("deleteAllEpics");
-    }
-
-    public void getListOfAllStandardTasks() {
-        System.out.println("getListOfAllTasks");
-    }
 
     public void createTask() {
         System.out.println("createTask");
@@ -311,16 +256,13 @@ public final class TaskManager {
         return false;
     }
 
-    public void deleteAllTasks() {
+    public boolean deleteAllTasks() {
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
-            System.out.print(Color.RED);
-            System.out.println("У Вас нет задач");
-            System.out.print(Color.RESET);
+            return false;
         } else {
             taskRepository.deleteAllTasks(standardTasks);
             taskRepository.deleteAllTasks(epicTasks);
+            return true;
         }
-
     }
-
 }
