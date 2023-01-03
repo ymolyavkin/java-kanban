@@ -224,7 +224,7 @@ public final class TaskManager {
                 System.out.println("Введите id подзадачи");
                 String strSubtaskId = scanner.nextLine();
 
-                int subtaskId = Integer.parseInt(strSubtaskId);
+                int subtaskId = Integer.valueOf(strSubtaskId);
 
                 Map<Integer, Task> subtasks = epicTask.getSubtasks();
                 if (subtasks.containsKey(subtaskId)) {
