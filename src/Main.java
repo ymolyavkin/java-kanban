@@ -24,7 +24,7 @@ public class Main {
                     System.out.println("Ведите id задачи");
 
                     String stringId = scanner.nextLine();
-                    int id = Integer.parseInt(stringId);
+                    int id = taskManager.stringToInt(stringId);
                     boolean taskIsFound = taskManager.findTaskById(id);
 
                     if (!taskIsFound) {
@@ -38,7 +38,7 @@ public class Main {
                     System.out.println("Если это подзадача, то введите номер родительского эпика");
 
                     String stringId = scanner.nextLine();
-                    int id = Integer.parseInt(stringId);
+                    int id = taskManager.stringToInt(stringId);
 
                     taskManager.updateTaskById(id);
                 }
@@ -46,7 +46,7 @@ public class Main {
                     System.out.println("Ведите id задачи");
 
                     String stringId = scanner.nextLine();
-                    int id = Integer.parseInt(stringId);
+                    int id = taskManager.stringToInt(stringId);
                     boolean taskIsFound = taskManager.deleteTaskById(id);
 
                     if (taskIsFound) {
@@ -79,6 +79,7 @@ public class Main {
     }
 
     static void printMenu() {
+        System.out.println();
         System.out.println("1 - Получить список всех задач");
         System.out.println("2 - Создать задачу");
         System.out.println("3 - Найти задачу по идентификатору");

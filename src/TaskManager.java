@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class TaskManager {
     private int taskId;
@@ -29,7 +31,15 @@ public final class TaskManager {
         return scanner.nextLine();
     }
 
-
+    public int stringToInt(String userInput) {
+        Pattern pattern = Pattern.compile(".*?(\\d+).*");
+        Matcher matcher = pattern.matcher(userInput);
+        String number = "-1";
+        if (matcher.find()) {
+            number = matcher.group(1);
+        }
+        return Integer.valueOf(number);
+    }
     public void createTask() {
         System.out.println("createTask");
 
@@ -222,9 +232,9 @@ public final class TaskManager {
             if (userInput.equals("1")) {
                 System.out.println(epicTask);
                 System.out.println("Введите id подзадачи");
-                String strSubtaskId = scanner.nextLine();
 
-                int subtaskId = Integer.valueOf(strSubtaskId);
+                String strSubtaskId = scanner.nextLine();
+                int subtaskId=stringToInt(strSubtaskId);
 
                 Map<Integer, Task> subtasks = epicTask.getSubtasks();
                 if (subtasks.containsKey(subtaskId)) {
