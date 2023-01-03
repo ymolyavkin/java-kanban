@@ -22,9 +22,11 @@ public class Main {
                 case "2" -> taskManager.createTask();
                 case "3" -> {
                     System.out.println("Ведите id задачи");
+
                     String stringId = scanner.nextLine();
                     int id = Integer.parseInt(stringId);
                     boolean taskIsFound = taskManager.findTaskById(id);
+
                     if (!taskIsFound) {
                         System.out.print(Color.RED);
                         System.out.println("У Вас нет задач с таким id");
@@ -34,16 +36,24 @@ public class Main {
                 case "4" -> {
                     System.out.println("Ведите id задачи, которую хотите обновить");
                     System.out.println("Если это подзадача, то введите номер родительского эпика");
+
                     String stringId = scanner.nextLine();
                     int id = Integer.parseInt(stringId);
+
                     taskManager.updateTaskById(id);
                 }
                 case "5" -> {
                     System.out.println("Ведите id задачи");
+
                     String stringId = scanner.nextLine();
                     int id = Integer.parseInt(stringId);
                     boolean taskIsFound = taskManager.deleteTaskById(id);
-                    if (!taskIsFound) {
+
+                    if (taskIsFound) {
+                        System.out.print(Color.GREEN);
+                        System.out.println("Задача удалена");
+                        System.out.print(Color.RESET);
+                    } else {
                         System.out.print(Color.RED);
                         System.out.println("У Вас нет задач с таким id");
                         System.out.print(Color.RESET);
@@ -51,16 +61,20 @@ public class Main {
                 }
                 case "6" -> {
                     boolean taskExists = taskManager.deleteAllTasks();
-                    if (!taskExists) {
+
+                    if (taskExists) {
+                        System.out.print(Color.GREEN);
+                        System.out.println("Все задачи удалены");
+                        System.out.print(Color.RESET);
+                    } else {
                         System.out.print(Color.RED);
                         System.out.println("У Вас нет задач");
                         System.out.print(Color.RESET);
                     }
                 }
                 case "0" -> System.out.println("Выход");
-                default ->  System.out.println("Извините, такой команды пока нет. Введите число от 0 до 6");
-            };
-            
+                default -> System.out.println("Извините, такой команды пока нет. Введите число от 0 до 6");
+            }
         } while (!userInput.equals("0"));
     }
 
