@@ -1,18 +1,17 @@
 import java.util.Objects;
 
 public abstract class AbstractTask implements Comparable<AbstractTask> {
-    private int parentId;
+    //private int parentId;
     private String title;
     private String description;
     private int id;
     private Status status;
 
 
-    public AbstractTask(String title, String description, int id, int parentId) {
+    public AbstractTask(String title, String description, int id) {
         this.title = title;
         this.description = description;
         this.id = id;
-        this.parentId = parentId;
         status = Status.NEW;
     }
 
@@ -39,23 +38,11 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public String toString() {
-        String result = "";
 
-        if (parentId != -1) result += "Подзадача { ";
-        else result = " Задача { ";
-
-        result += "название: '" + title + '\'' +
+        return  "{ название: '" + title + '\'' +
                 ", описание: '" + description + '\'' +
                 ", id: " + id +
                 ", статус: " + status;
-
-        if (parentId != -1) {
-            result += ", id родителя: " + parentId;
-        }
-
-        result += " }";
-
-        return result;
     }
 
     @Override
@@ -74,10 +61,6 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     public int getId() {
         return id;
-    }
-
-    public int getParentId() {
-        return parentId;
     }
 
     public String getTitle() {

@@ -2,23 +2,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class EpicTask extends AbstractTask {
-    private final Map<Integer, Task> subtasks;
+    private int parentId;
+    private final Map<Integer, Subtask> subtasks;
 
-    public EpicTask(String title, String description, int id, int parentId) {
-        super(title, description, id, parentId);
+    public EpicTask(String title, String description, int id) {
+        super(title, description, id);
         this.subtasks = new HashMap<>();
     }
 
-    public void addSubtask(int id, Task task) {
-        subtasks.put(id, task);
+    public void addSubtask(Subtask subtask) {
+        subtasks.put(subtask.getId(), subtask);
     }
 
-    public void updateSubtask(int id, Task task) {
-        subtasks.put(id, task);
+    public void updateSubtask(int id, Subtask subtask) {
+        subtasks.put(id, subtask);
     }
 
-    public Map<Integer, Task> getSubtasks() {
+    public Map<Integer, Subtask> getSubtasks() {
         return subtasks;
+    }
+
+    public int getParentId() {
+        return parentId;
     }
 
     @Override
@@ -34,8 +39,8 @@ public final class EpicTask extends AbstractTask {
         }
         // Если все подзадачи в статусе DONE, то статус эпика должен быть DONE
         // Достаем любой элемент из Мар
-        Map.Entry<Integer, Task> entry = subtasks.entrySet().iterator().next();
-        Task someTask = entry.getValue();
+        Map.Entry<Integer, Subtask> entry = subtasks.entrySet().iterator().next();
+        Subtask someTask = entry.getValue();
 
         if (someTask.getStatus() == Status.DONE && allStatusesIsEqual(subtasks) && curerentStatus != Status.DONE) {
             this.setStatus(Status.DONE);
@@ -44,25 +49,25 @@ public final class EpicTask extends AbstractTask {
         return false;
     }
 
-    private boolean allStatusesIsEqual(Map<Integer, Task> tasks) {
+    private boolean allStatusesIsEqual(Map<Integer, Subtask> tasks) {
         if (tasks.isEmpty()) return true;
 
         // Достаем любой элемент из Мар
-        Map.Entry<Integer, Task> entry = tasks.entrySet().iterator().next();
+        Map.Entry<Integer, Subtask> entry = tasks.entrySet().iterator().next();
         Status currentStatus = entry.getValue().getStatus();
 
         // обходим всю мапу перебирая её значения
-        for (Task value : tasks.values()) {
+        for (Subtask value : tasks.values()) {
             if (currentStatus != value.getStatus()) return false;
         }
         return true;
     }
 
-    private boolean oneStatusIsProgress(Map<Integer, Task> tasks) {
+    private boolean oneStatusIsProgress(Map<Integer, Subtask> tasks) {
         if (tasks.isEmpty()) return false;
 
         // обходим всю мапу перебирая её значения
-        for (Task value : tasks.values()) {
+        for (Subtask value : tasks.values()) {
             if (value.getStatus() == Status.IN_PROGRESS) return true;
         }
         return false;
@@ -79,12 +84,12 @@ public final class EpicTask extends AbstractTask {
                 "}";
     }
 
-    private String printSubtasks(Map<Integer, Task> subtasks) {
+    private String printSubtasks(Map<Integer, Subtask> subtasks) {
         StringBuilder result = new StringBuilder();
 
-        for (Task task : subtasks.values()) {
+        for (Subtask subtask : subtasks.values()) {
             result.append("  ");
-            result.append(task.toString());
+            result.append(subtask.toString());
             result.append("\n");
         }
         return result.toString();
