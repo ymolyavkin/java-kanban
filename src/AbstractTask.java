@@ -1,7 +1,6 @@
 import java.util.Objects;
 
 public abstract class AbstractTask implements Comparable<AbstractTask> {
-    //private int parentId;
     private String title;
     private String description;
     private int id;
@@ -16,9 +15,12 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     }
 
     boolean changeStatus() {
+        Status currentStatus = this.status;
+
         if (this.status == Status.NEW) this.status = Status.IN_PROGRESS;
         else this.status = Status.DONE;
-        return true;
+        if (this.status != currentStatus) return true;
+        else return false;
     }
 
     @Override
@@ -39,10 +41,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     @Override
     public String toString() {
 
-        return  "{ название: '" + title + '\'' +
-                ", описание: '" + description + '\'' +
-                ", id: " + id +
-                ", статус: " + status;
+        return "{ название: '" + title + '\''
+                + ", описание: '" + description + '\''
+                + ", id = " + id
+                + ", статус: " + status;
     }
 
     @Override

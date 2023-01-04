@@ -2,7 +2,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class EpicTask extends AbstractTask {
-    private int parentId;
     private final Map<Integer, Subtask> subtasks;
 
     public EpicTask(String title, String description, int id) {
@@ -14,26 +13,22 @@ public final class EpicTask extends AbstractTask {
         subtasks.put(subtask.getId(), subtask);
     }
 
-    public void updateSubtask(int id, Subtask subtask) {
+    /*public void updateSubtask(int id, Subtask subtask) {
         subtasks.put(id, subtask);
-    }
+    }*/
 
     public Map<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 
-    public int getParentId() {
-        return parentId;
-    }
-
     @Override
     boolean changeStatus() {
-        Status curerentStatus = this.getStatus();
+        Status currentStatus = this.getStatus();
 
         // Если хотя бы одна из подзадач в статусе IN_PROGRESS, то статус эпика должен быть IN_PROGRESS
-        if (oneStatusIsProgress(subtasks) && curerentStatus == Status.IN_PROGRESS) {
+        if (oneStatusIsProgress(subtasks) && currentStatus == Status.IN_PROGRESS) {
             return false; //Статус задачи не изменился
-        } else if (oneStatusIsProgress(subtasks) && curerentStatus == Status.NEW) {
+        } else if (oneStatusIsProgress(subtasks) && currentStatus == Status.NEW) {
             this.setStatus(Status.IN_PROGRESS);
             return true; //Статус задачи изменился
         }
@@ -42,7 +37,7 @@ public final class EpicTask extends AbstractTask {
         Map.Entry<Integer, Subtask> entry = subtasks.entrySet().iterator().next();
         Subtask someTask = entry.getValue();
 
-        if (someTask.getStatus() == Status.DONE && allStatusesIsEqual(subtasks) && curerentStatus != Status.DONE) {
+        if (someTask.getStatus() == Status.DONE && allStatusesIsEqual(subtasks) && currentStatus != Status.DONE) {
             this.setStatus(Status.DONE);
             return true;
         }

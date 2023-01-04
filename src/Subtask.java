@@ -1,5 +1,5 @@
 public class Subtask extends AbstractTask {
-    private int parentId;
+    private final int parentId;
 
     public Subtask(String title, String description, int id, int parentId) {
         super(title, description, id);
@@ -8,6 +8,6 @@ public class Subtask extends AbstractTask {
 
     @Override
     public String toString() {
-        return super.toString() + " parentId=" + parentId + '}';
+        return super.toString() + ", parentId = " + parentId + " }";
     }
 }
