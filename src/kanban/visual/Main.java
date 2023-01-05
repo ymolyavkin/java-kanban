@@ -1,3 +1,8 @@
+package kanban.visual;
+
+import kanban.core.TaskManager;
+import kanban.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,12 +93,14 @@ public class Main {
         }
 
         String userInput = scanner.nextLine();
-        int taskType = stringToInt(userInput);
+        int menuItem = stringToInt(userInput);
 
         for (int value : values) {
-            if (taskType == value) return taskType;
+            if (menuItem == value) return menuItem;
         }
-        System.out.println("Такого варианта пока нет");
+        if (values.length > 1) {
+            System.out.println("Такого варианта пока нет");
+        }
         return -1;
     }
 
@@ -160,7 +167,7 @@ public class Main {
         System.out.println("Ведите id задачи");
         String stringId = scanner.nextLine();
         int id = stringToInt(stringId);
-        var task = taskManager.findTaskById(id);
+        var task = taskManager.findTaskByIdOrNull(id);
 
         if (task == null) {
             System.out.print(Color.RED);
@@ -179,7 +186,7 @@ public class Main {
         int id = stringToInt(stringId);
 
         // Ищем задачу по id
-        var task = taskManager.findTaskById(id);
+        var task = taskManager.findTaskByIdOrNull(id);
 
         if (task == null || task instanceof Subtask) {
             System.out.print(Color.RED);
@@ -255,7 +262,6 @@ public class Main {
         if (changeStatus == 1) {
             return true;
         } else {
-            /*System.out.println("Статус не изменён");*/
             return false;
         }
     }

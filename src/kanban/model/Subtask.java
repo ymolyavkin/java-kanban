@@ -1,3 +1,4 @@
+package kanban.model;
 public class Subtask extends AbstractTask {
     private final int parentId;
 

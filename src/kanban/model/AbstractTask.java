@@ -1,3 +1,5 @@
+package kanban.model;
+
 import java.util.Objects;
 
 public abstract class AbstractTask implements Comparable<AbstractTask> {
@@ -14,7 +16,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         status = Status.NEW;
     }
 
-    boolean changeStatus() {
+    public boolean changeStatus() {
         Status currentStatus = this.status;
 
         if (this.status == Status.NEW) this.status = Status.IN_PROGRESS;
@@ -49,11 +51,12 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public int compareTo(AbstractTask anotherTask) {
-        if (this.status == anotherTask.getStatus()) {
+        if (this.status == anotherTask.getStatus() && this.id == anotherTask.getId()) {
             return 0;
         } else if (this.status == Status.NEW && anotherTask.getStatus() == Status.IN_PROGRESS
                 || this.status == Status.IN_PROGRESS && anotherTask.getStatus() == Status.DONE
-                || this.status == Status.NEW && anotherTask.getStatus() == Status.DONE) {
+                || this.status == Status.NEW && anotherTask.getStatus() == Status.DONE
+                || this.id < anotherTask.getId()) {
             return -1;
         } else {
             return 1;

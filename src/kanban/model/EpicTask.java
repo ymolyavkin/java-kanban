@@ -1,3 +1,5 @@
+package kanban.model;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,16 +15,13 @@ public final class EpicTask extends AbstractTask {
         subtasks.put(subtask.getId(), subtask);
     }
 
-    /*public void updateSubtask(int id, Subtask subtask) {
-        subtasks.put(id, subtask);
-    }*/
 
     public Map<Integer, Subtask> getSubtasks() {
         return subtasks;
     }
 
     @Override
-    boolean changeStatus() {
+    public boolean changeStatus() {
         Status currentStatus = this.getStatus();
 
         // Если хотя бы одна из подзадач в статусе IN_PROGRESS, то статус эпика должен быть IN_PROGRESS
