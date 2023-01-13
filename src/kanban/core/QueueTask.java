@@ -7,8 +7,6 @@ import java.util.Map;
 
 public class QueueTask extends LinkedHashMap<Integer, AbstractTask> {
     private final int capacity;
-    private int key;
-    private QueueTask queueTask;
 
     /**
      * Constructs an empty insertion-ordered {@code LinkedHashMap} instance
@@ -16,8 +14,6 @@ public class QueueTask extends LinkedHashMap<Integer, AbstractTask> {
      */
     public QueueTask(int capacity) {
         this.capacity = capacity;
-        key = 0;
-        queueTask = new QueueTask(capacity);
     }
 
     /**
@@ -64,18 +60,5 @@ public class QueueTask extends LinkedHashMap<Integer, AbstractTask> {
     @Override
     protected boolean removeEldestEntry(Map.Entry<Integer, AbstractTask> eldest) {
         return this.size() > capacity;
-    }
-
-    private int getKey() {
-        if (key >= capacity - 1) {
-            key = 0;
-        } else key++;
-        return key;
-    }
-    public void addTaskToQueue (AbstractTask task) {
-        queueTask.put(getKey(), task);
-    }
-    public QueueTask getQueueTask() {
-        return queueTask;
     }
 }

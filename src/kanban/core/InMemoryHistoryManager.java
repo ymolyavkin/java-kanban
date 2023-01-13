@@ -4,14 +4,21 @@ import kanban.model.AbstractTask;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private int capacity;
-    private QueueTask queueTask = new QueueTask(capacity);
+    private int key;
+    private QueueTask queueTask;
+    private final int CAPACITYHISTORY = 10;
+
+    public InMemoryHistoryManager() {
+        queueTask = new QueueTask(CAPACITYHISTORY);
+        key=0;
+    }
 
     /**
      * @param task
      */
     @Override
     public void add(AbstractTask task) {
-        queueTask.addTaskToQueue(task);
+        queueTask.put(getKey(), task);
     }
 
     /**
@@ -19,6 +26,12 @@ public class InMemoryHistoryManager implements HistoryManager {
      */
     @Override
     public QueueTask getHistory() {
-        return queueTask.getQueueTask();
+        return queueTask;
+    }
+    private int getKey() {
+        if (key >= capacity - 1) {
+            key = 0;
+        } else key++;
+        return key;
     }
 }

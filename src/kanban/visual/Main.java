@@ -1,6 +1,7 @@
 package kanban.visual;
 
 import kanban.core.InMemoryTaskManager;
+import kanban.core.QueueTask;
 import kanban.model.*;
 
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class Main {
                 case "4" -> updateTaskById();
                 case "5" -> deleteTaskById();
                 case "6" -> deleteAllTasks();
+                case "7" -> createSeveralTestTasks();
+                case "8" -> getBrowsingHistory();
                 case "0" -> System.out.println("Выход");
                 default -> System.out.println("Извините, такой команды пока нет. Введите число от 0 до 6");
             }
@@ -72,10 +75,13 @@ public class Main {
         System.out.println("4 - Обновить задачу");
         System.out.println("5 - Удалить задачу по идентификатору");
         System.out.println("6 - Удалить все задачи");
+        System.out.println("7 - Создать несколько тестовых задач");
+        System.out.println("8 - Получить историю просмотров задач");
         System.out.println("0 - Выход из программы");
     }
 
     static int stringToInt(String userInput) {
+        // Шаблон выбирает первое число из строки
         Pattern pattern = Pattern.compile(".*?(\\d+).*");
         Matcher matcher = pattern.matcher(userInput);
         String number = "-1";
@@ -323,5 +329,85 @@ public class Main {
             System.out.print(Color.RESET);
         }
     }
+
+    private static void createSeveralTestTasks() {
+        // Создаём стандартную задачу
+        String titleAndDescription = "Физминутка|Выполнить десять приседаний";
+        Task task = inMemoryTaskManager.createStandardTask(titleAndDescription);
+        System.out.print(Color.GREEN);
+        System.out.println("Создана обычная задача с id = " + task.getId());
+        System.out.print(Color.RESET);
+
+        // Создаём стандартную задачу
+        titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения";
+        task = inMemoryTaskManager.createStandardTask(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создана обычная задача с id = " + task.getId());
+        System.out.print(Color.RESET);
+
+        // Создаём эпик
+        titleAndDescription = "Понять условие домашнего задания" +
+                "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ";
+        EpicTask epicTask = inMemoryTaskManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+        // Создаем список названий и описаний подзадач
+        String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать ТЗ", "Подзадача 2|Понять ТЗ"};
+        for (String titleDescription : importantTitleAndDescriptions) {
+            // Создаем подзадачу
+            Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
+            // Добавляем её к эпику
+            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+        }
+        // Кладем эпик в мапу
+        inMemoryTaskManager.addEpic(epicTask);
+
+        // Создаём эпик
+        titleAndDescription = "Прочитать почту" +
+                "|Прочитать все входящие письма и сообщения из мессенджеров";
+        epicTask = inMemoryTaskManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+        // Создаем список названий и описаний подзадач
+        String[] secondaryTitleAndDescriptions = {
+                "Подзадача 1|Прочитать электронную почту",
+                "Подзадача 2|Прочитать мессенджеры",
+                "Подзадача 3|Прочитать соцсети"};
+        for (String titleDescription : secondaryTitleAndDescriptions) {
+            // Создаем подзадачу
+            Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
+            // Добавляем её к эпику
+            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+        }
+        // Кладем эпик в мапу
+        inMemoryTaskManager.addEpic(epicTask);
+    }
+
+    private static void getBrowsingHistory() {
+        QueueTask queueTask = inMemoryTaskManager.getHistory();
+        if (queueTask.isEmpty()) {
+            System.out.print(Color.RED);
+            System.out.println("История просмотров пуста");
+            System.out.print(Color.RESET);
+
+            return;
+        }
+        int count = 1;
+        for (AbstractTask value : queueTask.values()) {
+            //queueTask.forEach((key, value) -> System.out.println(key + "->" + value));
+            System.out.print(count + " задача: ");
+            System.out.println(value);
+            count++;
+            System.out.println("-------------------------------------------------------------------------------------");
+        }
+    }
 }
+
 
