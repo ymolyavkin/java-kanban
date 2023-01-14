@@ -1,7 +1,6 @@
 package kanban.core;
 
 public class Managers {
-
     static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
     static InMemoryHistoryManager inMemoryHistoryManager = InMemoryHistoryManager.getInstance();
 
