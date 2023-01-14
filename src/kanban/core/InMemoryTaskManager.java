@@ -8,20 +8,15 @@ import kanban.model.Task;
 import java.util.*;
 
 public final class InMemoryTaskManager implements TaskManager {
-    private int taskId;
-    private final Map<Integer, AbstractTask> standardTasks;
-    private final Map<Integer, AbstractTask> epicTasks;
+    private static int taskId;
+    private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
+    private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
+    static InMemoryHistoryManager inMemoryHistoryManager = InMemoryHistoryManager.getInstance();
     private static InMemoryTaskManager instance;
-    private final QueueTask queueTask;
-    private final int CAPACITY_HISTORY = 10;
-    private int key;
+
 
     private InMemoryTaskManager() {
         taskId = 0;
-        standardTasks = new HashMap<>();
-        epicTasks = new HashMap<>();
-        queueTask = new QueueTask(CAPACITY_HISTORY);
-        key = -1;
     }
 
     public static InMemoryTaskManager getInstance() {
@@ -36,14 +31,7 @@ public final class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public QueueTask getHistory() {
-        return queueTask;
-    }
-
-    private int getKey() {
-        if (key >= Integer.MAX_VALUE - 1) {
-            key = 0;
-        } else key++;
-        return key;
+        return Managers.getDefaultHistory().getHistory();
     }
 
     public void addEpic(EpicTask epicTask) {
@@ -155,7 +143,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (standardTasks.containsKey(id)) {
                 Task task = (Task) standardTasks.get(id);
 
-                queueTask.put(getKey(), task);
+                inMemoryHistoryManager.add(task);
                 return task;
             }
         }
@@ -164,7 +152,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (epicTasks.containsKey(id)) {
                 EpicTask epic = (EpicTask) epicTasks.get(id);
 
-                queueTask.put(getKey(), epic);
+                inMemoryHistoryManager.add(epic);
                 return epic;
             }
         }
@@ -178,7 +166,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (subtasks.containsKey(id)) {
                 Subtask subtask = subtasks.get(id);
 
-                queueTask.put(getKey(), subtask);
+                inMemoryHistoryManager.add(subtask);
                 return subtask;
             }
         }
