@@ -1,13 +1,10 @@
 package kanban.core;
 
 public class Managers {
-    public TaskManager getDefault() {
-        return null;
-    }
 
-    public static HistoryManager getDefaultHistory() {
-        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
 
-        return inMemoryHistoryManager;
+    public static TaskManager getDefault() {
+        return inMemoryTaskManager;
     }
 }

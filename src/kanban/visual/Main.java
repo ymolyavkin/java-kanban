@@ -1,6 +1,7 @@
 package kanban.visual;
 
 import kanban.core.InMemoryTaskManager;
+import kanban.core.Managers;
 import kanban.core.QueueTask;
 import kanban.model.*;
 
@@ -13,8 +14,8 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static Scanner scanner;
-    static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
 
+    static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
     public static void main(String[] args) {
 
         scanner = new Scanner(System.in);
