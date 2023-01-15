@@ -16,6 +16,7 @@ public final class InMemoryTaskManager implements TaskManager {
 
 
     private InMemoryTaskManager() {
+
         taskId = 0;
     }
 
@@ -30,11 +31,12 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return List<AbstractTask>
      */
     @Override
-    public QueueTask getHistory() {
-        return Managers.getDefaultHistory().getHistory();
+    public List<AbstractTask> getHistory() {
+        return Managers.getDefaultHistory();
     }
 
     public void addEpic(EpicTask epicTask) {
+
         epicTasks.put(epicTask.getId(), epicTask);
     }
 
@@ -124,6 +126,7 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return Map<Integer, AbstractTask> standardTasks
      */
     public Map<Integer, AbstractTask> getStandardTasks() {
+
         return standardTasks;
     }
 
@@ -131,6 +134,7 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return Map<Integer, AbstractTask> EpicTasks
      */
     public Map<Integer, AbstractTask> getEpicTasks() {
+
         return epicTasks;
     }
 

@@ -2,14 +2,16 @@ package kanban.core;
 
 import kanban.model.AbstractTask;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class InMemoryHistoryManager implements HistoryManager {
     private static InMemoryHistoryManager instance;
-    private QueueTask queueTask;
+    private List<AbstractTask> historyBrowsingTask;
     private final int CAPACITYHISTORY = 10;
-    private int key;
+
     public InMemoryHistoryManager() {
-        queueTask = new QueueTask(CAPACITYHISTORY);
-        key = -1;
+        historyBrowsingTask = new LinkedList<>();
     }
 
     public static InMemoryHistoryManager getInstance() {
@@ -18,26 +20,22 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return instance;
     }
-    private int getKey() {
-        if (key >= Integer.MAX_VALUE - 1) {
-            key = 0;
-        } else key++;
-        return key;
-    }
-    /**
-     * @param task
-     */
+
+
     @Override
     public void add(AbstractTask task) {
-        queueTask.put(getKey(), task);
+        historyBrowsingTask.add(task);
+        while (historyBrowsingTask.size() > CAPACITYHISTORY) {
+            historyBrowsingTask.remove(0);
+        }
     }
 
     /**
      * @return tasks list
      */
     @Override
-    public QueueTask getHistory() {
-        return queueTask;
+    public List<AbstractTask> getHistory() {
+        return historyBrowsingTask;
     }
 
 }

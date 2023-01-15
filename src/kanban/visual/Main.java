@@ -2,7 +2,6 @@ package kanban.visual;
 
 import kanban.core.InMemoryTaskManager;
 import kanban.core.Managers;
-import kanban.core.QueueTask;
 import kanban.model.*;
 
 import java.util.ArrayList;
@@ -392,8 +391,8 @@ public class Main {
     }
 
     private static void getBrowsingHistory() {
-        QueueTask queueTask = inMemoryTaskManager.getHistory();
-        if (queueTask.isEmpty()) {
+        List<AbstractTask> historyFindTask = inMemoryTaskManager.getHistory();
+        if (historyFindTask.isEmpty()) {
             System.out.print(Color.RED);
             System.out.println("История просмотров пуста");
             System.out.print(Color.RESET);
@@ -401,10 +400,9 @@ public class Main {
             return;
         }
         int count = 1;
-        for (AbstractTask value : queueTask.values()) {
-            //queueTask.forEach((key, value) -> System.out.println(key + "->" + value));
+        for (AbstractTask abstractTask : historyFindTask) {
             System.out.print(count + " задача: ");
-            System.out.println(value);
+            System.out.println(abstractTask);
             count++;
             System.out.println("-------------------------------------------------------------------------------------");
         }

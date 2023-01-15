@@ -5,10 +5,12 @@ import kanban.model.EpicTask;
 import kanban.model.Subtask;
 import kanban.model.Task;
 
+import java.util.List;
 import java.util.Map;
 
 public interface TaskManager {
-    QueueTask getHistory();
+    List<AbstractTask> getHistory();
+
     void addEpic(EpicTask epicTask);
 
     Task createStandardTask(String titleAndDescription);
