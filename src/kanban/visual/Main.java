@@ -15,6 +15,7 @@ public class Main {
     private static Scanner scanner;
 
     static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+
     public static void main(String[] args) {
 
         scanner = new Scanner(System.in);
@@ -359,12 +360,11 @@ public class Main {
         // Создаем список названий и описаний подзадач
         String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать ТЗ", "Подзадача 2|Понять ТЗ"};
         for (String titleDescription : importantTitleAndDescriptions) {
-            // Создаем подзадачу
+
             Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
-            // Добавляем её к эпику
+
             epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
-        // Кладем эпик в мапу
         inMemoryTaskManager.addEpic(epicTask);
 
         // Создаём эпик
@@ -387,7 +387,6 @@ public class Main {
             // Добавляем её к эпику
             epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
-        // Кладем эпик в мапу
         inMemoryTaskManager.addEpic(epicTask);
     }
 
