@@ -9,10 +9,12 @@ public class Managers {
     static InMemoryHistoryManager inMemoryHistoryManager = InMemoryHistoryManager.getInstance();
 
     public static TaskManager getDefault() {
+
         return inMemoryTaskManager;
     }
 
     public static List<AbstractTask> getDefaultHistory() {
+
         return inMemoryHistoryManager.getHistory();
     }
 }
