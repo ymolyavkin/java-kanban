@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Managers {
     static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
-    static InMemoryHistoryManager inMemoryHistoryManager = InMemoryHistoryManager.getInstance();
 
     public static TaskManager getDefault() {
 
@@ -14,7 +13,8 @@ public class Managers {
     }
 
     public static List<AbstractTask> getDefaultHistory() {
-
-        return inMemoryHistoryManager.getHistory();
+        return InMemoryTaskManager.historyManager.getHistory();
     }
+
+
 }

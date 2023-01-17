@@ -11,7 +11,8 @@ public final class InMemoryTaskManager implements TaskManager {
     private static int taskId;
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
-    static InMemoryHistoryManager inMemoryHistoryManager = InMemoryHistoryManager.getInstance();
+    static HistoryManager historyManager = new InMemoryHistoryManager();
+
     private static InMemoryTaskManager instance;
 
 
@@ -142,7 +143,7 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return AbstractTask task after search by id
      */
     public void addTaskIntoHistory(AbstractTask task) {
-        inMemoryHistoryManager.add(task);
+        historyManager.add(task);
     }
 
     public AbstractTask findTaskByIdOrNull(int id) {
