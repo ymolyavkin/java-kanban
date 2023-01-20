@@ -14,8 +14,8 @@ public final class InMemoryTaskManager implements TaskManager {
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
-    static HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    static AbstractTask foundTask;
+    private static HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private static AbstractTask foundTask;
 
 
     private InMemoryTaskManager() {
@@ -146,44 +146,40 @@ public final class InMemoryTaskManager implements TaskManager {
     /**
      * @return AbstractTask task after search by id
      */
-   /* public void addTaskIntoHistory(AbstractTask task) {
+    public void addTaskIntoHistory(AbstractTask task) {
 
-        Managers.inMemoryHistoryManager.add(task);
-    }*/
+        inMemoryHistoryManager.add(task);
+    }
+
     public AbstractTask findTaskByIdOrNull(int id) {
+        foundTask = null;
         // Ищем среди обычных задач
-        if (!standardTasks.isEmpty()) {
-            if (standardTasks.containsKey(id)) {
-                Task task = (Task) standardTasks.get(id);
+        if (standardTasks.containsKey(id)) {
 
-                inMemoryHistoryManager.add(task);
-                return task;
+            foundTask = standardTasks.get(id);
+
+        } else if (epicTasks.containsKey(id)) {
+            //Ищем среди эпиков
+            foundTask = epicTasks.get(id);
+
+        } else {
+            // Ищем среди подзадач
+            for (AbstractTask abstractTask : epicTasks.values()) {
+                // Получаем эпик
+                EpicTask epic = (EpicTask) abstractTask;
+                // Получаем подзадачи эпика
+                Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                // Ищем среди подзадач текущего эпика
+                if (subtasks.containsKey(id)) {
+
+                    foundTask = subtasks.get(id);
+                }
             }
         }
-        //Ищем среди эпиков
-        if (!epicTasks.isEmpty()) {
-            if (epicTasks.containsKey(id)) {
-                EpicTask epic = (EpicTask) epicTasks.get(id);
-
-                inMemoryHistoryManager.add(epic);
-                return epic;
-            }
+        if (foundTask != null) {
+            addTaskIntoHistory(foundTask);
         }
-        // Ищем среди подзадач
-        for (AbstractTask abstractTask : epicTasks.values()) {
-            // Получаем эпик
-            EpicTask epic = (EpicTask) abstractTask;
-            // Получаем подзадачи эпика
-            Map<Integer, Subtask> subtasks = epic.getSubtasks();
-            // Ищем среди подзадач текущего эпика
-            if (subtasks.containsKey(id)) {
-                Subtask subtask = subtasks.get(id);
-
-                inMemoryHistoryManager.add(subtask);
-                return subtask;
-            }
-        }
-        return null;
+        return foundTask;
     }
 
     /**

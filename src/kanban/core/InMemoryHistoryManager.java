@@ -8,22 +8,10 @@ import java.util.List;
 public class InMemoryHistoryManager implements HistoryManager {
     private List<AbstractTask> historyBrowsingTask;
     private final int CAPACITYHISTORY = 10;
+
     public InMemoryHistoryManager() {
         historyBrowsingTask = new LinkedList<>();
     }
-
-    //private static InMemoryHistoryManager instance;
-
-    /*public static InMemoryHistoryManager getInstance() {
-        if (instance == null) {
-            instance = new InMemoryHistoryManager();
-        }
-        return instance;
-    }*/
-    /*private InMemoryHistoryManager() {
-
-        historyBrowsingTask = new LinkedList<>();
-    }*/
 
     @Override
     public void add(AbstractTask task) {
