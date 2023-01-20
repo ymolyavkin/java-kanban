@@ -5,16 +5,17 @@ import kanban.model.EpicTask;
 import kanban.model.Subtask;
 import kanban.model.Task;
 
-import java.util.*;
-
-import static kanban.core.Managers.inMemoryHistoryManager;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class InMemoryTaskManager implements TaskManager {
     private static int taskId;
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
-
     private static InMemoryTaskManager instance;
+    static HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    static AbstractTask foundTask;
 
 
     private InMemoryTaskManager() {
@@ -24,6 +25,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public static InMemoryTaskManager getInstance() {
         if (instance == null) {
             instance = new InMemoryTaskManager();
+
         }
         return instance;
     }
@@ -33,7 +35,9 @@ public final class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<AbstractTask> getHistory() {
-        return Managers.getDefaultHistory();
+
+        return inMemoryHistoryManager.getHistory();
+
     }
 
     public void addEpic(EpicTask epicTask) {
@@ -146,7 +150,6 @@ public final class InMemoryTaskManager implements TaskManager {
 
         Managers.inMemoryHistoryManager.add(task);
     }*/
-
     public AbstractTask findTaskByIdOrNull(int id) {
         // Ищем среди обычных задач
         if (!standardTasks.isEmpty()) {
