@@ -180,7 +180,7 @@ public class Main {
             System.out.println("У Вас нет задач с таким id");
             System.out.print(Color.RESET);
         } else {
-            inMemoryTaskManager.addTaskIntoHistory(task);
+            //inMemoryTaskManager.addTaskIntoHistory(task);
             System.out.println(task);
         }
     }

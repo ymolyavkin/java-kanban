@@ -7,6 +7,8 @@ import kanban.model.Task;
 
 import java.util.*;
 
+import static kanban.core.Managers.inMemoryHistoryManager;
+
 public final class InMemoryTaskManager implements TaskManager {
     private static int taskId;
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
@@ -31,7 +33,7 @@ public final class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<AbstractTask> getHistory() {
-        return Managers.getDefaultHistory().getHistory();
+        return Managers.getDefaultHistory();
     }
 
     public void addEpic(EpicTask epicTask) {
@@ -140,9 +142,10 @@ public final class InMemoryTaskManager implements TaskManager {
     /**
      * @return AbstractTask task after search by id
      */
-    public void addTaskIntoHistory(AbstractTask task) {
+   /* public void addTaskIntoHistory(AbstractTask task) {
+
         Managers.inMemoryHistoryManager.add(task);
-    }
+    }*/
 
     public AbstractTask findTaskByIdOrNull(int id) {
         // Ищем среди обычных задач
@@ -150,6 +153,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (standardTasks.containsKey(id)) {
                 Task task = (Task) standardTasks.get(id);
 
+                inMemoryHistoryManager.add(task);
                 return task;
             }
         }
@@ -158,6 +162,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (epicTasks.containsKey(id)) {
                 EpicTask epic = (EpicTask) epicTasks.get(id);
 
+                inMemoryHistoryManager.add(epic);
                 return epic;
             }
         }
@@ -171,6 +176,7 @@ public final class InMemoryTaskManager implements TaskManager {
             if (subtasks.containsKey(id)) {
                 Subtask subtask = subtasks.get(id);
 
+                inMemoryHistoryManager.add(subtask);
                 return subtask;
             }
         }
