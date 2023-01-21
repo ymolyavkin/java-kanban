@@ -15,7 +15,7 @@ public final class InMemoryTaskManager implements TaskManager {
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
     private static HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    private static AbstractTask foundTask;
+    //private static AbstractTask foundTask;
 
 
     private InMemoryTaskManager() {
@@ -152,7 +152,7 @@ public final class InMemoryTaskManager implements TaskManager {
     }
 
     public AbstractTask findTaskByIdOrNull(int id) {
-        foundTask = null;
+        AbstractTask foundTask = null;
         // Ищем среди обычных задач
         if (standardTasks.containsKey(id)) {
 
