@@ -10,4 +10,10 @@ public class Node<T> {
         this.next = null;
         this.prev = null;
     }
+
+    public Node(T data, Node<T> next, Node<T> prev) {
+        this.data = data;
+        this.next = next;
+        this.prev = prev;
+    }
 }

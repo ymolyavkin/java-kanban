@@ -9,7 +9,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     // TODO: Maybe  doublyLinkedList is useless
     // the doublyLinkedList may not be necessary
     private List<AbstractTask> doublyLinkedList;
-    private Map<Integer, Node> taskViewMap;
+    private Map<Integer, Node> historyViewMap;
     private final int CAPACITYHISTORY = 10;
 
     public InMemoryHistoryManager() {
@@ -19,11 +19,36 @@ public class InMemoryHistoryManager implements HistoryManager {
         // To change implementation (maybe keep only single list)
         // Change the implementation (maybe keep only one list)
         doublyLinkedList = new ArrayList<>();
-        taskViewMap = new HashMap<>();
+        historyViewMap = new HashMap<>();
+    }
+
+    /**
+     * Returns {@code true} if this map should remove its eldest entry.
+     * This method is invoked by {@code put} and {@code putAll} after
+     * inserting a new entry into the map.  It provides the implementor
+     * with the opportunity to remove the eldest entry each time a new one
+     * is added.  This is useful if the map represents a cache: it allows
+     * the map to reduce memory consumption by deleting stale entries.
+     * @param eldest
+     */
+    protected boolean removeEldestEntry(Map.Entry<Integer, Node> eldest) {
+        return historyViewMap.size() > CAPACITYHISTORY;
     }
 
     @Override
     public void add(AbstractTask task) {
+        // TODO:
+        //  with help HashMap and the method removeNode this method fast deleting a task from list,
+        //  if she is exist here, then insert him into end doubly linked list
+        /**
+         * With the HashMap and the removeNode delete method, this method will quickly delete a task
+         * from the list if it is there, and then insert it at the end of the double-linked list.
+         */
+        if (historyViewMap.containsKey(task.getId())) {
+            this.remove(task.getId());
+        }
+        historyViewMap.put(task.getId(), new Node<>(task));
+
         historyBrowsingTask.add(task);
         while (historyBrowsingTask.size() > CAPACITYHISTORY) {
             historyBrowsingTask.remove(0);
@@ -38,6 +63,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         // TODO: удалить задачу из истории просмотра если добавляется задача с таким же id
         // delete a task from browsing history if added a task have similar id
         // remove the task from the viewing history if a task with the same id is added
+        historyViewMap.remove(id);
     }
 
     public void removeNode(Node node) {
