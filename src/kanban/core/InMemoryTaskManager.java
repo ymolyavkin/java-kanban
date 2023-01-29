@@ -186,6 +186,8 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return boolean task was deleted
      */
     public boolean deleteTaskById(int id) {
+        // TODO: remove the task from browsing history
+        //remove the task from the browsing history as well
         // Ищем среди обычных задач
         if (!standardTasks.isEmpty()) {
             if (standardTasks.containsKey(id)) {
@@ -220,6 +222,8 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return boolean all tasks was deleted
      */
     public boolean deleteAllTasks() {
+        // TODO: remove all tasks from the browsing history as well
+
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
             return false;
         } else {
