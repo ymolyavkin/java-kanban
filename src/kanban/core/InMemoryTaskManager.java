@@ -14,8 +14,7 @@ public final class InMemoryTaskManager implements TaskManager {
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
-    private static HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    //private static AbstractTask foundTask;
+    private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
 
     private InMemoryTaskManager() {
@@ -36,8 +35,8 @@ public final class InMemoryTaskManager implements TaskManager {
     @Override
     public List<AbstractTask> getHistory() {
 
+        //return inMemoryHistoryManager.getHistory();
         return inMemoryHistoryManager.getHistory();
-
     }
 
     public void addEpic(EpicTask epicTask) {
@@ -143,9 +142,6 @@ public final class InMemoryTaskManager implements TaskManager {
         return epicTasks;
     }
 
-    /**
-     * @return AbstractTask task after search by id
-     */
     public void addTaskIntoHistory(AbstractTask task) {
 
         inMemoryHistoryManager.add(task);
@@ -186,8 +182,8 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return boolean task was deleted
      */
     public boolean deleteTaskById(int id) {
-        // TODO: remove the task from browsing history
-        //remove the task from the browsing history as well
+        inMemoryHistoryManager.remove(id);
+
         // Ищем среди обычных задач
         if (!standardTasks.isEmpty()) {
             if (standardTasks.containsKey(id)) {
@@ -222,7 +218,7 @@ public final class InMemoryTaskManager implements TaskManager {
      * @return boolean all tasks was deleted
      */
     public boolean deleteAllTasks() {
-        // TODO: remove all tasks from the browsing history as well
+        inMemoryHistoryManager.removeAllNodes();
 
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
             return false;

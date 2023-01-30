@@ -6,10 +6,10 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private List<AbstractTask> historyBrowsingTask;
-    // TODO: Maybe  doublyLinkedList is useless
-    // the doublyLinkedList may not be necessary
-    private List<AbstractTask> doublyLinkedList;
-    private Map<Integer, Node> historyViewMap;
+    //private List<AbstractTask> doublyLinkedList;
+    private Map<Integer, Node<AbstractTask>> historyViewMap;
+    private int idHead;
+    private int idTail;
     private final int CAPACITYHISTORY = 10;
 
     public InMemoryHistoryManager() {
@@ -18,36 +18,22 @@ public class InMemoryHistoryManager implements HistoryManager {
         // TODO: Поменять реализацию (возможно, оставить только один список)
         // To change implementation (maybe keep only single list)
         // Change the implementation (maybe keep only one list)
-        doublyLinkedList = new ArrayList<>();
+        // doublyLinkedList = new ArrayList<>();
         historyViewMap = new HashMap<>();
     }
 
-    /**
-     * Returns {@code true} if this map should remove its eldest entry.
-     * This method is invoked by {@code put} and {@code putAll} after
-     * inserting a new entry into the map.  It provides the implementor
-     * with the opportunity to remove the eldest entry each time a new one
-     * is added.  This is useful if the map represents a cache: it allows
-     * the map to reduce memory consumption by deleting stale entries.
-     * @param eldest
-     */
-    protected boolean removeEldestEntry(Map.Entry<Integer, Node> eldest) {
-        return historyViewMap.size() > CAPACITYHISTORY;
+    private void removeEldestEntryIfOverSize() {
+        while (historyViewMap.size() > CAPACITYHISTORY) {
+            removeHeadNode();
+        }
     }
 
     @Override
     public void add(AbstractTask task) {
-        // TODO:
-        //  with help HashMap and the method removeNode this method fast deleting a task from list,
-        //  if she is exist here, then insert him into end doubly linked list
-        /**
-         * With the HashMap and the removeNode delete method, this method will quickly delete a task
-         * from the list if it is there, and then insert it at the end of the double-linked list.
-         */
         if (historyViewMap.containsKey(task.getId())) {
-            this.remove(task.getId());
+            remove(task.getId());
         }
-        historyViewMap.put(task.getId(), new Node<>(task));
+        linkLast(task);
 
         historyBrowsingTask.add(task);
         while (historyBrowsingTask.size() > CAPACITYHISTORY) {
@@ -55,44 +41,113 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    /**
-     * @param id
-     */
     @Override
     public void remove(int id) {
-        // TODO: удалить задачу из истории просмотра если добавляется задача с таким же id
-        // delete a task from browsing history if added a task have similar id
-        // remove the task from the viewing history if a task with the same id is added
-        historyViewMap.remove(id);
+        if (historyViewMap.size() == 1) {
+            historyViewMap.remove(id);
+        } else {
+            Node<AbstractTask> removalNode = historyViewMap.get(id);
+            removeNode(removalNode);
+        }
     }
 
-    public void removeNode(Node node) {
-        // TODO: удалить узел двусвязного списка (отображения)
-        // delete the node of doubly linked list (map)
-        // delete a node in a doubly linked list (map)
+    private void removeNode(Node<AbstractTask> node) {
+        if (node.prev == null) {
+            removeHeadNode();
+        } else if (node.next == null) {
+            removeLastNode();
+        } else {
+            Node<AbstractTask> prevNode = node.prev;
+            Node<AbstractTask> nextNode = node.next;
+            prevNode.next = nextNode;
+            nextNode.prev = prevNode;
+            historyViewMap.remove(node.data.getId());
+            historyViewMap.put(prevNode.data.getId(), prevNode);
+            historyViewMap.put(nextNode.data.getId(), nextNode);
+        }
     }
 
-    /**
-     * @return tasks list
-     */
+    private void removeHeadNode() {
+        Node<AbstractTask> headNode = historyViewMap.get(idHead);
+        Node<AbstractTask> nextNode = headNode.next;
+
+        historyViewMap.remove(idHead);
+
+        nextNode.prev = null;
+        AbstractTask firstTask = nextNode.data;
+        idHead = firstTask.getId();
+
+        historyViewMap.put(idHead, nextNode);
+    }
+
+    private void removeLastNode() {
+        Node<AbstractTask> lastNode = historyViewMap.get(idTail);
+        Node<AbstractTask> prevLastNode = lastNode.prev;
+        prevLastNode.next = null;
+
+        historyViewMap.remove(idTail);
+        idTail = prevLastNode.data.getId();
+
+        historyViewMap.put(idTail, prevLastNode);
+    }
+
+    public void removeAllNodes() {
+        historyViewMap.clear();
+    }
+
+    private void addNode(Node<AbstractTask> node) {
+        AbstractTask task = node.data;
+        int id = task.getId();
+
+        if (historyViewMap.isEmpty()) {
+            historyViewMap.put(id, node);
+
+            idHead = id;
+            idTail = id;
+
+        } else {
+            Node<AbstractTask> lastNode = historyViewMap.get(idTail);
+            lastNode.next = node;
+            node.prev = lastNode;
+
+            historyViewMap.put(idTail, lastNode);
+            historyViewMap.put(id, node);
+
+            idTail = id;
+
+            removeEldestEntryIfOverSize();
+        }
+    }
+
     @Override
     public List<AbstractTask> getHistory() {
-        // Implementation this method must overput tasks from doubly linked list to ArrayList
-        //The implementation of this method should transfer the tasks from the linked list to the ArrayList
-        return historyBrowsingTask;
+        return getTasks();
+        //return historyBrowsingTask;
     }
 
-    public void linkLast(AbstractTask task) {
-        // TODO: добавить задачу в конец двусвязного списка
-        // add a task into end two-linked list
-        // add the task to the end of the doubly linked list
+    private void linkLast(AbstractTask task) {
+        Node<AbstractTask> taskNode = new Node<>(task);
 
+        addNode(taskNode);
     }
 
-    public List<AbstractTask> getTasks() {
-        // TODO: собирает все задачи из двусвязного списка в ArrayList
-        // accumulate all tasks from two-linked list into ArrayList
-        // collects all tasks from the double-linked list into an ArrayList
-        return doublyLinkedList;
+    private List<AbstractTask> getTasks() {
+        List<AbstractTask> historyList = new ArrayList<>();
+        int historySize = historyViewMap.size();
+        int currentId = idHead;
+
+        for (int i = 0; i < historySize; i++) {
+            Node<AbstractTask> currentHead = historyViewMap.get(currentId);
+
+            AbstractTask currentTask = currentHead.data;
+
+            historyList.add(currentTask);
+            if (currentHead.next == null) {
+                break;
+            }
+            Node<AbstractTask> nextNode = currentHead.next;
+            currentId = nextNode.data.getId();
+        }
+        return historyList;
     }
 }
