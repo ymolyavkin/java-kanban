@@ -5,8 +5,6 @@ import kanban.model.AbstractTask;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private List<AbstractTask> historyBrowsingTask;
-    //private List<AbstractTask> doublyLinkedList;
     private Map<Integer, Node<AbstractTask>> historyViewMap;
     private int idHead;
     private int idTail;
@@ -14,11 +12,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public InMemoryHistoryManager() {
 
-        historyBrowsingTask = new ArrayList<>();
-        // TODO: Поменять реализацию (возможно, оставить только один список)
-        // To change implementation (maybe keep only single list)
-        // Change the implementation (maybe keep only one list)
-        // doublyLinkedList = new ArrayList<>();
         historyViewMap = new HashMap<>();
     }
 
@@ -34,20 +27,20 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.getId());
         }
         linkLast(task);
-
-        historyBrowsingTask.add(task);
-        while (historyBrowsingTask.size() > CAPACITYHISTORY) {
-            historyBrowsingTask.remove(0);
-        }
     }
 
     @Override
     public void remove(int id) {
         if (historyViewMap.size() == 1) {
-            historyViewMap.remove(id);
+            if (historyViewMap.containsKey(id)) {
+                historyViewMap.remove(id);
+            }
+
         } else {
-            Node<AbstractTask> removalNode = historyViewMap.get(id);
-            removeNode(removalNode);
+            if (historyViewMap.containsKey(id)) {
+                Node<AbstractTask> removalNode = historyViewMap.get(id);
+                removeNode(removalNode);
+            }
         }
     }
 
@@ -122,7 +115,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<AbstractTask> getHistory() {
         return getTasks();
-        //return historyBrowsingTask;
     }
 
     private void linkLast(AbstractTask task) {
