@@ -34,7 +34,7 @@ public class Main {
                 case "7" -> createSeveralTestTasks();
                 case "8" -> getBrowsingHistory();
                 case "0" -> System.out.println("Выход");
-                default -> System.out.println("Извините, такой команды пока нет. Введите число от 0 до 6");
+                default -> System.out.println("Извините, такой команды пока нет. Введите число от 0 до 8");
             }
         } while (!userInput.equals("0"));
     }
