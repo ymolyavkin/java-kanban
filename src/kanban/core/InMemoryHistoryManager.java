@@ -55,13 +55,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             headNode = nextNode;
         } else {
             prevNode.setNext(nextNode);
-            historyViewMap.put(prevNode.getData().getId(), prevNode);
         }
         if (nextNode == null) {
             tailNode = prevNode;
         } else {
             nextNode.setPrev(prevNode);
-            historyViewMap.put(nextNode.getData().getId(), nextNode);
         }
     }
 
@@ -106,20 +104,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     private List<AbstractTask> getTasks() {
         List<AbstractTask> historyList = new ArrayList<>();
         if (!historyViewMap.isEmpty()) {
-            int historySize = historyViewMap.size();
-            int currentId = headNode.getData().getId();
+            Node<AbstractTask> currentNode = headNode;
 
-            for (int i = 0; i < historySize; i++) {
-                Node<AbstractTask> currentHead = historyViewMap.get(currentId);
-
-                AbstractTask currentTask = currentHead.getData();
+            while (true) {
+                AbstractTask currentTask = currentNode.getData();
 
                 historyList.add(currentTask);
-                if (currentHead.getNext() == null) {
+                if (currentNode.getNext() == null) {
                     break;
                 }
-                Node<AbstractTask> nextNode = currentHead.getNext();
-                currentId = nextNode.getData().getId();
+                currentNode = currentNode.getNext();
             }
         }
         return historyList;
