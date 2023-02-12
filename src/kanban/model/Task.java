@@ -1,7 +1,7 @@
 package kanban.model;
 public final class Task extends AbstractTask {
-    public Task(String title, String description, int id) {
-        super(title, description, id);
+    public Task(Type type, String title, String description, int id) {
+        super(type, title, description, id);
     }
 
     @Override

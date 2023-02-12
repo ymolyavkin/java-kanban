@@ -1,9 +1,6 @@
 package kanban.core;
 
-import kanban.model.AbstractTask;
-import kanban.model.EpicTask;
-import kanban.model.Subtask;
-import kanban.model.Task;
+import kanban.model.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,9 +49,10 @@ public final class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = taskId;
+        Type type = Type.TASK;
         taskId++;
 
-        Task task = new Task(title, description, id);
+        Task task = new Task(type, title, description, id);
         standardTasks.put(id, task);
         return task;
     }
@@ -96,9 +94,10 @@ public final class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = taskId;
+        Type type=Type.SUBTASK;
         taskId++;
 
-        Subtask subtask = new Subtask(title, description, id, parentId);
+        Subtask subtask = new Subtask(type, title, description, id, parentId);
         return subtask;
     }
 
@@ -110,9 +109,10 @@ public final class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int epicId = taskId;
+        Type type=Type.EPIC;
         taskId++;
 
-        EpicTask epicTask = new EpicTask(title, description, epicId);
+        EpicTask epicTask = new EpicTask(type, title, description, epicId);
         return epicTask;
     }
 

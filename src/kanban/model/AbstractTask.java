@@ -7,9 +7,11 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     private String description;
     private int id;
     private Status status;
+    private Type type;
 
 
-    public AbstractTask(String title, String description, int id) {
+    public AbstractTask(Type type, String title, String description, int id) {
+        this.type = type;
         this.title = title;
         this.description = description;
         this.id = id;
@@ -43,7 +45,8 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     @Override
     public String toString() {
 
-        return "{ название: '" + title + '\''
+        return "{тип: '" + type + '\''
+                + ", название: '" + title + '\''
                 + ", описание: '" + description + '\''
                 + ", id = " + id
                 + ", статус: " + status;

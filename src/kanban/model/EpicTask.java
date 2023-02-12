@@ -6,8 +6,8 @@ import java.util.Map;
 public final class EpicTask extends AbstractTask {
     private final Map<Integer, Subtask> subtasks;
 
-    public EpicTask(String title, String description, int id) {
-        super(title, description, id);
+    public EpicTask(Type type, String title, String description, int id) {
+        super(type, title, description, id);
         this.subtasks = new HashMap<>();
     }
 
