@@ -12,6 +12,7 @@ public final class InMemoryTaskManager implements TaskManager {
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
     private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    private static InFileHistoryManager inFileHistoryManager = Managers.getFromFileHistory();
 
 
     private InMemoryTaskManager() {
@@ -32,7 +33,6 @@ public final class InMemoryTaskManager implements TaskManager {
     @Override
     public List<AbstractTask> getHistory() {
 
-        //return inMemoryHistoryManager.getHistory();
         return inMemoryHistoryManager.getHistory();
     }
 
@@ -145,6 +145,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public void addTaskIntoHistory(AbstractTask task) {
 
         inMemoryHistoryManager.add(task);
+        inFileHistoryManager.add(task);
     }
 
     public AbstractTask findTaskByIdOrNull(int id) {

@@ -67,6 +67,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public int getId() {
         return id;
     }
