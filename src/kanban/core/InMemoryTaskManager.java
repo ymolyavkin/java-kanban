@@ -68,7 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
             statusWasChanged = task.changeStatus();
         }
         // кладём обновленную задачу обратно в HashMap
-        standardTasks.put(task.getId(), task);
+       // standardTasks.put(task.getId(), task);
 
         return statusWasChanged;
     }
