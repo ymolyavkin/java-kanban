@@ -6,16 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private static int taskId;
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
     private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    private static InFileHistoryManager inFileHistoryManager = Managers.getFromFileHistory();
+    //private static InFileHistoryManager inFileHistoryManager = Managers.getFromFileHistory();
 
 
-    private InMemoryTaskManager() {
+    InMemoryTaskManager() {
         taskId = 0;
     }
 
@@ -94,7 +94,7 @@ public final class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = taskId;
-        Type type=Type.SUBTASK;
+        Type type = Type.SUBTASK;
         taskId++;
 
         Subtask subtask = new Subtask(type, title, description, id, parentId);
@@ -109,7 +109,7 @@ public final class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int epicId = taskId;
-        Type type=Type.EPIC;
+        Type type = Type.EPIC;
         taskId++;
 
         EpicTask epicTask = new EpicTask(type, title, description, epicId);
@@ -119,11 +119,12 @@ public final class InMemoryTaskManager implements TaskManager {
     /**
      * @return EpicTask after adding
      */
-    public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+   // public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+    public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
         epicTask.changeStatus();
-        return epicTask;
+        //return epicTask;
     }
 
     /**
@@ -145,7 +146,7 @@ public final class InMemoryTaskManager implements TaskManager {
     public void addTaskIntoHistory(AbstractTask task) {
 
         inMemoryHistoryManager.add(task);
-        inFileHistoryManager.add(task);
+        //inFileHistoryManager.add(task);
     }
 
     public AbstractTask findTaskByIdOrNull(int id) {

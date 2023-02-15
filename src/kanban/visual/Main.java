@@ -162,7 +162,8 @@ public class Main {
                 // Создаем подзадачу
                 Subtask subtask = inMemoryTaskManager.createSubtask(titleAndDescription, epicTask.getId());
                 // Добавляем её к эпику
-                epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+                // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+                inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
             }
             // Кладем эпик в мапу
             inMemoryTaskManager.addEpic(epicTask);
@@ -245,7 +246,8 @@ public class Main {
 
                         Status currentStatus = epicTask.getStatus();
                         // Добавляем обновленную подзадачу к эпику
-                        epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
+                        //   epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
+                        inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
                         Status newStatus = epicTask.getStatus();
 
                         if (newStatus != currentStatus) {
@@ -363,7 +365,8 @@ public class Main {
 
             Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
 
-            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
         inMemoryTaskManager.addEpic(epicTask);
 
@@ -385,7 +388,8 @@ public class Main {
             // Создаем подзадачу
             Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
             // Добавляем её к эпику
-            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            //  epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
         inMemoryTaskManager.addEpic(epicTask);
     }

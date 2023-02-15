@@ -23,7 +23,8 @@ public interface TaskManager {
 
     EpicTask createEpic(String titleAndDescription);
 
-    EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask);
+    //EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask);
+    void addSubtaskToEpic(EpicTask epicTask, Subtask subtask);
 
     Map<Integer, AbstractTask> getStandardTasks();
 
