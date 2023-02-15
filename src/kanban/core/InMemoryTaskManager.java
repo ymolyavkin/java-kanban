@@ -12,7 +12,6 @@ public class InMemoryTaskManager implements TaskManager {
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
     private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    //private static InFileHistoryManager inFileHistoryManager = Managers.getFromFileHistory();
 
 
     InMemoryTaskManager() {
@@ -68,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
             statusWasChanged = task.changeStatus();
         }
         // кладём обновленную задачу обратно в HashMap
-       // standardTasks.put(task.getId(), task);
+        // standardTasks.put(task.getId(), task);
 
         return statusWasChanged;
     }
@@ -116,10 +115,8 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
-    /**
-     * @return EpicTask after adding
-     */
-   // public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+
+    // public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
@@ -146,7 +143,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void addTaskIntoHistory(AbstractTask task) {
 
         inMemoryHistoryManager.add(task);
-        //inFileHistoryManager.add(task);
     }
 
     public AbstractTask findTaskByIdOrNull(int id) {

@@ -15,8 +15,9 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
-
-    private static FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
+    //private static HistoryManager historyManager = Managers.getDefaultHistory();
+    //private static HistoryManager historyManager = Managers.getDefaultHistory();
+    private static final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
 
     public FileBackedTasksManager(Path path) {
         super();
@@ -26,8 +27,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) throws ManagerSaveException {
 
         System.out.println("From file backed manager");
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
+        //FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
         fileBackedTasksManager.createSeveralTestTasksInFile();
+        fileBackedTasksManager.findTaskByIdOrNull(0);
+        fileBackedTasksManager.findTaskByIdOrNull(1);
+
+
         try {
             fileBackedTasksManager.save();
         } catch (ManagerSaveException e) {
@@ -43,14 +48,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static String historyToString(HistoryManager manager) {
+        List<AbstractTask> browsingHistory = manager.getHistory();
+        List<Integer> taskIds = taskIdsFromHistory(browsingHistory);
+        StringBuilder sb = new StringBuilder();
+        for (Integer id : taskIds) {
+            sb.append(id + ",");
+        }
+        return sb.toString();
+    }
+
+    private static List<Integer> taskIdsFromHistory(List<AbstractTask> browsingHistory) {
+        List<Integer> taskIds = new ArrayList<>();
+
+        for (AbstractTask task : browsingHistory) {
+            taskIds.add(task.getId());
+        }
+        return taskIds;
+    }
+
+    private static List<Integer> historyFromString(String value) {
 
         return null;
     }
 
-    private static List<Integer> historyFromString(String vaue) {
-
-        return null;
-    }
 
     @Override
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
@@ -62,6 +82,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
     }
+
 
     /**
      * метод save без параметров — он будет сохранять текущее состояние менеджера в файл,
@@ -85,18 +106,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (String s : epicsInStringForm) {
                 writer.write(s);
             }
+            writer.write("");
+          //  writer.write(historyToString(historyManager));
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения файла");
         }
+
     }
 
-    private void load() throws ManagerSaveException{
+    private void load() throws ManagerSaveException {
         try {
             Files.readString(path);
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки файла");
         }
+    }
+
+
+    private String taskIdsFromHistoryInOneString(List<Integer> taskIds) {
+        StringBuilder sb = new StringBuilder();
+        for (Integer id : taskIds) {
+            sb.append(String.valueOf(id));
+        }
+        return sb.toString();
     }
 
     private List<String> tasksIntoListString(Map<Integer, AbstractTask> tasks) {
@@ -145,6 +178,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Task task = new Task(Type.TASK, strTask[1], strTask[2], id);
         return task;
     }
+
 
     private void createSeveralTestTasksInFile() {
         // Создаём стандартную задачу
@@ -200,7 +234,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             // Создаем подзадачу
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
             // Добавляем её к эпику
-           // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
         fileBackedTasksManager.addEpic(epicTask);
