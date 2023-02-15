@@ -16,8 +16,7 @@ import java.util.Map;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
     private static HistoryManager historyManager;
-    //private static HistoryManager historyManager = Managers.getDefaultHistory();
-    //private static HistoryManager historyManager = Managers.getDefaultHistory();
+
     private static final FileBackedTasksManager fileBackedTasksManager
             = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
 
