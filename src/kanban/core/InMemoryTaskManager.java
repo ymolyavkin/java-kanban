@@ -18,6 +18,10 @@ public class InMemoryTaskManager implements TaskManager {
         taskId = 0;
     }
 
+    public static InMemoryHistoryManager getInMemoryHistoryManager() {
+        return inMemoryHistoryManager;
+    }
+
     public static InMemoryTaskManager getInstance() {
         if (instance == null) {
             instance = new InMemoryTaskManager();

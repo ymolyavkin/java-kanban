@@ -15,13 +15,16 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
+    private static HistoryManager historyManager;
     //private static HistoryManager historyManager = Managers.getDefaultHistory();
     //private static HistoryManager historyManager = Managers.getDefaultHistory();
-    private static final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
+    private static final FileBackedTasksManager fileBackedTasksManager
+            = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
 
-    public FileBackedTasksManager(Path path) {
+    public FileBackedTasksManager(Path path, HistoryManager historyManager) {
         super();
         this.path = path;
+        this.historyManager = historyManager;
     }
 
     public static void main(String[] args) throws ManagerSaveException {
@@ -106,8 +109,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (String s : epicsInStringForm) {
                 writer.write(s);
             }
-            writer.write("");
-          //  writer.write(historyToString(historyManager));
+            writer.write("\n");
+            writer.write(historyToString(historyManager));
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения файла");
