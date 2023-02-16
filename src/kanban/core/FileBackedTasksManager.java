@@ -268,6 +268,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
+        super.updateStandardTask(task, newTitleAndDescription, mustChangeStatus);
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /*@Override
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         try {
