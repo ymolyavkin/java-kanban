@@ -277,6 +277,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public AbstractTask findTaskByIdOrNull(int id) {
+        var foundTask = super.findTaskByIdOrNull(id);
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+        return foundTask;
+    }
     /*@Override
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         try {
