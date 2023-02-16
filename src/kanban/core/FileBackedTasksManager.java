@@ -241,4 +241,39 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         fileBackedTasksManager.addEpic(epicTask);
     }
+
+    /*public Task createStandardTask(String titleAndDescription) {
+        super.createStandardTask(titleAndDescription);
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+        return
+    }*/
+    @Override
+    public void addEpic(EpicTask epicTask) {
+        super.addEpic(epicTask);
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void addTask(Task task) {
+        super.addTask(task);
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /*@Override
+    public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+    }*/
 }

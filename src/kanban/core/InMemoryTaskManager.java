@@ -39,6 +39,11 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager.getHistory();
     }
 
+    public void addTask(Task task) {
+        int id = task.getId();
+        standardTasks.put(id, task);
+    }
+
     public void addEpic(EpicTask epicTask) {
 
         epicTasks.put(epicTask.getId(), epicTask);
@@ -56,7 +61,8 @@ public class InMemoryTaskManager implements TaskManager {
         taskId++;
 
         Task task = new Task(type, title, description, id);
-        standardTasks.put(id, task);
+        // standardTasks.put(id, task);
+        addTask(task);
         return task;
     }
 
