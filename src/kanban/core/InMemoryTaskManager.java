@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private static int taskId;
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
@@ -15,7 +15,7 @@ public final class InMemoryTaskManager implements TaskManager {
     private static InFileHistoryManager inFileHistoryManager = Managers.getFromFileHistory();
 
 
-    private InMemoryTaskManager() {
+    InMemoryTaskManager() {
         taskId = 0;
     }
 
