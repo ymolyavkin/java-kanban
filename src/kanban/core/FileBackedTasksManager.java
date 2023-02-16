@@ -171,7 +171,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             sb.append("\n");
         }
-
         return sb.toString();
     }
 
