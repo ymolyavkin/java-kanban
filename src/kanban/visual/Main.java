@@ -1,9 +1,11 @@
 package kanban.visual;
 
+import kanban.core.FileBackedTasksManager;
 import kanban.core.InMemoryTaskManager;
 import kanban.core.Managers;
 import kanban.model.*;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +13,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static kanban.core.InMemoryTaskManager.getInMemoryHistoryManager;
+
 public class Main {
     private static Scanner scanner;
 
     static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+    private static final FileBackedTasksManager fileBackedTasksManager
+            = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
 
     public static void main(String[] args) {
 
@@ -147,6 +153,36 @@ public class Main {
         int taskId;
 
         if (typeTask == 1) {
+            Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
+            System.out.print(Color.GREEN);
+            System.out.println("Создана обычная задача с id = " + task.getId());
+            System.out.print(Color.RESET);
+        } else if (typeTask == 2) {
+            EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription());
+            System.out.print(Color.GREEN);
+            System.out.println("Создан эпик с id = " + (epicTask.getId()));
+            System.out.print(Color.RESET);
+            // Получаем список названий и описаний подзадач
+            List<String> titleAndDescriptions = createSubtaskItemInfo();
+            for (String titleAndDescription : titleAndDescriptions) {
+                // Создаем подзадачу
+                Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
+                // Добавляем её к эпику
+                // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            }
+            // Кладем эпик в мапу
+            fileBackedTasksManager.addEpic(epicTask);
+        }
+    }
+
+    private static void createTaskOld() {
+        String[] menuItems = {"1 - обычная задача", "2 - эпик"};
+        int[] values = {1, 2};
+        int typeTask = userMenu("Выберите тип создаваемой задачи:", menuItems, values);
+        int taskId;
+
+        if (typeTask == 1) {
             Task task = inMemoryTaskManager.createStandardTask(titleAndDescription());
             System.out.print(Color.GREEN);
             System.out.println("Создана обычная задача с id = " + task.getId());
@@ -162,7 +198,8 @@ public class Main {
                 // Создаем подзадачу
                 Subtask subtask = inMemoryTaskManager.createSubtask(titleAndDescription, epicTask.getId());
                 // Добавляем её к эпику
-                epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+                // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+                inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
             }
             // Кладем эпик в мапу
             inMemoryTaskManager.addEpic(epicTask);
@@ -173,7 +210,7 @@ public class Main {
         System.out.println("Ведите id задачи");
         String stringId = scanner.nextLine();
         int id = stringToInt(stringId);
-        var task = inMemoryTaskManager.findTaskByIdOrNull(id);
+        var task = fileBackedTasksManager.findTaskByIdOrNull(id);
 
         if (task == null) {
             System.out.print(Color.RED);
@@ -206,8 +243,8 @@ public class Main {
             // Определяем тип задачи
             if (task instanceof Task) {
                 // Это обычная задача
-                boolean statusWasChanged = inMemoryTaskManager.updateStandardTask((Task) task,
-                        newTitleAndDescription, mustChangeStatus());
+                boolean statusWasChanged = mustChangeStatus();
+                inMemoryTaskManager.updateStandardTask((Task) task, newTitleAndDescription, mustChangeStatus());
                 System.out.print(Color.GREEN);
 
                 if (statusWasChanged) {
@@ -245,7 +282,8 @@ public class Main {
 
                         Status currentStatus = epicTask.getStatus();
                         // Добавляем обновленную подзадачу к эпику
-                        epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
+                        //   epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
+                        inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
                         Status newStatus = epicTask.getStatus();
 
                         if (newStatus != currentStatus) {
@@ -332,7 +370,7 @@ public class Main {
         }
     }
 
-    private static void createSeveralTestTasks() {
+    private static void createSeveralTestTasksOld() {
         // Создаём стандартную задачу
         String titleAndDescription = "Физминутка|Выполнить десять приседаний";
         Task task = inMemoryTaskManager.createStandardTask(titleAndDescription);
@@ -363,7 +401,8 @@ public class Main {
 
             Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
 
-            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
         inMemoryTaskManager.addEpic(epicTask);
 
@@ -385,9 +424,70 @@ public class Main {
             // Создаем подзадачу
             Subtask subtask = inMemoryTaskManager.createSubtask(titleDescription, epicTask.getId());
             // Добавляем её к эпику
-            epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            //  epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+            inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
         }
         inMemoryTaskManager.addEpic(epicTask);
+    }
+
+    private static void createSeveralTestTasks() {
+        // Создаём стандартную задачу
+        String titleAndDescription = "Физминутка|Выполнить десять приседаний";
+        Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
+        System.out.print(Color.GREEN);
+        System.out.println("Создана обычная задача с id = " + task.getId());
+        System.out.print(Color.RESET);
+
+        // Создаём стандартную задачу
+        titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения";
+        task = fileBackedTasksManager.createStandardTask(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создана обычная задача с id = " + task.getId());
+        System.out.print(Color.RESET);
+
+        // Создаём эпик
+        titleAndDescription = "Понять условие домашнего задания" +
+                "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ";
+        EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+        // Создаем список названий и описаний подзадач
+        String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать ТЗ", "Подзадача 2|Понять ТЗ"};
+        for (String titleDescription : importantTitleAndDescriptions) {
+
+            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
+
+            // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+        }
+        fileBackedTasksManager.addEpic(epicTask);
+
+        // Создаём эпик
+        titleAndDescription = "Прочитать почту" +
+                "|Прочитать все входящие письма и сообщения из мессенджеров";
+        epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+        // Создаем список названий и описаний подзадач
+        String[] secondaryTitleAndDescriptions = {
+                "Подзадача 1|Прочитать электронную почту",
+                "Подзадача 2|Прочитать мессенджеры",
+                "Подзадача 3|Прочитать соцсети"};
+        for (String titleDescription : secondaryTitleAndDescriptions) {
+            // Создаем подзадачу
+            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
+            // Добавляем её к эпику
+            //  epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+        }
+        fileBackedTasksManager.addEpic(epicTask);
     }
 
     private static void getBrowsingHistory() {
