@@ -15,7 +15,7 @@ public interface TaskManager {
 
     Task createStandardTask(String titleAndDescription);
 
-    boolean updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus);
+    void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus);
 
     Subtask updateSubtask(Subtask subtask, String[] newTitleAndDescription, boolean mustChangeStatus);
 

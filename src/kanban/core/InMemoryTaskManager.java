@@ -67,9 +67,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * @return boolean statusWasChanged
+     *
      */
-    public boolean updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
+    public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
         boolean statusWasChanged = false;
@@ -79,7 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
         // кладём обновленную задачу обратно в HashMap
         // standardTasks.put(task.getId(), task);
 
-        return statusWasChanged;
+        //return statusWasChanged;
     }
 
     /**

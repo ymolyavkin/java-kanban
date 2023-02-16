@@ -243,8 +243,8 @@ public class Main {
             // Определяем тип задачи
             if (task instanceof Task) {
                 // Это обычная задача
-                boolean statusWasChanged = inMemoryTaskManager.updateStandardTask((Task) task,
-                        newTitleAndDescription, mustChangeStatus());
+                boolean statusWasChanged = mustChangeStatus();
+                inMemoryTaskManager.updateStandardTask((Task) task, newTitleAndDescription, mustChangeStatus());
                 System.out.print(Color.GREEN);
 
                 if (statusWasChanged) {
