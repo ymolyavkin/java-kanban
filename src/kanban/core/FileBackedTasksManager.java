@@ -42,8 +42,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    //
-
     private static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager tasksFromFile = loadFromFile(file);
         return tasksFromFile;
@@ -55,6 +53,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         StringBuilder sb = new StringBuilder();
         for (Integer id : taskIds) {
             sb.append(id + ",");
+        }
+        if (sb.length() != 0) {
+            sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
     }
@@ -74,7 +75,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    @Override
+  /*  @Override
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         super.addSubtaskToEpic(epicTask, subtask);
         try {
@@ -83,7 +84,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
 
-    }
+    }*/
 
 
     /**
