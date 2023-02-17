@@ -183,7 +183,7 @@ public class Main {
         }
     }
 
-    private static void createTaskFromFile(List<String> tasksFromFile) {
+   /* private static void createTaskFromFile(List<String> tasksFromFile) {
         for (String s : tasksFromFile) {
             String[] taskInfo = s.split(",");
             String title = taskInfo[2];
@@ -222,7 +222,7 @@ public class Main {
             }
         }
 
-    }
+    }*/
 
     private static void createTaskOld() {
         String[] menuItems = {"1 - обычная задача", "2 - эпик"};

@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -23,14 +24,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
         return fileBackedTasksManager;
     }
+
     public static FileBackedTasksManager loadFromFile(Path path) {
         fileBackedTasksManager
                 = new FileBackedTasksManager(path, getInMemoryHistoryManager());
-        /*try {
-            fileBackedTasksManager.readFileOrNull();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }*/
+        restoreDataFromFile();
+
         return fileBackedTasksManager;
     }
    /* private static final FileBackedTasksManager fileBackedTasksManager
@@ -58,7 +57,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }*/
 
-
+    private static void restoreDataFromFile() {
+        List<String> tasks  = new ArrayList<>();
+        try {
+            String multilineFromFile = fileBackedTasksManager.readFileOrNull();
+            tasks.addAll(Arrays.asList(multilineFromFile.split("\n")));
+            fileBackedTasksManager.createTaskFromFile(tasks);
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private static String historyToString(HistoryManager manager) {
         List<AbstractTask> browsingHistory = manager.getHistory();
@@ -142,7 +150,49 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return content;
     }
 
+    private void createTaskFromFile(List<String> tasksFromFile) {
+        for (String s : tasksFromFile) {
+            if (s.substring(0,2).equals("id")) {
+                continue;
+            }
+            String[] taskInfo = s.split(",");
+            String title = taskInfo[2];
+            String description = taskInfo[3];
+            String typeTask = taskInfo[1];
+            int id = Integer.parseInt(taskInfo[0]);
+            if (typeTask.equals("TASK")) {
+                Task task = fileBackedTasksManager.createStandardTaskWithId(id, title, description);
+                System.out.print(Color.GREEN);
+                System.out.println("Прочитана из файла обычная задача с id = " + id);
+                System.out.print(Color.RESET);
+            } else if (typeTask.equals("EPIC")) {
+                EpicTask epicTask = fileBackedTasksManager.createEpicWithId(id, title, description);
+                System.out.print(Color.GREEN);
+                System.out.println("Прочитана из файла эпик с id = " + id);
+                System.out.print(Color.RESET);
+                // Получаем список названий и описаний подзадач
+                for (String str : tasksFromFile) {
+                    String[] taskInfoSub = str.split(",");
+                    typeTask = taskInfoSub[1];
+                    int idSubtask = Integer.parseInt(taskInfoSub[0]);
+                    if (typeTask.equals("SUBTASK")) {
+                        int parentId = Integer.parseInt(taskInfoSub[5]);
+                        title = taskInfo[2];
+                        description = taskInfo[3];
+                        Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
+                                , title
+                                , description
+                                , parentId);
+                        if (epicTask.getId() == parentId) {
+                            addSubtaskToEpic(epicTask, subtask);
+                        }
+                    }
+                }
+                fileBackedTasksManager.addEpic(epicTask);
+            }
+        }
 
+    }
     /*private String taskIdsFromHistoryInOneString(List<Integer> taskIds) {
         StringBuilder sb = new StringBuilder();
         for (Integer id : taskIds) {
@@ -198,7 +248,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-    private void createSeveralTestTasksInFile() {
+   /* private void createSeveralTestTasksInFile() {
         // Создаём стандартную задачу
         String titleAndDescription = "Пробежка|Добежать до работы";
         Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
@@ -257,7 +307,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         fileBackedTasksManager.addEpic(epicTask);
     }
-
+*/
     /*public Task createStandardTask(String titleAndDescription) {
         super.createStandardTask(titleAndDescription);
         try {
