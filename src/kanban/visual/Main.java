@@ -20,9 +20,10 @@ public class Main {
     private static Scanner scanner;
 
     static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
-
+    //private final Path path = Path.of("taskbacket.txt");
     //private static final FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.getFileBackedTasksManager();
-    private static final FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile();
+    private static final FileBackedTasksManager fileBackedTasksManager
+            = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
 
     //static FileBackedTasksManager fileBackedTasksManager=Managers.getFileBackedManager();
    /* private static final FileBackedTasksManager fileBackedTasksManager

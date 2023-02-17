@@ -23,9 +23,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
         return fileBackedTasksManager;
     }
-    public static FileBackedTasksManager loadFromFile() {
+    public static FileBackedTasksManager loadFromFile(Path path) {
         fileBackedTasksManager
-                = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
+                = new FileBackedTasksManager(path, getInMemoryHistoryManager());
         /*try {
             fileBackedTasksManager.readFileOrNull();
         } catch (ManagerSaveException e) {
