@@ -16,11 +16,17 @@ import java.util.Map;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
     private static HistoryManager historyManager;
+    private static FileBackedTasksManager fileBackedTasksManager;
 
-    private static final FileBackedTasksManager fileBackedTasksManager
-            = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
+    public static FileBackedTasksManager getFileBackedTasksManager() {
+        fileBackedTasksManager
+                = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
+        return fileBackedTasksManager;
+    }
+   /* private static final FileBackedTasksManager fileBackedTasksManager
+            = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());*/
 
-    public FileBackedTasksManager(Path path, HistoryManager historyManager) {
+    private FileBackedTasksManager(Path path, HistoryManager historyManager) {
         super();
         this.path = path;
         this.historyManager = historyManager;
@@ -260,6 +266,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
+
     public void addTask(Task task) {
         super.addTask(task);
         try {
@@ -268,6 +275,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
         super.updateStandardTask(task, newTitleAndDescription, mustChangeStatus);
@@ -277,6 +285,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public AbstractTask findTaskByIdOrNull(int id) {
         var foundTask = super.findTaskByIdOrNull(id);
