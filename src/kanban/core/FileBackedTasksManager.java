@@ -23,6 +23,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
         return fileBackedTasksManager;
     }
+    public static FileBackedTasksManager loadFromFile() {
+        fileBackedTasksManager
+                = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
+        /*try {
+            fileBackedTasksManager.readFileOrNull();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }*/
+        return fileBackedTasksManager;
+    }
    /* private static final FileBackedTasksManager fileBackedTasksManager
             = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());*/
 
@@ -32,7 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.historyManager = historyManager;
     }
 
-    public static void main(String[] args) throws ManagerSaveException {
+/*    public static void main(String[] args) throws ManagerSaveException {
 
         System.out.println("From file backed manager");
         //FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
@@ -46,12 +56,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (ManagerSaveException e) {
             throw new ManagerSaveException("Ошибка сохранения файла");
         }
-    }
+    }*/
 
-    private static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager tasksFromFile = loadFromFile(file);
-        return tasksFromFile;
-    }
+
 
     private static String historyToString(HistoryManager manager) {
         List<AbstractTask> browsingHistory = manager.getHistory();
@@ -124,22 +131,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     }
 
-    private void load() throws ManagerSaveException {
+    public String readFileOrNull() throws ManagerSaveException {
+        String content = null;
         try {
-            Files.readString(path);
+            content = Files.readString(path);
+            System.out.println(content);
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки файла");
         }
+        return content;
     }
 
 
-    private String taskIdsFromHistoryInOneString(List<Integer> taskIds) {
+    /*private String taskIdsFromHistoryInOneString(List<Integer> taskIds) {
         StringBuilder sb = new StringBuilder();
         for (Integer id : taskIds) {
             sb.append(String.valueOf(id));
         }
         return sb.toString();
-    }
+    }*/
 
     private List<String> tasksIntoListString(Map<Integer, AbstractTask> tasks) {
         List<String> result = new ArrayList<>();
@@ -296,12 +306,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return foundTask;
     }
-    /*@Override
-    public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
 }

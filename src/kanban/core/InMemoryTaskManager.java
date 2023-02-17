@@ -66,6 +66,14 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    public Task createStandardTaskWithId(int id, String title, String description) {
+        Type type = Type.TASK;
+        Task task = new Task(type, title, description, id);
+
+        addTask(task);
+        return task;
+    }
+
     /**
      *
      */
@@ -109,6 +117,11 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask subtask = new Subtask(type, title, description, id, parentId);
         return subtask;
     }
+    public Subtask createSubtaskWithId(int id, String title, String description, int parentId) {
+        Type type = Type.SUBTASK;
+        Subtask subtask = new Subtask(type, title, description, id, parentId);
+        return subtask;
+    }
 
     /**
      * @return Epictask after create
@@ -125,6 +138,14 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
+    public EpicTask createEpicWithId(int id, String title, String description) {
+        int epicId = taskId;
+        Type type = Type.EPIC;
+        taskId++;
+
+        EpicTask epicTask = new EpicTask(type, title, description, id);
+        return epicTask;
+    }
 
     // public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
