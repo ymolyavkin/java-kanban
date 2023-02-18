@@ -40,22 +40,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.historyManager = historyManager;
     }
 
-/*    public static void main(String[] args) throws ManagerSaveException {
-
-        System.out.println("From file backed manager");
-        //FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"));
-        fileBackedTasksManager.createSeveralTestTasksInFile();
-        fileBackedTasksManager.findTaskByIdOrNull(0);
-        fileBackedTasksManager.findTaskByIdOrNull(1);
-
-
-        try {
-            fileBackedTasksManager.save();
-        } catch (ManagerSaveException e) {
-            throw new ManagerSaveException("Ошибка сохранения файла");
-        }
-    }*/
-
     private static void restoreDataFromFile() {
         List<String> tasks = new ArrayList<>();
         try {
@@ -69,17 +53,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 fileBackedTasksManager.createTaskFromFile(tasks);
 
                 String history = multilineFromFile.substring(endPosition, multilineFromFile.length());
-                System.out.println("History: " + history);
 
                 if (!history.isEmpty()) {
                     int posNewLine = history.indexOf("\n\n");
                     int nextPosNewLine = history.indexOf("\n", posNewLine + 1);
 
-                    System.out.println("Empty string: " + posNewLine);
-                    System.out.println("Second empty string: " + nextPosNewLine);
                     history = history.substring(posNewLine + 2);
-                    System.out.println("History: " + history);
-                    List<Integer> idTaskFromHistory=historyFromFile(history);
+
+                    List<Integer> idTaskFromHistory = historyFromFile(history);
                     addTasksToHistory(idTaskFromHistory);
                 }
             }
@@ -87,11 +68,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         }
     }
-private static void addTasksToHistory(List<Integer> taskIds) {
-    for (Integer id : taskIds) {
-        fileBackedTasksManager.findTaskByIdOrNull(id);
+
+    private static void addTasksToHistory(List<Integer> taskIds) {
+        for (Integer id : taskIds) {
+            fileBackedTasksManager.findTaskByIdOrNull(id);
+        }
     }
-}
+
     private static String historyToString(HistoryManager manager) {
         List<AbstractTask> browsingHistory = manager.getHistory();
         List<Integer> taskIds = taskIdsFromHistory(browsingHistory);
@@ -122,18 +105,6 @@ private static void addTasksToHistory(List<Integer> taskIds) {
         }
         return history;
     }
-
-
-  /*  @Override
-    public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
-        super.addSubtaskToEpic(epicTask, subtask);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
-
-    }*/
 
 
     /**
@@ -172,28 +143,6 @@ private static void addTasksToHistory(List<Integer> taskIds) {
         try {
             if (Files.exists(path)) {
                 content = Files.readString(path);
-                /*int posNewLine = content.indexOf("\n\n");
-                int nextPosNewLine = content.indexOf("\n", posNewLine + 1);
-
-                System.out.println("Empty string: " + posNewLine);
-                System.out.println("Second empty string: " + nextPosNewLine);
-
-                String history = content.substring(content.indexOf("\n\n"), content.length() - 2);
-                //System.out.println("History: " + history);
-
-                posNewLine = history.indexOf("\n\n");
-                nextPosNewLine = history.indexOf("\n", posNewLine + 1);
-
-                System.out.println("Empty string: " + posNewLine);
-                System.out.println("Second empty string: " + nextPosNewLine);
-
-                if (!history.isEmpty()) {
-                    history = history.substring(posNewLine + 2);
-                    System.out.println("History: " + history);
-                }
-
-                content = content.substring(content.indexOf("\n") + 1, content.indexOf("\n\n"));
-                System.out.println(content);*/
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки файла");
@@ -244,13 +193,6 @@ private static void addTasksToHistory(List<Integer> taskIds) {
         }
 
     }
-    /*private String taskIdsFromHistoryInOneString(List<Integer> taskIds) {
-        StringBuilder sb = new StringBuilder();
-        for (Integer id : taskIds) {
-            sb.append(String.valueOf(id));
-        }
-        return sb.toString();
-    }*/
 
     private List<String> tasksIntoListString(Map<Integer, AbstractTask> tasks) {
         List<String> result = new ArrayList<>();
@@ -298,76 +240,6 @@ private static void addTasksToHistory(List<Integer> taskIds) {
         return task;
     }
 
-
-    /* private void createSeveralTestTasksInFile() {
-         // Создаём стандартную задачу
-         String titleAndDescription = "Пробежка|Добежать до работы";
-         Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-         System.out.print(Color.GREEN);
-         System.out.println("Создана обычная задача с id = " + task.getId());
-         System.out.print(Color.RESET);
-
-         // Создаём стандартную задачу
-         titleAndDescription = "Почитать сообщения в Телеграм|Открыть Телеграм и просмотреть новые сообщения";
-         task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-
-         System.out.print(Color.GREEN);
-         System.out.println("Создана обычная задача с id = " + task.getId());
-         System.out.print(Color.RESET);
-
-         // Создаём эпик
-         titleAndDescription = "Утро рабочего дня" +
-                 "|Составить план рабочего дня";
-         EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
-
-         System.out.print(Color.GREEN);
-         System.out.println("Создан эпик с id = " + (epicTask.getId()));
-         System.out.print(Color.RESET);
-
-         // Создаем список названий и описаний подзадач
-         String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать входящие сообщения", "Подзадача 2|Получить вводные от руководителя"};
-         for (String titleDescription : importantTitleAndDescriptions) {
-
-             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-
-             //epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-         }
-         fileBackedTasksManager.addEpic(epicTask);
-
-         // Создаём эпик
-         titleAndDescription = "Прочитать рабочую корреспонденцию" +
-                 "|Прочитать все входящие письма и сообщения из мессенджеров";
-         epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
-
-         System.out.print(Color.GREEN);
-         System.out.println("Создан эпик с id = " + (epicTask.getId()));
-         System.out.print(Color.RESET);
-
-         // Создаем список названий и описаний подзадач
-         String[] secondaryTitleAndDescriptions = {
-                 "Подзадача 1|Прочитать электронную почту",
-                 "Подзадача 2|Прочитать мессенджеры",
-                 "Подзадача 3|Прочитать соцсети"};
-         for (String titleDescription : secondaryTitleAndDescriptions) {
-             // Создаем подзадачу
-             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-             // Добавляем её к эпику
-             // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-         }
-         fileBackedTasksManager.addEpic(epicTask);
-     }
- */
-    /*public Task createStandardTask(String titleAndDescription) {
-        super.createStandardTask(titleAndDescription);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
-        return
-    }*/
     @Override
     public void addEpic(EpicTask epicTask) {
         super.addEpic(epicTask);

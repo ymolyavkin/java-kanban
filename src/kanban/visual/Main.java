@@ -179,46 +179,6 @@ public class Main {
         }
     }
 
-   /* private static void createTaskFromFile(List<String> tasksFromFile) {
-        for (String s : tasksFromFile) {
-            String[] taskInfo = s.split(",");
-            String title = taskInfo[2];
-            String description = taskInfo[3];
-            String typeTask = taskInfo[1];
-            int id = Integer.parseInt(taskInfo[0]);
-            if (typeTask.equals("TASK")) {
-                Task task = fileBackedTasksManager.createStandardTaskWithId(id, title, description);
-                System.out.print(Color.GREEN);
-                System.out.println("Прочитана из файла обычная задача с id = " + id);
-                System.out.print(Color.RESET);
-            } else if (typeTask.equals("EPIC")) {
-                EpicTask epicTask = fileBackedTasksManager.createEpicWithId(id, title, description);
-                System.out.print(Color.GREEN);
-                System.out.println("Прочитана из файла эпик с id = " + id);
-                System.out.print(Color.RESET);
-                // Получаем список названий и описаний подзадач
-                for (String str : tasksFromFile) {
-                    String[] taskInfoSub = str.split(",");
-                    typeTask = taskInfoSub[1];
-                    int idSubtask = Integer.parseInt(taskInfoSub[0]);
-                    if (typeTask.equals("SUBTASK")) {
-                        int parentId = Integer.parseInt(taskInfoSub[5]);
-                        title = taskInfo[2];
-                        description = taskInfo[3];
-                        Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
-                                , title
-                                , description
-                                , parentId);
-                        if (epicTask.getId() == parentId) {
-                            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-                        }
-                    }
-                }
-                fileBackedTasksManager.addEpic(epicTask);
-            }
-        }
-
-    }*/
 
     private static void createTaskOld() {
         String[] menuItems = {"1 - обычная задача", "2 - эпик"};
