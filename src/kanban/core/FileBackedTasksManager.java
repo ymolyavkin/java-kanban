@@ -380,14 +380,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return foundTask;
     }
+
     @Override
-    public boolean deleteAllTasks() {
-        boolean wasDeleted=super.deleteAllTasks();
+    public boolean deleteTaskById(int id) {
+        boolean oneTaskWasDeleted = super.deleteTaskById(id);
         try {
             save();
         } catch (ManagerSaveException e) {
             throw new RuntimeException(e);
         }
-            return wasDeleted;
+        return oneTaskWasDeleted;
+    }
+
+    @Override
+    public boolean deleteAllTasks() {
+        boolean wasDeleted = super.deleteAllTasks();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
         }
+        return wasDeleted;
+    }
 }
