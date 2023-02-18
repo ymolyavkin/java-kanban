@@ -54,6 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return Task
      */
     private int generateId() {
+        fillListAllIds();
         if (usedIds.isEmpty()) {
             return initId++;
         }
@@ -72,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskId;
     }
 
-    private List<Integer> listAllIds() {
+    private void fillListAllIds() {
         if (!standardTasks.isEmpty()) {
             for (int key : standardTasks.keySet()) {
                 usedIds.add(key);
@@ -89,7 +90,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
-        return usedIds;
+       // return usedIds;
     }
 
     public Task createStandardTask(String titleAndDescription) {

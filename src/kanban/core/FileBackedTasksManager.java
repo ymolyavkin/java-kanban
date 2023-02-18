@@ -228,8 +228,8 @@ private static void addTasksToHistory(List<Integer> taskIds) {
                     int idSubtask = Integer.parseInt(taskInfoSub[0]);
                     if (typeSubtask.equals("SUBTASK")) {
                         int parentId = Integer.parseInt(taskInfoSub[5]);
-                        String titleSubtask = taskInfo[2];
-                        String descriptionSubtask = taskInfo[3];
+                        String titleSubtask = taskInfoSub[2];
+                        String descriptionSubtask = taskInfoSub[3];
                         Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
                                 , titleSubtask
                                 , descriptionSubtask
