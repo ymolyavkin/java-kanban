@@ -32,8 +32,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         return fileBackedTasksManager;
     }
-   /* private static final FileBackedTasksManager fileBackedTasksManager
-            = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());*/
+
 
     private FileBackedTasksManager(Path path, HistoryManager historyManager) {
         super();
@@ -58,11 +57,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }*/
 
     private static void restoreDataFromFile() {
-        List<String> tasks  = new ArrayList<>();
+        List<String> tasks = new ArrayList<>();
         try {
             String multilineFromFile = fileBackedTasksManager.readFileOrNull();
-            tasks.addAll(Arrays.asList(multilineFromFile.split("\n")));
-            fileBackedTasksManager.createTaskFromFile(tasks);
+            if (multilineFromFile != null) {
+                tasks.addAll(Arrays.asList(multilineFromFile.split("\n")));
+                fileBackedTasksManager.createTaskFromFile(tasks);
+            }
         } catch (ManagerSaveException e) {
             throw new RuntimeException(e);
         }
@@ -142,8 +143,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public String readFileOrNull() throws ManagerSaveException {
         String content = null;
         try {
-            content = Files.readString(path);
-            System.out.println(content);
+            if (Files.exists(path)) {
+                content = Files.readString(path);
+                int posNewLine = content.indexOf("\n\n");
+                int nextPosNewLine = content.indexOf("\n", posNewLine + 1);
+
+                System.out.println("Empty string: " + posNewLine);
+                System.out.println("Second empty string: " + nextPosNewLine);
+
+                String history = content.substring(content.indexOf("\n\n"), content.length() - 2);
+                //System.out.println("History: " + history);
+
+                posNewLine = history.indexOf("\n\n");
+                nextPosNewLine = history.indexOf("\n", posNewLine + 1);
+
+                System.out.println("Empty string: " + posNewLine);
+                System.out.println("Second empty string: " + nextPosNewLine);
+
+                if (!history.isEmpty()) {
+                    history = history.substring(posNewLine+2);
+                    System.out.println("History: " + history);
+                }
+
+                content = content.substring(content.indexOf("\n") + 1, content.indexOf("\n\n"));
+                System.out.println(content);
+            }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки файла");
         }
@@ -152,7 +176,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void createTaskFromFile(List<String> tasksFromFile) {
         for (String s : tasksFromFile) {
-            if (s.substring(0,2).equals("id")) {
+            if (s.substring(0, 2).equals("id")) {
                 continue;
             }
             String[] taskInfo = s.split(",");
@@ -248,66 +272,66 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
 
-   /* private void createSeveralTestTasksInFile() {
-        // Создаём стандартную задачу
-        String titleAndDescription = "Пробежка|Добежать до работы";
-        Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
+    /* private void createSeveralTestTasksInFile() {
+         // Создаём стандартную задачу
+         String titleAndDescription = "Пробежка|Добежать до работы";
+         Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
+         System.out.print(Color.GREEN);
+         System.out.println("Создана обычная задача с id = " + task.getId());
+         System.out.print(Color.RESET);
 
-        // Создаём стандартную задачу
-        titleAndDescription = "Почитать сообщения в Телеграм|Открыть Телеграм и просмотреть новые сообщения";
-        task = fileBackedTasksManager.createStandardTask(titleAndDescription);
+         // Создаём стандартную задачу
+         titleAndDescription = "Почитать сообщения в Телеграм|Открыть Телеграм и просмотреть новые сообщения";
+         task = fileBackedTasksManager.createStandardTask(titleAndDescription);
 
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
+         System.out.print(Color.GREEN);
+         System.out.println("Создана обычная задача с id = " + task.getId());
+         System.out.print(Color.RESET);
 
-        // Создаём эпик
-        titleAndDescription = "Утро рабочего дня" +
-                "|Составить план рабочего дня";
-        EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
+         // Создаём эпик
+         titleAndDescription = "Утро рабочего дня" +
+                 "|Составить план рабочего дня";
+         EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
 
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
+         System.out.print(Color.GREEN);
+         System.out.println("Создан эпик с id = " + (epicTask.getId()));
+         System.out.print(Color.RESET);
 
-        // Создаем список названий и описаний подзадач
-        String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать входящие сообщения", "Подзадача 2|Получить вводные от руководителя"};
-        for (String titleDescription : importantTitleAndDescriptions) {
+         // Создаем список названий и описаний подзадач
+         String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать входящие сообщения", "Подзадача 2|Получить вводные от руководителя"};
+         for (String titleDescription : importantTitleAndDescriptions) {
 
-            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
+             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
 
-            //epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-        }
-        fileBackedTasksManager.addEpic(epicTask);
+             //epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+         }
+         fileBackedTasksManager.addEpic(epicTask);
 
-        // Создаём эпик
-        titleAndDescription = "Прочитать рабочую корреспонденцию" +
-                "|Прочитать все входящие письма и сообщения из мессенджеров";
-        epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
+         // Создаём эпик
+         titleAndDescription = "Прочитать рабочую корреспонденцию" +
+                 "|Прочитать все входящие письма и сообщения из мессенджеров";
+         epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
 
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
+         System.out.print(Color.GREEN);
+         System.out.println("Создан эпик с id = " + (epicTask.getId()));
+         System.out.print(Color.RESET);
 
-        // Создаем список названий и описаний подзадач
-        String[] secondaryTitleAndDescriptions = {
-                "Подзадача 1|Прочитать электронную почту",
-                "Подзадача 2|Прочитать мессенджеры",
-                "Подзадача 3|Прочитать соцсети"};
-        for (String titleDescription : secondaryTitleAndDescriptions) {
-            // Создаем подзадачу
-            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-            // Добавляем её к эпику
-            // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-        }
-        fileBackedTasksManager.addEpic(epicTask);
-    }
-*/
+         // Создаем список названий и описаний подзадач
+         String[] secondaryTitleAndDescriptions = {
+                 "Подзадача 1|Прочитать электронную почту",
+                 "Подзадача 2|Прочитать мессенджеры",
+                 "Подзадача 3|Прочитать соцсети"};
+         for (String titleDescription : secondaryTitleAndDescriptions) {
+             // Создаем подзадачу
+             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
+             // Добавляем её к эпику
+             // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+         }
+         fileBackedTasksManager.addEpic(epicTask);
+     }
+ */
     /*public Task createStandardTask(String titleAndDescription) {
         super.createStandardTask(titleAndDescription);
         try {
