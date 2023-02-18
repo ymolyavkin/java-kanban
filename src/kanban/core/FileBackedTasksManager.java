@@ -197,15 +197,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 // Получаем список названий и описаний подзадач
                 for (String str : tasksFromFile) {
                     String[] taskInfoSub = str.split(",");
-                    typeTask = taskInfoSub[1];
+                    String typeSubtask = taskInfoSub[1];
                     int idSubtask = Integer.parseInt(taskInfoSub[0]);
-                    if (typeTask.equals("SUBTASK")) {
+                    if (typeSubtask.equals("SUBTASK")) {
                         int parentId = Integer.parseInt(taskInfoSub[5]);
-                        title = taskInfo[2];
-                        description = taskInfo[3];
+                        String titleSubtask = taskInfo[2];
+                       String descriptionSubtask = taskInfo[3];
                         Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
-                                , title
-                                , description
+                                , titleSubtask
+                                , descriptionSubtask
                                 , parentId);
                         if (epicTask.getId() == parentId) {
                             addSubtaskToEpic(epicTask, subtask);

@@ -74,7 +74,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     private List<Integer> listAllIds() {
         if (!standardTasks.isEmpty()) {
-            //  idNotChanged = false;
             for (int key : standardTasks.keySet()) {
                 usedIds.add(key);
             }
@@ -99,9 +98,8 @@ public class InMemoryTaskManager implements TaskManager {
         String description = parts[1];
         int id = generateId();
         Type type = Type.TASK;
-
         Task task = new Task(type, title, description, id);
-        // standardTasks.put(id, task);
+
         addTask(task);
         return task;
     }
@@ -114,9 +112,6 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    /**
-     *
-     */
     public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
@@ -124,10 +119,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (mustChangeStatus) {
             statusWasChanged = task.changeStatus();
         }
-        // кладём обновленную задачу обратно в HashMap
-        // standardTasks.put(task.getId(), task);
-
-        //return statusWasChanged;
     }
 
     /**
@@ -190,7 +181,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
         epicTask.changeStatus();
-        //return epicTask;
     }
 
     /**
