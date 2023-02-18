@@ -161,7 +161,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 System.out.println("Second empty string: " + nextPosNewLine);
 
                 if (!history.isEmpty()) {
-                    history = history.substring(posNewLine+2);
+                    history = history.substring(posNewLine + 2);
                     System.out.println("History: " + history);
                 }
 
@@ -202,7 +202,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     if (typeSubtask.equals("SUBTASK")) {
                         int parentId = Integer.parseInt(taskInfoSub[5]);
                         String titleSubtask = taskInfo[2];
-                       String descriptionSubtask = taskInfo[3];
+                        String descriptionSubtask = taskInfo[3];
                         Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
                                 , titleSubtask
                                 , descriptionSubtask
@@ -380,4 +380,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return foundTask;
     }
+    @Override
+    public boolean deleteAllTasks() {
+        boolean wasDeleted=super.deleteAllTasks();
+        try {
+            save();
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
+        }
+            return wasDeleted;
+        }
 }
