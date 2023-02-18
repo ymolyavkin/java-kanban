@@ -61,14 +61,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             String multilineFromFile = fileBackedTasksManager.readFileOrNull();
             if (multilineFromFile != null) {
-                tasks.addAll(Arrays.asList(multilineFromFile.split("\n")));
+                int startPosition = multilineFromFile.indexOf("\n") + 1;
+                int endPosition = multilineFromFile.indexOf("\n\n");
+                String content = multilineFromFile.substring(startPosition, endPosition);
+
+                tasks.addAll(Arrays.asList(content.split("\n")));
                 fileBackedTasksManager.createTaskFromFile(tasks);
+
+                String history = multilineFromFile.substring(endPosition, multilineFromFile.length());
+                System.out.println("History: " + history);
+
+                if (!history.isEmpty()) {
+                    int posNewLine = history.indexOf("\n\n");
+                    int nextPosNewLine = history.indexOf("\n", posNewLine + 1);
+
+                    System.out.println("Empty string: " + posNewLine);
+                    System.out.println("Second empty string: " + nextPosNewLine);
+                    history = history.substring(posNewLine + 2);
+                    System.out.println("History: " + history);
+                    List<Integer> idTaskFromHistory=historyFromFile(history);
+                    addTasksToHistory(idTaskFromHistory);
+                }
             }
         } catch (ManagerSaveException e) {
             throw new RuntimeException(e);
         }
     }
-
+private static void addTasksToHistory(List<Integer> taskIds) {
+    for (Integer id : taskIds) {
+        fileBackedTasksManager.findTaskByIdOrNull(id);
+    }
+}
     private static String historyToString(HistoryManager manager) {
         List<AbstractTask> browsingHistory = manager.getHistory();
         List<Integer> taskIds = taskIdsFromHistory(browsingHistory);
@@ -91,9 +114,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return taskIds;
     }
 
-    private static List<Integer> historyFromString(String value) {
-
-        return null;
+    private static List<Integer> historyFromFile(String value) {
+        List<Integer> history = new ArrayList<>();
+        String[] ids = value.split(",");
+        for (String id : ids) {
+            history.add(Integer.parseInt(id));
+        }
+        return history;
     }
 
 
@@ -145,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             if (Files.exists(path)) {
                 content = Files.readString(path);
-                int posNewLine = content.indexOf("\n\n");
+                /*int posNewLine = content.indexOf("\n\n");
                 int nextPosNewLine = content.indexOf("\n", posNewLine + 1);
 
                 System.out.println("Empty string: " + posNewLine);
@@ -166,7 +193,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
 
                 content = content.substring(content.indexOf("\n") + 1, content.indexOf("\n\n"));
-                System.out.println(content);
+                System.out.println(content);*/
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки файла");
