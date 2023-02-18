@@ -2,12 +2,14 @@ package kanban.core;
 
 import kanban.model.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int taskId;
+    private static int initId;
+    private static List<Integer> usedIds = new ArrayList<>();
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
     private static InMemoryTaskManager instance;
@@ -15,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     InMemoryTaskManager() {
-        taskId = 0;
+        initId = 0;
     }
 
     public static InMemoryHistoryManager getInMemoryHistoryManager() {
@@ -25,7 +27,6 @@ public class InMemoryTaskManager implements TaskManager {
     public static InMemoryTaskManager getInstance() {
         if (instance == null) {
             instance = new InMemoryTaskManager();
-
         }
         return instance;
     }
@@ -52,13 +53,52 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * @return Task
      */
+    private int generateId() {
+        if (usedIds.isEmpty()) {
+            return initId++;
+        }
+        int taskId = 0;
+        boolean idIsBusy = true;
+        while (idIsBusy) {
+            idIsBusy = false;
+            for (Integer id : usedIds) {
+                if (taskId == id) {
+                    idIsBusy = true;
+                    taskId++;
+                    break;
+                }
+            }
+        }
+        return taskId;
+    }
+
+    private List<Integer> listAllIds() {
+        if (!standardTasks.isEmpty()) {
+            //  idNotChanged = false;
+            for (int key : standardTasks.keySet()) {
+                usedIds.add(key);
+            }
+        }
+        if (!epicTasks.isEmpty()) {
+            for (AbstractTask epicTask : epicTasks.values()) {
+                EpicTask epic = (EpicTask) epicTask;
+                usedIds.add(epic.getId());
+                Map<Integer, Subtask> subtasks = epic.getSubtasks();
+
+                for (int key : subtasks.keySet()) {
+                    usedIds.add(key);
+                }
+            }
+        }
+        return usedIds;
+    }
+
     public Task createStandardTask(String titleAndDescription) {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int id = taskId;
+        int id = generateId();
         Type type = Type.TASK;
-        taskId++;
 
         Task task = new Task(type, title, description, id);
         // standardTasks.put(id, task);
@@ -110,13 +150,13 @@ public class InMemoryTaskManager implements TaskManager {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int id = taskId;
+        int id = generateId();
         Type type = Type.SUBTASK;
-        taskId++;
 
         Subtask subtask = new Subtask(type, title, description, id, parentId);
         return subtask;
     }
+
     public Subtask createSubtaskWithId(int id, String title, String description, int parentId) {
         Type type = Type.SUBTASK;
         Subtask subtask = new Subtask(type, title, description, id, parentId);
@@ -130,18 +170,16 @@ public class InMemoryTaskManager implements TaskManager {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int epicId = taskId;
+        int epicId = generateId();
         Type type = Type.EPIC;
-        taskId++;
 
         EpicTask epicTask = new EpicTask(type, title, description, epicId);
         return epicTask;
     }
 
     public EpicTask createEpicWithId(int id, String title, String description) {
-        int epicId = taskId;
+        int epicId = generateId();
         Type type = Type.EPIC;
-        taskId++;
 
         EpicTask epicTask = new EpicTask(type, title, description, id);
         return epicTask;
