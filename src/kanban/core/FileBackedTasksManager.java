@@ -16,41 +16,55 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
-    private static HistoryManager historyManager;
-    private static FileBackedTasksManager fileBackedTasksManager;
+    //  private static HistoryManager historyManager;
+    //  private static FileBackedTasksManager fileBackedTasksManager;
 
-    public static FileBackedTasksManager getFileBackedTasksManager() {
+    /*public static FileBackedTasksManager getFileBackedTasksManager() {
         fileBackedTasksManager
                 = new FileBackedTasksManager(Path.of("taskbacket.txt"), getInMemoryHistoryManager());
         return fileBackedTasksManager;
-    }
+    }*/
 
-    public static FileBackedTasksManager loadFromFile(Path path) {
+    /*public static FileBackedTasksManager loadFromFile(Path path) {
         fileBackedTasksManager
                 = new FileBackedTasksManager(path, getInMemoryHistoryManager());
         restoreDataFromFile();
 
         return fileBackedTasksManager;
-    }
+    }*/
 
 
-    private FileBackedTasksManager(Path path, HistoryManager historyManager) {
+    /*private FileBackedTasksManager(Path path, HistoryManager historyManager) {
         super();
         this.path = path;
         this.historyManager = historyManager;
+    }*/
+    public FileBackedTasksManager(Path path) {
+        super();
+        this.path = path;
     }
 
-    private static void restoreDataFromFile() {
+    public static FileBackedTasksManager loadFromFile(Path path) {
+        FileBackedTasksManager fileBackedTasksManager = Managers.getFileBackedTasksManager();
+
+
+        return fileBackedTasksManager;
+    }
+
+    /**
+     * все методы, кроме loadFromFile должны быть не статическими
+     */
+    private void restoreDataFromFile() {
         List<String> tasks = new ArrayList<>();
         try {
-            String multilineFromFile = fileBackedTasksManager.readFileOrNull();
+            String multilineFromFile = readFileOrNull();
             if (multilineFromFile != null) {
                 int startPosition = multilineFromFile.indexOf("\n") + 1;
                 int endPosition = multilineFromFile.indexOf("\n\n");
                 String content = multilineFromFile.substring(startPosition, endPosition);
 
                 tasks.addAll(Arrays.asList(content.split("\n")));
-                fileBackedTasksManager.createTaskFromFile(tasks);
+                createTaskFromFile(tasks);
 
                 String history = multilineFromFile.substring(endPosition, multilineFromFile.length());
 
@@ -69,9 +83,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static void addTasksToHistory(List<Integer> taskIds) {
+    private void addTasksToHistory(List<Integer> taskIds) {
         for (Integer id : taskIds) {
-            fileBackedTasksManager.findTaskByIdOrNull(id);
+            findTaskByIdOrNull(id);
         }
     }
 
@@ -130,7 +144,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 writer.write(s);
             }
             writer.write("\n");
-            writer.write(historyToString(historyManager));
+            writer.write(historyToString(getInMemoryHistoryManager()));
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения файла");
@@ -145,7 +159,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 content = Files.readString(path);
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка загрузки файла");
+            throw new ManagerSaveException(e.getMessage());
         }
         return content;
     }
@@ -161,12 +175,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String typeTask = taskInfo[1];
             int id = Integer.parseInt(taskInfo[0]);
             if (typeTask.equals("TASK")) {
-                Task task = fileBackedTasksManager.createStandardTaskWithId(id, title, description);
+                Task task = createStandardTaskWithId(id, title, description);
                 System.out.print(Color.GREEN);
                 System.out.println("Прочитана из файла обычная задача с id = " + id);
                 System.out.print(Color.RESET);
             } else if (typeTask.equals("EPIC")) {
-                EpicTask epicTask = fileBackedTasksManager.createEpicWithId(id, title, description);
+                EpicTask epicTask = createEpicWithId(id, title, description);
                 System.out.print(Color.GREEN);
                 System.out.println("Прочитана из файла эпик с id = " + id);
                 System.out.print(Color.RESET);
@@ -179,7 +193,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         int parentId = Integer.parseInt(taskInfoSub[5]);
                         String titleSubtask = taskInfoSub[2];
                         String descriptionSubtask = taskInfoSub[3];
-                        Subtask subtask = fileBackedTasksManager.createSubtaskWithId(idSubtask
+                        Subtask subtask = createSubtaskWithId(idSubtask
                                 , titleSubtask
                                 , descriptionSubtask
                                 , parentId);
@@ -188,7 +202,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         }
                     }
                 }
-                fileBackedTasksManager.addEpic(epicTask);
+                addEpic(epicTask);
             }
         }
 

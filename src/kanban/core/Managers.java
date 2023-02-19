@@ -8,6 +8,7 @@ public class Managers {
     private static InFileHistoryManager inFileHistoryManager;
     private static FileBackedTasksManager fileBackedTasksManager;
 
+
     public static TaskManager getDefault() {
 
         return inMemoryTaskManager;
@@ -18,12 +19,17 @@ public class Managers {
 
         return historyManager;
     }
+    public static FileBackedTasksManager getFileBackedTasksManager() {
+        fileBackedTasksManager
+                = new FileBackedTasksManager(Path.of("taskbacket.txt"));
+        return fileBackedTasksManager;
+    }
 
-    public static InFileHistoryManager getFromFileHistory() {
+   /* public static InFileHistoryManager getFromFileHistory() {
         inFileHistoryManager = new InFileHistoryManager();
 
         return inFileHistoryManager;
-    }
+    }*/
 
    /* public static FileBackedTasksManager getFileBackedManager() {
         fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"), getFromFileHistory());
