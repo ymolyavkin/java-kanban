@@ -152,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = generateId(parentId);
+        usedIds.add(id);
         Type type = Type.SUBTASK;
 
         Subtask subtask = new Subtask(type, title, description, id, parentId);

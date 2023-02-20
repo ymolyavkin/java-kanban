@@ -5,7 +5,7 @@ import java.nio.file.Path;
 public class Managers {
     public static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
     private static InMemoryHistoryManager historyManager;
-    private static InFileHistoryManager inFileHistoryManager;
+   // private static InFileHistoryManager inFileHistoryManager;
     private static FileBackedTasksManager fileBackedTasksManager;
 
 
@@ -24,16 +24,4 @@ public class Managers {
                 = new FileBackedTasksManager(path);
         return fileBackedTasksManager;
     }
-
-   /* public static InFileHistoryManager getFromFileHistory() {
-        inFileHistoryManager = new InFileHistoryManager();
-
-        return inFileHistoryManager;
-    }*/
-
-   /* public static FileBackedTasksManager getFileBackedManager() {
-        fileBackedTasksManager = new FileBackedTasksManager(Path.of("taskbacket.txt"), getFromFileHistory());
-        return fileBackedTasksManager;
-    }*/
-
 }

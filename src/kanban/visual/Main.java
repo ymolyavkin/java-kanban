@@ -170,11 +170,9 @@ public class Main {
             for (String titleAndDescription : titleAndDescriptions) {
                 // Создаем подзадачу
                 Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
-                // Добавляем её к эпику
-                // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+
                 fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             }
-            // Кладем эпик в мапу
             fileBackedTasksManager.addEpic(epicTask);
         }
     }
@@ -202,7 +200,7 @@ public class Main {
                 // Создаем подзадачу
                 Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
                 // Добавляем её к эпику
-                // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+
                 fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             }
             // Кладем эпик в мапу
@@ -286,7 +284,7 @@ public class Main {
 
                         Status currentStatus = epicTask.getStatus();
                         // Добавляем обновленную подзадачу к эпику
-                        //   epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, updatedSubtask);
+
                         fileBackedTasksManager.addSubtaskToEpic(epicTask, updatedSubtask);
                         Status newStatus = epicTask.getStatus();
 
@@ -405,7 +403,6 @@ public class Main {
 
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
 
-            // epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
         fileBackedTasksManager.addEpic(epicTask);
@@ -465,7 +462,6 @@ public class Main {
 
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
 
-            // epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
         fileBackedTasksManager.addEpic(epicTask);
