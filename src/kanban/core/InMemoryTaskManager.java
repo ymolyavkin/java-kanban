@@ -53,11 +53,14 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * @return Task
      */
-    private int generateId() {
+    private int generateId(int busyId) {
         fillListAllIds();
-        if (usedIds.isEmpty()) {
-            return initId++;
+        if (busyId != -1) {
+            usedIds.add(busyId);
         }
+            if (usedIds.isEmpty()) {
+                return initId++;
+            }
         int taskId = 0;
         boolean idIsBusy = true;
         while (idIsBusy) {
@@ -71,9 +74,15 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return taskId;
+
     }
 
     private void fillListAllIds() {
+        if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
+            usedIds.clear();
+            initId = 0;
+            return;
+        }
         if (!standardTasks.isEmpty()) {
             for (int key : standardTasks.keySet()) {
                 usedIds.add(key);
@@ -90,14 +99,14 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
-       // return usedIds;
+        // return usedIds;
     }
 
     public Task createStandardTask(String titleAndDescription) {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int id = generateId();
+        int id = generateId(-1);
         Type type = Type.TASK;
         Task task = new Task(type, title, description, id);
 
@@ -142,7 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int id = generateId();
+        int id = generateId(parentId);
         Type type = Type.SUBTASK;
 
         Subtask subtask = new Subtask(type, title, description, id, parentId);
@@ -162,7 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
-        int epicId = generateId();
+        int epicId = generateId(-1);
         Type type = Type.EPIC;
 
         EpicTask epicTask = new EpicTask(type, title, description, epicId);
@@ -170,7 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public EpicTask createEpicWithId(int id, String title, String description) {
-        int epicId = generateId();
+        int epicId = generateId(-1);
         Type type = Type.EPIC;
 
         EpicTask epicTask = new EpicTask(type, title, description, id);

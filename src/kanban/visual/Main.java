@@ -19,7 +19,7 @@ import static kanban.core.InMemoryTaskManager.getInMemoryHistoryManager;
 public class Main {
     private static Scanner scanner;
 
-    static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+   // static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
 
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
