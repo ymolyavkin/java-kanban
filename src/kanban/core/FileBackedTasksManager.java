@@ -229,8 +229,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String toString(AbstractTask task) {
-        StringJoiner sj = new StringJoiner(",");
-       // StringBuilder sb = new StringBuilder();
+        //StringJoiner sj = new StringJoiner(",");
+        StringBuilder sb = new StringBuilder();
         Type typeTask;
         if (task instanceof Task) {
             typeTask = Type.TASK;
@@ -239,45 +239,58 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             typeTask = Type.SUBTASK;
         }
-        sj.add(String.valueOf(task.getId()));
-        sj.add(String.valueOf(typeTask));
-        sj.add(task.getTitle());
-        sj.add(task.getDescription());
-        sj.add(String.valueOf(task.getStatus()));
-        if (typeTask == Type.SUBTASK) {
+        sb.append(task.getId() + ",");
+        sb.append(typeTask + ",");
+        sb.append(task.getTitle() + ",");
+        sb.append(task.getDescription() + ",");
+        sb.append(task.getStatus());
+        switch (typeTask) {
+            case SUBTASK -> {
+                Subtask subtask = (Subtask) task;
+                sb.append(subtask.getParentId());
+                sb.append("\n");
+            }
+            case EPIC -> {
+                sb.append("\n");
+                EpicTask epic = (EpicTask) task;
+                Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                for (Subtask subtask : subtasks.values()) {
+                    sb.append(subtask.getId() + ",");
+                    sb.append(Type.SUBTASK + ",");
+                    sb.append(subtask.getTitle() + ",");
+                    sb.append(subtask.getDescription() + ",");
+                    sb.append(subtask.getStatus() + ",");
+                    sb.append(subtask.getParentId());
+                    sb.append("\n");
+                }
+            }
+            default -> {
+                sb.append("\n");
+            }
+        }
+        /*if (typeTask == Type.SUBTASK) {
             Subtask subtask = (Subtask) task;
-            sj.add(String.valueOf(subtask.getParentId()));
-            sj.add("\n");
+            sb.append(subtask.getParentId());
+            sb.append("\n");
         } else if (typeTask == Type.EPIC) {
-            sj.add("\n");
+            sb.append("\n");
             EpicTask epic = (EpicTask) task;
             Map<Integer, Subtask> subtasks = epic.getSubtasks();
             for (Subtask subtask : subtasks.values()) {
-                sj.add(String.valueOf(subtask.getId()));
-                sj.add(String.valueOf(Type.SUBTASK));
-                sj.add(subtask.getTitle());
-                sj.add(subtask.getDescription());
-                sj.add(String.valueOf(subtask.getStatus()));
-                sj.add(String.valueOf(subtask.getParentId()));
-                sj.add("\n");
+                sb.append(subtask.getId() + ",");
+                sb.append(Type.SUBTASK + ",");
+                sb.append(subtask.getTitle() + ",");
+                sb.append(subtask.getDescription() + ",");
+                sb.append(subtask.getStatus() + ",");
+                sb.append(subtask.getParentId());
+                sb.append("\n");
             }
         } else {
-            sj.add("\n");
-        }
-        return sj.toString();
+            sb.append("\n");
+        }*/
+        return sb.toString();
     }
 
-    /**
-     *
-     * switch (type) {
-     *                 case TASK -> {
-     *                     createStandardTaskWithId(id, title, description);
-     *                     System.out.print(Color.GREEN);
-     *                     System.out.println("Прочитана из файла обычная задача с id = " + id);
-     *                     System.out.print(Color.RESET);
-     *                 }
-     *                 case EPIC -> {
-     */
     private AbstractTask fromString(String taskStringForm) {
         String[] strTask = taskStringForm.split(";");
         int id = 0;
