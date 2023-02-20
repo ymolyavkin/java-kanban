@@ -34,6 +34,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         List<String> tasks = new ArrayList<>();
         try {
             String multilineFromFile = readFileOrNull();
+            int poSeparator= multilineFromFile.indexOf(System.lineSeparator());
+            System.out.println(poSeparator);
             if (multilineFromFile != null) {
                 int startPosition = multilineFromFile.indexOf("\n") + 1;
                 int endPosition = multilineFromFile.indexOf("\n\n");
@@ -114,14 +116,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             if (Files.notExists(path)) {
                 Files.createFile(path);
             }
-            writer.write("id, type, name, description, status, epic \n");
+            writer.write("id, type, name, description, status, epic");
+            writer.newLine();
             for (String s : tasksInStringForm) {
                 writer.write(s);
             }
             for (String s : epicsInStringForm) {
                 writer.write(s);
             }
-            writer.write("\n");
+           // writer.write("\n");
+            writer.newLine();
             writer.write(historyToString(getInMemoryHistoryManager()));
 
         } catch (IOException e) {
@@ -228,6 +232,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return result;
     }
 
+    /**
+     * Здесь отказался от использования StringJoiner, т.к. мне показалось, что код получился более громоздким,
+     * по причине того, что разделитель нужно ставить не везде.
+     *
+     *
+     */
     private String toString(AbstractTask task) {
         //StringJoiner sj = new StringJoiner(",");
         StringBuilder sb = new StringBuilder();
