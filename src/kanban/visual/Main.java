@@ -424,8 +424,7 @@ public class Main {
         for (String titleDescription : secondaryTitleAndDescriptions) {
             // Создаем подзадачу
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-            // Добавляем её к эпику
-            //  epicTask = inMemoryTaskManager.addSubtaskToEpic(epicTask, subtask);
+
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
         fileBackedTasksManager.addEpic(epicTask);

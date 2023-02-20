@@ -153,9 +153,43 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String[] taskInfo = s.split(",");
             String title = taskInfo[2];
             String description = taskInfo[3];
-            String typeTask = taskInfo[1];
+            //String typeTask = taskInfo[1];
+            Type type = Type.valueOf(taskInfo[1]);
             int id = Integer.parseInt(taskInfo[0]);
-            if (typeTask.equals("TASK")) {
+            switch (type) {
+                case TASK -> {
+                    createStandardTaskWithId(id, title, description);
+                    System.out.print(Color.GREEN);
+                    System.out.println("Прочитана из файла обычная задача с id = " + id);
+                    System.out.print(Color.RESET);
+                }
+                case EPIC -> {
+                    EpicTask epicTask = createEpicWithId(id, title, description);
+                    System.out.print(Color.GREEN);
+                    System.out.println("Прочитана из файла эпик с id = " + id);
+                    System.out.print(Color.RESET);
+                    // Получаем список названий и описаний подзадач
+                    for (String str : tasksFromFile) {
+                        String[] taskInfoSub = str.split(",");
+                        Type typeSubtask = Type.valueOf(taskInfoSub[1]);
+                        int idSubtask = Integer.parseInt(taskInfoSub[0]);
+                        if (typeSubtask==Type.SUBTASK) {
+                            int parentId = Integer.parseInt(taskInfoSub[5]);
+                            String titleSubtask = taskInfoSub[2];
+                            String descriptionSubtask = taskInfoSub[3];
+                            Subtask subtask = createSubtaskWithId(idSubtask
+                                    , titleSubtask
+                                    , descriptionSubtask
+                                    , parentId);
+                            if (epicTask.getId() == parentId) {
+                                addSubtaskToEpic(epicTask, subtask);
+                            }
+                        }
+                    }
+                    addEpic(epicTask);
+                }
+            }
+            /*if (typeTask.equals("TASK")) {
                 Task task = createStandardTaskWithId(id, title, description);
                 System.out.print(Color.GREEN);
                 System.out.println("Прочитана из файла обычная задача с id = " + id);
@@ -184,7 +218,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
                 addEpic(epicTask);
-            }
+            }*/
         }
 
     }
