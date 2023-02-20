@@ -9,10 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
@@ -153,7 +150,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String[] taskInfo = s.split(",");
             String title = taskInfo[2];
             String description = taskInfo[3];
-            //String typeTask = taskInfo[1];
             Type type = Type.valueOf(taskInfo[1]);
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
@@ -173,7 +169,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         String[] taskInfoSub = str.split(",");
                         Type typeSubtask = Type.valueOf(taskInfoSub[1]);
                         int idSubtask = Integer.parseInt(taskInfoSub[0]);
-                        if (typeSubtask==Type.SUBTASK) {
+                        if (typeSubtask == Type.SUBTASK) {
                             int parentId = Integer.parseInt(taskInfoSub[5]);
                             String titleSubtask = taskInfoSub[2];
                             String descriptionSubtask = taskInfoSub[3];
@@ -233,43 +229,55 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String toString(AbstractTask task) {
-        StringBuilder sb = new StringBuilder();
+        StringJoiner sj = new StringJoiner(",");
+       // StringBuilder sb = new StringBuilder();
         Type typeTask;
         if (task instanceof Task) {
-            typeTask=Type.TASK;
+            typeTask = Type.TASK;
         } else if (task instanceof EpicTask) {
-            typeTask=Type.EPIC;
+            typeTask = Type.EPIC;
         } else {
-            typeTask=Type.SUBTASK;
+            typeTask = Type.SUBTASK;
         }
-        sb.append(task.getId() + ",");
-        sb.append(typeTask + ",");
-        sb.append(task.getTitle() + ",");
-        sb.append(task.getDescription() + ",");
-        sb.append(task.getStatus());
+        sj.add(String.valueOf(task.getId()));
+        sj.add(String.valueOf(typeTask));
+        sj.add(task.getTitle());
+        sj.add(task.getDescription());
+        sj.add(String.valueOf(task.getStatus()));
         if (typeTask == Type.SUBTASK) {
             Subtask subtask = (Subtask) task;
-            sb.append(subtask.getParentId());
-            sb.append("\n");
+            sj.add(String.valueOf(subtask.getParentId()));
+            sj.add("\n");
         } else if (typeTask == Type.EPIC) {
-            sb.append("\n");
+            sj.add("\n");
             EpicTask epic = (EpicTask) task;
             Map<Integer, Subtask> subtasks = epic.getSubtasks();
             for (Subtask subtask : subtasks.values()) {
-                sb.append(subtask.getId() + ",");
-                sb.append(Type.SUBTASK + ",");
-                sb.append(subtask.getTitle() + ",");
-                sb.append(subtask.getDescription() + ",");
-                sb.append(subtask.getStatus() + ",");
-                sb.append(subtask.getParentId());
-                sb.append("\n");
+                sj.add(String.valueOf(subtask.getId()));
+                sj.add(String.valueOf(Type.SUBTASK));
+                sj.add(subtask.getTitle());
+                sj.add(subtask.getDescription());
+                sj.add(String.valueOf(subtask.getStatus()));
+                sj.add(String.valueOf(subtask.getParentId()));
+                sj.add("\n");
             }
         } else {
-            sb.append("\n");
+            sj.add("\n");
         }
-        return sb.toString();
+        return sj.toString();
     }
 
+    /**
+     *
+     * switch (type) {
+     *                 case TASK -> {
+     *                     createStandardTaskWithId(id, title, description);
+     *                     System.out.print(Color.GREEN);
+     *                     System.out.println("Прочитана из файла обычная задача с id = " + id);
+     *                     System.out.print(Color.RESET);
+     *                 }
+     *                 case EPIC -> {
+     */
     private AbstractTask fromString(String taskStringForm) {
         String[] strTask = taskStringForm.split(";");
         int id = 0;
