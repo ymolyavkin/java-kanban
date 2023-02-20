@@ -58,9 +58,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (busyId != -1) {
             usedIds.add(busyId);
         }
-            if (usedIds.isEmpty()) {
-                return initId++;
-            }
+        if (usedIds.isEmpty()) {
+            return initId++;
+        }
         int taskId = 0;
         boolean idIsBusy = true;
         while (idIsBusy) {
@@ -107,16 +107,14 @@ public class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = generateId(-1);
-        Type type = Type.TASK;
-        Task task = new Task(type, title, description, id);
+        Task task = new Task(title, description, id);
 
         addTask(task);
         return task;
     }
 
     public Task createStandardTaskWithId(int id, String title, String description) {
-        Type type = Type.TASK;
-        Task task = new Task(type, title, description, id);
+        Task task = new Task(title, description, id);
 
         addTask(task);
         return task;
@@ -155,13 +153,13 @@ public class InMemoryTaskManager implements TaskManager {
         usedIds.add(id);
         Type type = Type.SUBTASK;
 
-        Subtask subtask = new Subtask(type, title, description, id, parentId);
+        Subtask subtask = new Subtask(title, description, id, parentId);
         return subtask;
     }
 
     public Subtask createSubtaskWithId(int id, String title, String description, int parentId) {
         Type type = Type.SUBTASK;
-        Subtask subtask = new Subtask(type, title, description, id, parentId);
+        Subtask subtask = new Subtask(title, description, id, parentId);
         return subtask;
     }
 

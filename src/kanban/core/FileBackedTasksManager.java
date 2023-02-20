@@ -200,22 +200,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private String toString(AbstractTask task) {
         StringBuilder sb = new StringBuilder();
+        Type typeTask;
+        if (task instanceof Task) {
+            typeTask=Type.TASK;
+        } else if (task instanceof EpicTask) {
+            typeTask=Type.EPIC;
+        } else {
+            typeTask=Type.SUBTASK;
+        }
         sb.append(task.getId() + ",");
-        sb.append(task.getType() + ",");
+        sb.append(typeTask + ",");
         sb.append(task.getTitle() + ",");
         sb.append(task.getDescription() + ",");
         sb.append(task.getStatus());
-        if (task.getType() == Type.SUBTASK) {
+        if (typeTask == Type.SUBTASK) {
             Subtask subtask = (Subtask) task;
             sb.append(subtask.getParentId());
             sb.append("\n");
-        } else if (task.getType() == Type.EPIC) {
+        } else if (typeTask == Type.EPIC) {
             sb.append("\n");
             EpicTask epic = (EpicTask) task;
             Map<Integer, Subtask> subtasks = epic.getSubtasks();
             for (Subtask subtask : subtasks.values()) {
                 sb.append(subtask.getId() + ",");
-                sb.append(subtask.getType() + ",");
+                sb.append(Type.SUBTASK + ",");
                 sb.append(subtask.getTitle() + ",");
                 sb.append(subtask.getDescription() + ",");
                 sb.append(subtask.getStatus() + ",");
@@ -231,7 +239,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private AbstractTask fromString(String taskStringForm) {
         String[] strTask = taskStringForm.split(";");
         int id = 0;
-        Task task = new Task(Type.TASK, strTask[1], strTask[2], id);
+        Task task = new Task(strTask[1], strTask[2], id);
         return task;
     }
 

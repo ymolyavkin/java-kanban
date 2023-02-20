@@ -7,8 +7,8 @@ public class Subtask extends AbstractTask {
         return parentId;
     }
 
-    public Subtask(Type type, String title, String description, int id, int parentId) {
-        super(type, title, description, id);
+    public Subtask(String title, String description, int id, int parentId) {
+        super(title, description, id);
         this.parentId = parentId;
     }
 
