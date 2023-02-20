@@ -19,9 +19,9 @@ public class Managers {
 
         return historyManager;
     }
-    public static FileBackedTasksManager getFileBackedTasksManager() {
+    public static FileBackedTasksManager getFileBackedTasksManager(Path path) {
         fileBackedTasksManager
-                = new FileBackedTasksManager(Path.of("taskbacket.txt"));
+                = new FileBackedTasksManager(path);
         return fileBackedTasksManager;
     }
 

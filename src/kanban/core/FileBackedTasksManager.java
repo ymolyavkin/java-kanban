@@ -45,8 +45,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(Path path) {
-        FileBackedTasksManager fileBackedTasksManager = Managers.getFileBackedTasksManager();
-
+        FileBackedTasksManager fileBackedTasksManager = Managers.getFileBackedTasksManager(path);
+        fileBackedTasksManager.restoreDataFromFile();
 
         return fileBackedTasksManager;
     }
