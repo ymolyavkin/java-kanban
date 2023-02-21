@@ -34,24 +34,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         List<String> tasks = new ArrayList<>();
         try {
             String multilineFromFile = readFileOrNull();
-            int poSeparator= multilineFromFile.indexOf(System.lineSeparator());
-            System.out.println(poSeparator);
+
             if (multilineFromFile != null) {
-                int startPosition = multilineFromFile.indexOf("\n") + 1;
-                int endPosition = multilineFromFile.indexOf("\n\n");
-                String content = multilineFromFile.substring(startPosition, endPosition);
+                int poSeparator = multilineFromFile.indexOf(System.lineSeparator());
+                System.out.println(poSeparator);
+                multilineFromFile = multilineFromFile.substring(poSeparator + 2, multilineFromFile.length());
+                System.out.println(multilineFromFile);
+                int posEnd = multilineFromFile.indexOf("\r\n\r\n");
+                String content = multilineFromFile.substring(0, posEnd);
 
-                tasks.addAll(Arrays.asList(content.split("\n")));
+             /*   //int startPosition = multilineFromFile.indexOf("\n") + 1;
+                //int endPosition = multilineFromFile.indexOf("\n\n");
+              //  String content = multilineFromFile.substring(startPosition, endPosition);*/
+
+                tasks.addAll(Arrays.asList(content.split(System.lineSeparator())));
                 createTaskFromFile(tasks);
-
-                String history = multilineFromFile.substring(endPosition, multilineFromFile.length());
+                int posHystory = posEnd + 4;
+                String history = multilineFromFile.substring(posHystory, multilineFromFile.length());
 
                 if (!history.isEmpty()) {
-                    int posNewLine = history.indexOf("\n\n");
-                    int nextPosNewLine = history.indexOf("\n", posNewLine + 1);
-
-                    history = history.substring(posNewLine + 2);
-
                     List<Integer> idTaskFromHistory = historyFromFile(history);
                     addTasksToHistory(idTaskFromHistory);
                 }
@@ -124,7 +125,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (String s : epicsInStringForm) {
                 writer.write(s);
             }
-           // writer.write("\n");
+            // writer.write("\n");
             writer.newLine();
             writer.write(historyToString(getInMemoryHistoryManager()));
 
@@ -186,7 +187,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             }
                         }
                     }
-                    addEpic(epicTask);
+                    super.addEpic(epicTask);
+                    //addEpic(epicTask);
                 }
             }
             /*if (typeTask.equals("TASK")) {
@@ -235,8 +237,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Здесь отказался от использования StringJoiner, т.к. мне показалось, что код получился более громоздким,
      * по причине того, что разделитель нужно ставить не везде.
-     *
-     *
      */
     private String toString(AbstractTask task) {
         //StringJoiner sj = new StringJoiner(",");
@@ -258,10 +258,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case SUBTASK -> {
                 Subtask subtask = (Subtask) task;
                 sb.append(subtask.getParentId());
-                sb.append("\n");
+                sb.append(System.lineSeparator());
+                //sb.append("\n");
             }
             case EPIC -> {
-                sb.append("\n");
+                //sb.append("\n");
+                sb.append(System.lineSeparator());
                 EpicTask epic = (EpicTask) task;
                 Map<Integer, Subtask> subtasks = epic.getSubtasks();
                 for (Subtask subtask : subtasks.values()) {
@@ -271,11 +273,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     sb.append(subtask.getDescription() + ",");
                     sb.append(subtask.getStatus() + ",");
                     sb.append(subtask.getParentId());
-                    sb.append("\n");
+                    //sb.append("\n");
+                    sb.append(System.lineSeparator());
                 }
             }
             default -> {
-                sb.append("\n");
+                //sb.append("\n");
+                sb.append(System.lineSeparator());
             }
         }
         /*if (typeTask == Type.SUBTASK) {
