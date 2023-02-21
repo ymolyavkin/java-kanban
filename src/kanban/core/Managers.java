@@ -5,7 +5,6 @@ import java.nio.file.Path;
 public class Managers {
     public static InMemoryTaskManager inMemoryTaskManager = InMemoryTaskManager.getInstance();
     private static InMemoryHistoryManager historyManager;
-   // private static InFileHistoryManager inFileHistoryManager;
     private static FileBackedTasksManager fileBackedTasksManager;
 
 

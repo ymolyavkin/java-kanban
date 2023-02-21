@@ -1,9 +1,6 @@
 package kanban.visual;
 
 import kanban.core.FileBackedTasksManager;
-import kanban.core.InMemoryTaskManager;
-import kanban.core.Managers;
-import kanban.exceptions.ManagerSaveException;
 import kanban.model.*;
 
 import java.nio.file.Path;
@@ -14,7 +11,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static kanban.core.InMemoryTaskManager.getInMemoryHistoryManager;
 
 public class Main {
     private static Scanner scanner;
