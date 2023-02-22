@@ -39,7 +39,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 int poSeparator = multilineFromFile.indexOf(System.lineSeparator());
                 multilineFromFile = multilineFromFile.substring(poSeparator + 2, multilineFromFile.length());
                 int posEnd = multilineFromFile.indexOf("\r\n\r\n");
-                if (posEnd!=-1){
+                if (posEnd != -1) {
                     String content = multilineFromFile.substring(0, posEnd);
 
                     tasks.addAll(Arrays.asList(content.split(System.lineSeparator())));
@@ -123,7 +123,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             for (String s : epicsInStringForm) {
                 writer.write(s);
             }
-            // writer.write("\n");
             writer.newLine();
             writer.write(historyToString(getInMemoryHistoryManager()));
 
@@ -249,13 +248,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return sb.toString();
     }
 
-   /* private AbstractTask fromString(String taskStringForm) {
-        String[] strTask = taskStringForm.split(";");
-        int id = 0;
-        Task task = new Task(strTask[1], strTask[2], id);
-        return task;
-    }*/
-
     @Override
     public void addEpic(EpicTask epicTask) {
         super.addEpic(epicTask);
@@ -270,43 +262,30 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
         super.updateStandardTask(task, newTitleAndDescription, mustChangeStatus);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
+        save();
     }
 
     @Override
     public AbstractTask findTaskByIdOrNull(int id) {
         var foundTask = super.findTaskByIdOrNull(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
+        save();
+
         return foundTask;
     }
 
     @Override
     public boolean deleteTaskById(int id) {
         boolean oneTaskWasDeleted = super.deleteTaskById(id);
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
+        save();
+
         return oneTaskWasDeleted;
     }
 
     @Override
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
-        try {
-            save();
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
+        save();
+
         return wasDeleted;
     }
 }
