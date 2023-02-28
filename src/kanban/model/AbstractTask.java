@@ -1,5 +1,6 @@
 package kanban.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class AbstractTask implements Comparable<AbstractTask> {
@@ -7,7 +8,8 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     private String description;
     private int id;
     private Status status;
-    //private Type type;
+    private int duration;
+    private LocalDateTime startTime;
 
 
     public AbstractTask(String title, String description, int id) {
@@ -91,5 +93,17 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusMinutes(duration);
     }
 }
