@@ -9,6 +9,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -115,7 +117,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             if (Files.notExists(path)) {
                 Files.createFile(path);
             }
-            writer.write("id, type, name, description, status, epic");
+            writer.write("id, type, name, description, status, startTime, duration, epic");
             writer.newLine();
             for (String s : tasksInStringForm) {
                 writer.write(s);
@@ -152,17 +154,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String[] taskInfo = s.split(",");
             String title = taskInfo[2];
             String description = taskInfo[3];
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            LocalDateTime startTime = LocalDateTime.parse(taskInfo[4], formatter);
+            int duration = Integer.parseInt(taskInfo[5]);
+
             Type type = Type.valueOf(taskInfo[1]);
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
                 case TASK -> {
-                    createStandardTaskWithId(id, title, description);
+                    createStandardTaskWithId(id, title, description, startTime, duration);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла обычная задача с id = " + id);
                     System.out.print(Color.RESET);
                 }
                 case EPIC -> {
-                    EpicTask epicTask = createEpicWithId(id, title, description);
+                    EpicTask epicTask = createEpicWithId(id, title, description, startTime, duration);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла эпик с id = " + id);
                     System.out.print(Color.RESET);
@@ -175,10 +181,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             int parentId = Integer.parseInt(taskInfoSub[5]);
                             String titleSubtask = taskInfoSub[2];
                             String descriptionSubtask = taskInfoSub[3];
+                            LocalDateTime startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
+                            int durationSubtask = Integer.parseInt(taskInfoSub[5]);
                             Subtask subtask = createSubtaskWithId(idSubtask
                                     , titleSubtask
                                     , descriptionSubtask
-                                    , parentId);
+                                    , parentId
+                                    , startTimeSubtask
+                                    , durationSubtask);
                             if (epicTask.getId() == parentId) {
                                 addSubtaskToEpic(epicTask, subtask);
                             }
@@ -188,7 +198,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         }
-
     }
 
     private List<String> tasksIntoListString(Map<Integer, AbstractTask> tasks) {
@@ -205,6 +214,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * по причине того, что разделитель нужно ставить не везде.
      */
     private String toString(AbstractTask task) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         StringBuilder sb = new StringBuilder();
         Type typeTask;
         if (task instanceof Task) {
@@ -218,6 +228,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         sb.append(typeTask + ",");
         sb.append(task.getTitle() + ",");
         sb.append(task.getDescription() + ",");
+        sb.append(task.getStartTime().format(formatter) + ",");
+        sb.append(task.getDuration() + ",");
         sb.append(task.getStatus());
         switch (typeTask) {
             case SUBTASK -> {
@@ -226,7 +238,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 sb.append(System.lineSeparator());
             }
             case EPIC -> {
-                //sb.append("\n");
                 sb.append(System.lineSeparator());
                 EpicTask epic = (EpicTask) task;
                 Map<Integer, Subtask> subtasks = epic.getSubtasks();
@@ -235,9 +246,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     sb.append(Type.SUBTASK + ",");
                     sb.append(subtask.getTitle() + ",");
                     sb.append(subtask.getDescription() + ",");
+                    sb.append(subtask.getStartTime().format(formatter) + ",");
+                    sb.append(subtask.getDuration() + ",");
                     sb.append(subtask.getStatus() + ",");
                     sb.append(subtask.getParentId());
-                    //sb.append("\n");
                     sb.append(System.lineSeparator());
                 }
             }

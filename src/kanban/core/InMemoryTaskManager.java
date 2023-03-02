@@ -2,6 +2,8 @@ package kanban.core;
 
 import kanban.model.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,14 +109,18 @@ public class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = generateId(-1);
-        Task task = new Task(title, description, id);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
+        int duration = Integer.parseInt(parts[3]);
+        Task task = new Task(title, description, id, startTime, duration);
 
         addTask(task);
         return task;
     }
 
-    public Task createStandardTaskWithId(int id, String title, String description) {
-        Task task = new Task(title, description, id);
+    public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
+        Task task = new Task(title, description, id, startTime, duration);
 
         addTask(task);
         return task;
@@ -150,16 +156,26 @@ public class InMemoryTaskManager implements TaskManager {
         String title = parts[0];
         String description = parts[1];
         int id = generateId(parentId);
+
         usedIds.add(id);
         Type type = Type.SUBTASK;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
+        int duration = Integer.parseInt(parts[3]);
 
-        Subtask subtask = new Subtask(title, description, id, parentId);
+        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
         return subtask;
     }
 
-    public Subtask createSubtaskWithId(int id, String title, String description, int parentId) {
+    public Subtask createSubtaskWithId(
+              int id
+            , String title
+            , String description
+            , int parentId
+            , LocalDateTime startTime
+            , int duration) {
         Type type = Type.SUBTASK;
-        Subtask subtask = new Subtask(title, description, id, parentId);
+        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
         return subtask;
     }
 
@@ -173,15 +189,19 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        EpicTask epicTask = new EpicTask(type, title, description, epicId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
+        int duration = Integer.parseInt(parts[3]);
+
+        EpicTask epicTask = new EpicTask(type, title, description, epicId, startTime, duration);
         return epicTask;
     }
 
-    public EpicTask createEpicWithId(int id, String title, String description) {
+    public EpicTask createEpicWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        EpicTask epicTask = new EpicTask(type, title, description, id);
+        EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
         return epicTask;
     }
 
