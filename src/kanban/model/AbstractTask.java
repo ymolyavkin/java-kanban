@@ -1,6 +1,7 @@
 package kanban.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public abstract class AbstractTask implements Comparable<AbstractTask> {
@@ -12,12 +13,13 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     private LocalDateTime startTime;
 
 
-    public AbstractTask(String title, String description, int id) {
-        //this.type = type;
+    public AbstractTask(String title, String description, int id, LocalDateTime startTime, int duration) {
         this.title = title;
         this.description = description;
         this.id = id;
         status = Status.NEW;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public boolean changeStatus() {
@@ -46,11 +48,15 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public String toString() {
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        String dateTimetask = ", время начала: '" + startTime.format(formatter) + ", окончание: "
+                + getEndTime().format(formatter) + '\'';
         return "{ название: '" + title + '\''
                 + ", описание: '" + description + '\''
                 + ", id = " + id
-                + ", статус: " + status;
+                + dateTimetask
+                + ", статус: '" + status
+                + '\'';
     }
 
     @Override

@@ -1,13 +1,15 @@
 package kanban.model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class EpicTask extends AbstractTask {
     private final Map<Integer, Subtask> subtasks;
 
-    public EpicTask(Type type, String title, String description, int id) {
-        super(title, description, id);
+    public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, int duration) {
+        super(title, description, id, startTime, duration);
         this.subtasks = new HashMap<>();
     }
 
@@ -69,13 +71,17 @@ public final class EpicTask extends AbstractTask {
 
     @Override
     public String toString() {
-        return "Эпик { " +
-                "название: '" + this.getTitle() + '\'' +
-                ", описание: '" + this.getDescription() + '\'' +
-                ", id = " + this.getId() +
-                ", статус: " + this.getStatus() + " }\n" +
-                "Подзадачи: {\n" + printSubtasks(subtasks) +
-                "}";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        String dateTimetask = ", время начала: '" + getStartTime().format(formatter) + ", окончание: "
+                + getEndTime().format(formatter) + '\'';
+        return "Эпик { "
+             + "название: '" + this.getTitle() + '\''
+             + ", описание: '" + this.getDescription() + '\''
+             + ", id = " + this.getId()
+             + dateTimetask
+             + ", статус: " + this.getStatus() + " }\n"
+             + "Подзадачи: {\n" + printSubtasks(subtasks)
+             + "}";
     }
 
     private String printSubtasks(Map<Integer, Subtask> subtasks) {
