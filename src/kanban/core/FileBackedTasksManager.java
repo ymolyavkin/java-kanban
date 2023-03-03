@@ -178,7 +178,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         Type typeSubtask = Type.valueOf(taskInfoSub[1]);
                         int idSubtask = Integer.parseInt(taskInfoSub[0]);
                         if (typeSubtask == Type.SUBTASK) {
-                            int parentId = Integer.parseInt(taskInfoSub[5]);
+                            int parentId = Integer.parseInt(taskInfoSub[7]);
                             String titleSubtask = taskInfoSub[2];
                             String descriptionSubtask = taskInfoSub[3];
                             LocalDateTime startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
@@ -266,9 +266,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    public void addTask(Task task) {
-        super.addTask(task);
-        save();
+    public void addTask(Task task, boolean flag) {
+        super.addTask(task, flag);
+        if (flag) {
+            save();
+        }
+
+        System.out.println("Call child method");
     }
 
     @Override

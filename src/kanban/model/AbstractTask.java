@@ -61,6 +61,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public int compareTo(AbstractTask anotherTask) {
+        int result = this.startTime.compareTo(anotherTask.startTime);
+        if (result != 0) {
+            return result;
+        }
         if (this.status == anotherTask.getStatus() && this.id == anotherTask.getId()) {
             return 0;
         } else if (this.status == Status.NEW && anotherTask.getStatus() == Status.IN_PROGRESS
