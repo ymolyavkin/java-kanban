@@ -42,7 +42,8 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager.getHistory();
     }
 
-    public void addTask(Task task, boolean fromFile) {
+    public void addTask(Task task) {
+       // public void addTask(Task task, boolean fromFile) {
         int id = task.getId();
         standardTasks.put(id, task);
     }
@@ -115,14 +116,16 @@ public class InMemoryTaskManager implements TaskManager {
         int duration = Integer.parseInt(parts[3]);
         Task task = new Task(title, description, id, startTime, duration);
 
-        addTask(task, false);
+        //addTask(task, false);
+        addTask(task);
         return task;
     }
 
     public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
         Task task = new Task(title, description, id, startTime, duration);
 
-        addTask(task, false);
+        //addTask(task, false);
+        addTask(task);
         return task;
     }
 

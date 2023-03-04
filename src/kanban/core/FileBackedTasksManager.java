@@ -15,11 +15,17 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
-
+    //private boolean needWriteToFile = false;
+    private boolean needWriteToFile;
 
     public FileBackedTasksManager(Path path) {
         super();
         this.path = path;
+        needWriteToFile = false;
+    }
+
+    public void setNeedWriteToFile(boolean needWriteToFile) {
+        this.needWriteToFile = needWriteToFile;
     }
 
     public static FileBackedTasksManager loadFromFile(Path path) {
@@ -162,6 +168,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
                 case TASK -> {
+                    //needWriteToFile = true;
                     createStandardTaskWithId(id, title, description, startTime, duration);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла обычная задача с id = " + id);
@@ -194,7 +201,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             }
                         }
                     }
-                    super.addEpic(epicTask);
+                   // needWriteToFile = true;
+                    addEpic(epicTask);
+                    //super.addEpic(epicTask);
                 }
             }
         }
@@ -263,13 +272,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void addEpic(EpicTask epicTask) {
         super.addEpic(epicTask);
-        save();
+        if (needWriteToFile) {
+            save();
+            needWriteToFile = false;
+        }
     }
 
-    public void addTask(Task task, boolean flag) {
-        super.addTask(task, flag);
-        if (flag) {
+    public void addTask(Task task) {
+        //public void addTask(Task task, boolean flag) {
+        // super.addTask(task, flag);
+        super.addTask(task);
+        if (needWriteToFile) {
             save();
+            needWriteToFile = false;
         }
 
         System.out.println("Call child method");

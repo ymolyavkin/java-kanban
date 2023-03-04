@@ -169,6 +169,7 @@ public class Main {
 
                 fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             }
+            fileBackedTasksManager.setNeedWriteToFile(true);
             fileBackedTasksManager.addEpic(epicTask);
         }
     }
@@ -258,6 +259,7 @@ public class Main {
                             System.out.print(Color.RESET);
                         }
                         // Отправляем для добавления в мапу эпиков
+                        fileBackedTasksManager.setNeedWriteToFile(true);
                         fileBackedTasksManager.addEpic(epicTask);
                     }
                 }
@@ -429,6 +431,7 @@ public class Main {
 
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
+        fileBackedTasksManager.setNeedWriteToFile(true);
         fileBackedTasksManager.addEpic(epicTask);
 
         // Создаём эпик
@@ -452,6 +455,7 @@ public class Main {
             //  epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
         }
+        fileBackedTasksManager.setNeedWriteToFile(true);
         fileBackedTasksManager.addEpic(epicTask);
     }
 
