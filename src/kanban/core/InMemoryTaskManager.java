@@ -2,18 +2,17 @@ package kanban.core;
 
 import kanban.model.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private static int initId;
     private static List<Integer> usedIds = new ArrayList<>();
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
+    private static final TreeSet<AbstractTask> allTasks = new TreeSet<>();
     private static InMemoryTaskManager instance;
     private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
@@ -43,14 +42,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void addTask(Task task) {
-       // public void addTask(Task task, boolean fromFile) {
         int id = task.getId();
+
+        int idOver = idOverlap(task);
+        if (idOver != -1) {
+            System.out.println("Task " + id + " intersects with task " + idOver);
+        } else {
+            System.out.println("This is no overlap");
+        }
+
         standardTasks.put(id, task);
+        allTasks.add(task);
     }
 
     public void addEpic(EpicTask epicTask) {
-
         epicTasks.put(epicTask.getId(), epicTask);
+        allTasks.add(epicTask);
     }
 
     /**
@@ -102,7 +109,6 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
-        // return usedIds;
     }
 
     public Task createStandardTask(String titleAndDescription) {
@@ -116,15 +122,22 @@ public class InMemoryTaskManager implements TaskManager {
         int duration = Integer.parseInt(parts[3]);
         Task task = new Task(title, description, id, startTime, duration);
 
-        //addTask(task, false);
         addTask(task);
         return task;
+    }
+
+    private static int idOverlap(Task task) {
+        for (AbstractTask itemTask : allTasks) {
+            if (itemTask.isOverlap(task)) {
+                return itemTask.getId();
+            }
+        }
+        return -1;
     }
 
     public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
         Task task = new Task(title, description, id, startTime, duration);
 
-        //addTask(task, false);
         addTask(task);
         return task;
     }
@@ -171,7 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Subtask createSubtaskWithId(
-              int id
+            int id
             , String title
             , String description
             , int parentId

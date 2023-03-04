@@ -1,6 +1,8 @@
 package kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -75,6 +77,24 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         } else {
             return 1;
         }
+    }
+
+    public boolean isOverlap(AbstractTask otherTask) {
+        // int commonDuration = this.duration + otherTask.getDuration();
+        if (this.startTime.isEqual(otherTask.startTime)) {
+            return true;
+        }
+        if (this.startTime.isBefore(otherTask.startTime)) {
+            //Duration timeDuration = Duration.between(startTime, otherTask.getEndTime());
+            if (otherTask.startTime.isBefore(this.getEndTime())) {
+                return true;
+            }
+        } else if (otherTask.startTime.isBefore(this.startTime)) {
+            if (this.startTime.isBefore(otherTask.getEndTime())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getId() {
