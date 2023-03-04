@@ -236,6 +236,11 @@ public class InMemoryTaskManager implements TaskManager {
         return standardTasks;
     }
 
+    public TreeSet<AbstractTask> getAllTasks() {
+
+        return allTasks;
+    }
+
     /**
      * @return Map<Integer, AbstractTask> EpicTasks
      */

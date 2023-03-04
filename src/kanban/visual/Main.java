@@ -4,10 +4,7 @@ import kanban.core.FileBackedTasksManager;
 import kanban.model.*;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +42,21 @@ public class Main {
     }
 
     static void getListOfAllTasks() {
+        TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getAllTasks();
+        if (myTasks.isEmpty()) {
+            System.out.print(Color.RED);
+            System.out.println("У Вас нет задач");
+            System.out.print(Color.RESET);
+            return;
+        }
+        for (AbstractTask task : myTasks) {
+            System.out.println(task);
+            /*if (task instanceof EpicTask) {
+                EpicTask epic = (EpicTask) task;
+                Map<Integer, Subtask> subtasks=epic.getSubtasks();
+            }*/
+        }
+       /* return;
         var standardTasks = fileBackedTasksManager.getStandardTasks();
         var epicTasks = fileBackedTasksManager.getEpicTasks();
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
@@ -70,7 +82,7 @@ public class Main {
 
                 System.out.println(task + " ");
             }
-        }
+        }*/
     }
 
     static void printMenu() {

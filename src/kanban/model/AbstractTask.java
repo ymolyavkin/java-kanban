@@ -53,7 +53,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String dateTimetask = ", время начала: '" + startTime.format(formatter) + ", окончание: "
                 + getEndTime().format(formatter) + '\'';
-        return "{ название: '" + title + '\''
+        return "Задача: { название: '" + title + '\''
                 + ", описание: '" + description + '\''
                 + ", id = " + id
                 + dateTimetask
