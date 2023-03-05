@@ -201,7 +201,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             }
                         }
                     }
-                   // needWriteToFile = true;
+                    // needWriteToFile = true;
                     addEpic(epicTask);
                     //super.addEpic(epicTask);
                 }
@@ -249,8 +249,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case EPIC -> {
                 sb.append(System.lineSeparator());
                 EpicTask epic = (EpicTask) task;
-                Map<Integer, Subtask> subtasks = epic.getSubtasks();
-                for (Subtask subtask : subtasks.values()) {
+                // Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                // for (Subtask subtask : subtasks.values())
+                TreeSet<Subtask> subtasks = epic.getSubtasks();
+                for (Subtask subtask : subtasks) {
                     sb.append(subtask.getId() + ",");
                     sb.append(Type.SUBTASK + ",");
                     sb.append(subtask.getTitle() + ",");

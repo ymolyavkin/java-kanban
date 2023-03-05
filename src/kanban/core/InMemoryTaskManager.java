@@ -102,11 +102,14 @@ public class InMemoryTaskManager implements TaskManager {
             for (AbstractTask epicTask : epicTasks.values()) {
                 EpicTask epic = (EpicTask) epicTask;
                 usedIds.add(epic.getId());
-                Map<Integer, Subtask> subtasks = epic.getSubtasks();
-
-                for (int key : subtasks.keySet()) {
-                    usedIds.add(key);
+                //Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                TreeSet<Subtask> subtasks = epic.getSubtasks();
+                for (Subtask subtask : subtasks) {
+                    usedIds.add(subtask.getId());
                 }
+                /*for (int key : subtasks.keySet()) {
+                    usedIds.add(key);
+                }*/
             }
         }
     }
@@ -254,6 +257,28 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.add(task);
     }
 
+    /*public AbstractTask findTaskByIdSetOrNull(int id) {
+        AbstractTask foundTask = null;
+        Iterator<AbstractTask> iterator = allTasks.iterator();
+        while (iterator.hasNext()) {
+            AbstractTask task = iterator.next();
+            if (task.getId() == id){
+                foundTask=task;
+                addTaskIntoHistory(foundTask);
+            }
+        }
+        return foundTask;
+    }*/
+
+    public Subtask findSubtaskByIdOrNull(int id, TreeSet<Subtask> subtasks) {
+        Iterator<Subtask> iterator = subtasks.iterator();
+        while (iterator.hasNext()) {
+            Subtask subtask = iterator.next();
+            if (subtask.getId() == id)
+                return subtask;
+        }
+        return null;
+    }
     public AbstractTask findTaskByIdOrNull(int id) {
         AbstractTask foundTask = null;
         // Ищем среди обычных задач
@@ -271,12 +296,14 @@ public class InMemoryTaskManager implements TaskManager {
                 // Получаем эпик
                 EpicTask epic = (EpicTask) abstractTask;
                 // Получаем подзадачи эпика
-                Map<Integer, Subtask> subtasks = epic.getSubtasks();
+                TreeSet<Subtask> subtasks = epic.getSubtasks();
+                foundTask=findSubtaskByIdOrNull(id, subtasks);
+               /* Map<Integer, Subtask> subtasks = epic.getSubtasks();
                 // Ищем среди подзадач текущего эпика
                 if (subtasks.containsKey(id)) {
 
                     foundTask = subtasks.get(id);
-                }
+                }*/
             }
         }
         if (foundTask != null) {
@@ -311,12 +338,19 @@ public class InMemoryTaskManager implements TaskManager {
             EpicTask epic = (EpicTask) abstractTask;
 
             // Получаем подзадачи эпика
-            Map<Integer, Subtask> subtasks = epic.getSubtasks();
+            //Map<Integer, Subtask> subtasks = epic.getSubtasks();
+            TreeSet<Subtask> subtasks = epic.getSubtasks();
             // Ищем среди подзадач текущего эпика
-            if (subtasks.containsKey(id)) {
-                subtasks.remove(id);
+            Subtask subtask = findSubtaskByIdOrNull(id, subtasks);
+            if (subtask != null) {
+                subtasks.remove(subtask);
                 return true;
             }
+
+            /*if (subtasks.containsKey(id)) {
+                subtasks.remove(id);
+                return true;
+            }*/
         }
         return false;
     }

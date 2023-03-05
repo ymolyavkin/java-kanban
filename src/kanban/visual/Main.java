@@ -247,11 +247,13 @@ public class Main {
                     String strSubtaskId = scanner.nextLine();
                     int subtaskId = stringToInt(strSubtaskId);
 
-                    Map<Integer, Subtask> subtasks = epicTask.getSubtasks();
-
-                    if (subtasks.containsKey(subtaskId)) {
+                    //Map<Integer, Subtask> subtasks = epicTask.getSubtasks();
+                    TreeSet<Subtask> subtasks = epicTask.getSubtasks();
+                    Subtask subtask = fileBackedTasksManager.findSubtaskByIdOrNull(subtaskId, subtasks);
+                    if (subtask != null) {
+                        //if (subtasks.containsKey(subtaskId)) {
                         // Обновляем подзадачу
-                        Subtask subtask = subtasks.get(subtaskId);
+                       // Subtask subtask = subtasks.get(subtaskId);
                         // Получаем новое название и описание подзадачи
                         String[] changeTitleAndDescription
                                 = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
@@ -435,7 +437,7 @@ public class Main {
 
         // Создаем список названий и описаний подзадач
         String[] importantTitleAndDescriptions = {
-                  "Подзадача 1|Прочитать ТЗ|25.02.2023 12:24|15"
+                "Подзадача 1|Прочитать ТЗ|25.02.2023 12:24|15"
                 , "Подзадача 2|Понять ТЗ|25.02.2023 12:39|15"};
         for (String titleDescription : importantTitleAndDescriptions) {
 
