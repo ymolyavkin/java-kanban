@@ -1,5 +1,6 @@
 package kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -10,12 +11,16 @@ public final class EpicTask extends AbstractTask {
     // private final Map<Integer, Subtask> subtasks;
     private final TreeSet<Subtask> subtasks;
 
-    public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, int duration) {
+    public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, long duration) {
         super(title, description, id, startTime, duration);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
     }
-
+    public EpicTask(Type type, String title, String description, int id) {
+        super(title, description, id);
+        //this.subtasks = new HashMap<>();
+        this.subtasks = new TreeSet<>();
+    }
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask);
         //subtasks.put(subtask.getId(), subtask);
@@ -91,11 +96,32 @@ public final class EpicTask extends AbstractTask {
     private boolean oneStatusIsProgress(TreeSet<Subtask> tasks) {
         if (tasks.isEmpty()) return false;
 
-        // обходим всю мапу перебирая её значения
         for (Subtask task : tasks) {
             if (task.getStatus() == Status.IN_PROGRESS) return true;
         }
         return false;
+    }
+
+    @Override
+    public long getDuration() {
+        LocalDateTime startTime = subtasks.first().getStartTime();
+        LocalDateTime startLastTask = subtasks.last().getStartTime();
+        LocalDateTime endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+        Duration allDuration = Duration.between(startTime, endTime);
+
+        return allDuration.toMinutes();
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        return subtasks.first().getStartTime();
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        LocalDateTime startLastTask = subtasks.last().getStartTime();
+
+        return startLastTask.plusMinutes(subtasks.last().getDuration());
     }
 
     @Override

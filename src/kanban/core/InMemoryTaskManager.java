@@ -138,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
         return -1;
     }
 
-    public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
+    public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, long duration) {
         Task task = new Task(title, description, id, startTime, duration);
 
         addTask(task);
@@ -216,7 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
-    public EpicTask createEpicWithId(int id, String title, String description, LocalDateTime startTime, int duration) {
+    public EpicTask createEpicWithId(int id, String title, String description, LocalDateTime startTime, long duration) {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 

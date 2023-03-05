@@ -161,14 +161,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String title = taskInfo[2];
             String description = taskInfo[3];
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            LocalDateTime startTime = LocalDateTime.parse(taskInfo[4], formatter);
-            int duration = Integer.parseInt(taskInfo[5]);
+            LocalDateTime startTime = null;
+            long duration = 0;
 
+            if (taskInfo[4] != "") {
+                startTime = LocalDateTime.parse(taskInfo[4], formatter);
+                duration = Integer.parseInt(taskInfo[5]);
+            }
             Type type = Type.valueOf(taskInfo[1]);
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
                 case TASK -> {
-                    //needWriteToFile = true;
                     createStandardTaskWithId(id, title, description, startTime, duration);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла обычная задача с id = " + id);
@@ -237,8 +240,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         sb.append(typeTask + ",");
         sb.append(task.getTitle() + ",");
         sb.append(task.getDescription() + ",");
-        sb.append(task.getStartTime().format(formatter) + ",");
-        sb.append(task.getDuration() + ",");
+        if (task.getStartTime()!=null) {
+            sb.append(task.getStartTime().format(formatter) + ",");
+            sb.append(task.getDuration() + ",");
+        } else {
+            sb.append("");
+            sb.append("");
+        }
+       // sb.append(task.getStartTime().format(formatter) + ",");
+        //sb.append(task.getDuration() + ",");
         sb.append(task.getStatus());
         switch (typeTask) {
             case SUBTASK -> {
@@ -296,12 +306,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
         super.updateStandardTask(task, newTitleAndDescription, mustChangeStatus);
         save();
+        needWriteToFile = false;
     }
 
     @Override
     public AbstractTask findTaskByIdOrNull(int id) {
         var foundTask = super.findTaskByIdOrNull(id);
-        save();
+        if (needWriteToFile) {
+            save();
+            needWriteToFile = false;
+        }
 
         return foundTask;
     }
@@ -310,6 +324,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public boolean deleteTaskById(int id) {
         boolean oneTaskWasDeleted = super.deleteTaskById(id);
         save();
+        needWriteToFile = false;
 
         return oneTaskWasDeleted;
     }
@@ -318,6 +333,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
         save();
+        needWriteToFile = false;
 
         return wasDeleted;
     }

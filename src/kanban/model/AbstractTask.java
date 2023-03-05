@@ -11,17 +11,24 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     private String description;
     private int id;
     private Status status;
-    private int duration;
+    private long duration;
     private LocalDateTime startTime;
 
 
-    public AbstractTask(String title, String description, int id, LocalDateTime startTime, int duration) {
+    public AbstractTask(String title, String description, int id, LocalDateTime startTime, long duration) {
         this.title = title;
         this.description = description;
         this.id = id;
         status = Status.NEW;
         this.duration = duration;
         this.startTime = startTime;
+    }
+
+    public AbstractTask(String title, String description, int id) {
+        this.title = title;
+        this.description = description;
+        this.id = id;
+        status = Status.NEW;
     }
 
     public boolean changeStatus() {
@@ -50,9 +57,13 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        String dateTimetask = ", время начала: '" + startTime.format(formatter) + ", окончание: "
-                + getEndTime().format(formatter) + '\'';
+        String dateTimetask = "";
+        if (startTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            dateTimetask = ", время начала: '" + startTime.format(formatter) + ", окончание: "
+                    + getEndTime().format(formatter) + '\'';
+        }
+
         return "Задача: { название: '" + title + '\''
                 + ", описание: '" + description + '\''
                 + ", id = " + id
@@ -63,6 +74,12 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public int compareTo(AbstractTask anotherTask) {
+        if (this.startTime == null) {
+            return -1;
+        }
+        if (anotherTask.startTime == null) {
+            return -1;
+        }
         int result = this.startTime.compareTo(anotherTask.startTime);
         if (result != 0) {
             return result;
@@ -80,7 +97,9 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     }
 
     public boolean isOverlap(AbstractTask otherTask) {
-        // int commonDuration = this.duration + otherTask.getDuration();
+        if (this.startTime == null || otherTask.startTime == null) {
+            return false;
+        }
         if (this.startTime.isEqual(otherTask.startTime)) {
             return true;
         }
@@ -125,7 +144,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         this.status = status;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
