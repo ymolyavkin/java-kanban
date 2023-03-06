@@ -205,6 +205,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         }
                     }
                     // needWriteToFile = true;
+                    epicTask.calculateTime();
                     addEpic(epicTask);
                     //super.addEpic(epicTask);
                 }
@@ -267,8 +268,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     sb.append(Type.SUBTASK + ",");
                     sb.append(subtask.getTitle() + ",");
                     sb.append(subtask.getDescription() + ",");
-                    sb.append(subtask.getStartTime().format(formatter) + ",");
-                    sb.append(subtask.getDuration() + ",");
+                    if (subtask.getStartTime()!=null) {
+                        sb.append(subtask.getStartTime().format(formatter) + ",");
+                        sb.append(subtask.getDuration() + ",");
+                    } else {
+                        sb.append("");
+                        sb.append("");
+                    }
+                   // sb.append(subtask.getStartTime().format(formatter) + ",");
+                  //  sb.append(subtask.getDuration() + ",");
                     sb.append(subtask.getStatus() + ",");
                     sb.append(subtask.getParentId());
                     sb.append(System.lineSeparator());
