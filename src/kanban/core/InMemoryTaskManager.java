@@ -137,8 +137,16 @@ public class InMemoryTaskManager implements TaskManager {
         return -1;
     }
 
-    public Task createStandardTaskWithId(int id, String title, String description, LocalDateTime startTime, long duration) {
+    public Task createStandardTaskWithId(int id,
+                                         String title,
+                                         String description,
+                                         LocalDateTime startTime,
+                                         long duration,
+                                         Status status) {
         Task task = new Task(title, description, id, startTime, duration);
+        if (task.getStatus() != status) {
+            task.setStatus(status);
+        }
 
         addTask(task);
         return task;
@@ -207,15 +215,19 @@ public class InMemoryTaskManager implements TaskManager {
         return subtask;
     }
 
-    public Subtask createSubtaskWithId(
-            int id
-            , String title
-            , String description
-            , int parentId
-            , LocalDateTime startTime
-            , int duration) {
+    public Subtask createSubtaskWithId(int id,
+                                       String title,
+                                       String description,
+                                       int parentId,
+                                       LocalDateTime startTime,
+                                       int duration,
+                                       Status status) {
         Type type = Type.SUBTASK;
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
+
+        if (subtask.getStatus() != status) {
+            subtask.setStatus(status);
+        }
         return subtask;
     }
 
@@ -238,13 +250,17 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
-    public EpicTask createEpicWithId(int id, String title, String description) {
+    public EpicTask createEpicWithId(int id, String title, String description, Status status) {
         //, LocalDateTime startTime, long duration) {
         //  int epicId = generateId(-1);
         Type type = Type.EPIC;
 
         //EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
         EpicTask epicTask = new EpicTask(type, title, description, id);
+
+        if (epicTask.getStatus() != status) {
+            epicTask.setStatus(status);
+        }
         return epicTask;
     }
 
