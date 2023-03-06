@@ -35,14 +35,14 @@ public class Main {
                 case "6" -> deleteAllTasks();
                 case "7" -> createSeveralTestTasks();
                 case "8" -> getBrowsingHistory();
+                case "9" -> getProritizedTask();
                 case "0" -> System.out.println("Выход");
                 default -> System.out.println("Извините, такой команды пока нет. Введите число от 0 до 8");
             }
         } while (!userInput.equals("0"));
     }
-
-    static void getListOfAllTasks() {
-        TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getAllTasks();
+    static void getProritizedTask(){
+        TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
             System.out.println("У Вас нет задач");
@@ -51,12 +51,9 @@ public class Main {
         }
         for (AbstractTask task : myTasks) {
             System.out.println(task);
-            /*if (task instanceof EpicTask) {
-                EpicTask epic = (EpicTask) task;
-                Map<Integer, Subtask> subtasks=epic.getSubtasks();
-            }*/
         }
-       /* return;
+    }
+    static void getListOfAllTasks() {
         var standardTasks = fileBackedTasksManager.getStandardTasks();
         var epicTasks = fileBackedTasksManager.getEpicTasks();
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
@@ -82,7 +79,7 @@ public class Main {
 
                 System.out.println(task + " ");
             }
-        }*/
+        }
     }
 
     static void printMenu() {
@@ -95,6 +92,7 @@ public class Main {
         System.out.println("6 - Удалить все задачи");
         System.out.println("7 - Создать несколько тестовых задач");
         System.out.println("8 - Получить историю просмотров задач");
+        System.out.println("9 - Получить отсортированный по времени начала список всех задач");
         System.out.println("0 - Выход из программы");
     }
 
@@ -484,7 +482,7 @@ public class Main {
         }
         int count = 1;
         for (AbstractTask abstractTask : historyFindTask) {
-            System.out.print(count + " задача: ");
+            System.out.print(count + " ");
             System.out.println(abstractTask);
             count++;
             System.out.println("-------------------------------------------------------------------------------------");

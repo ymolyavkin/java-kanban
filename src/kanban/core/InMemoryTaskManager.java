@@ -2,7 +2,6 @@ package kanban.core;
 
 import kanban.model.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -239,7 +238,7 @@ public class InMemoryTaskManager implements TaskManager {
         return standardTasks;
     }
 
-    public TreeSet<AbstractTask> getAllTasks() {
+    public TreeSet<AbstractTask> getPrioritizedTasks() {
 
         return allTasks;
     }
