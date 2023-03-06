@@ -74,13 +74,13 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public int compareTo(AbstractTask anotherTask) {
-        if (this.startTime == null) {
+        if (this.getStartTime() == null) {
             return -1;
         }
-        if (anotherTask.startTime == null) {
+        if (anotherTask.getStartTime() == null) {
             return -1;
         }
-        int result = this.startTime.compareTo(anotherTask.startTime);
+        int result = this.getStartTime().compareTo(anotherTask.getStartTime());
         if (result != 0) {
             return result;
         }
@@ -97,18 +97,18 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     }
 
     public boolean isOverlap(AbstractTask otherTask) {
-        if (this.startTime == null || otherTask.startTime == null) {
+        if (this.getStartTime() == null || otherTask.getStartTime() == null) {
             return false;
         }
-        if (this.startTime.isEqual(otherTask.startTime)) {
+        if (this.getStartTime().isEqual(otherTask.getStartTime())) {
             return true;
         }
-        if (this.startTime.isBefore(otherTask.startTime)) {
+        if (this.getStartTime().isBefore(otherTask.getStartTime())) {
             //Duration timeDuration = Duration.between(startTime, otherTask.getEndTime());
-            if (otherTask.startTime.isBefore(this.getEndTime())) {
+            if (otherTask.getStartTime().isBefore(this.getEndTime())) {
                 return true;
             }
-        } else if (otherTask.startTime.isBefore(this.startTime)) {
+        } else if (otherTask.getStartTime().isBefore(this.getStartTime())) {
             if (this.startTime.isBefore(otherTask.getEndTime())) {
                 return true;
             }

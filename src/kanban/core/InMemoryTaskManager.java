@@ -11,7 +11,7 @@ public class InMemoryTaskManager implements TaskManager {
     private static List<Integer> usedIds = new ArrayList<>();
     private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
-    private static final TreeSet<AbstractTask> allTasks = new TreeSet<>();
+    private static final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
     private static InMemoryTaskManager instance;
     private static InMemoryHistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
@@ -51,12 +51,12 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         standardTasks.put(id, task);
-        allTasks.add(task);
+        allTasksSorted.add(task);
     }
 
     public void addEpic(EpicTask epicTask) {
         epicTasks.put(epicTask.getId(), epicTask);
-        allTasks.add(epicTask);
+        allTasksSorted.add(epicTask);
     }
 
     /**
@@ -129,7 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private static int idOverlap(Task task) {
-        for (AbstractTask itemTask : allTasks) {
+        for (AbstractTask itemTask : allTasksSorted) {
             if (itemTask.isOverlap(task)) {
                 return itemTask.getId();
             }
@@ -144,6 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    // TODO: 06.03.2023 после обновления времени задачи нужно удалять ее из treeset и обратно добавлять 
     public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
@@ -264,7 +265,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public TreeSet<AbstractTask> getPrioritizedTasks() {
 
-        return allTasks;
+        return allTasksSorted;
     }
 
     /**
