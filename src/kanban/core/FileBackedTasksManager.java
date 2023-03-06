@@ -178,7 +178,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     System.out.print(Color.RESET);
                 }
                 case EPIC -> {
-                    EpicTask epicTask = createEpicWithId(id, title, description, startTime, duration);
+                    //EpicTask epicTask = createEpicWithId(id, title, description, startTime, duration);
+                    EpicTask epicTask = createEpicWithId(id, title, description);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла эпик с id = " + id);
                     System.out.print(Color.RESET);
@@ -241,14 +242,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         sb.append(typeTask + ",");
         sb.append(task.getTitle() + ",");
         sb.append(task.getDescription() + ",");
-        if (task.getStartTime()!=null) {
+        if (task.getStartTime() != null) {
             sb.append(task.getStartTime().format(formatter) + ",");
             sb.append(task.getDuration() + ",");
         } else {
             sb.append("");
             sb.append("");
         }
-       // sb.append(task.getStartTime().format(formatter) + ",");
+        // sb.append(task.getStartTime().format(formatter) + ",");
         //sb.append(task.getDuration() + ",");
         sb.append(task.getStatus());
         switch (typeTask) {
@@ -268,15 +269,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     sb.append(Type.SUBTASK + ",");
                     sb.append(subtask.getTitle() + ",");
                     sb.append(subtask.getDescription() + ",");
-                    if (subtask.getStartTime()!=null) {
+                    if (subtask.getStartTime() != null) {
                         sb.append(subtask.getStartTime().format(formatter) + ",");
                         sb.append(subtask.getDuration() + ",");
                     } else {
                         sb.append("");
                         sb.append("");
                     }
-                   // sb.append(subtask.getStartTime().format(formatter) + ",");
-                  //  sb.append(subtask.getDuration() + ",");
+                    // sb.append(subtask.getStartTime().format(formatter) + ",");
+                    //  sb.append(subtask.getDuration() + ",");
                     sb.append(subtask.getStatus() + ",");
                     sb.append(subtask.getParentId());
                     sb.append(System.lineSeparator());
@@ -291,6 +292,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public void addEpic(EpicTask epicTask) {
+        epicTask.calculateTime();
         super.addEpic(epicTask);
         if (needWriteToFile) {
             save();
@@ -311,8 +313,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
-        super.updateStandardTask(task, newTitleAndDescription, mustChangeStatus);
+    public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
+        super.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
         save();
         needWriteToFile = false;
     }

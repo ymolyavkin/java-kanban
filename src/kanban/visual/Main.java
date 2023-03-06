@@ -4,6 +4,8 @@ import kanban.core.FileBackedTasksManager;
 import kanban.model.*;
 
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +43,8 @@ public class Main {
             }
         } while (!userInput.equals("0"));
     }
-    static void getProritizedTask(){
+
+    static void getProritizedTask() {
         TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
@@ -53,6 +56,7 @@ public class Main {
             System.out.println(task);
         }
     }
+
     static void getListOfAllTasks() {
         var standardTasks = fileBackedTasksManager.getStandardTasks();
         var epicTasks = fileBackedTasksManager.getEpicTasks();
@@ -216,12 +220,17 @@ public class Main {
             System.out.print(Color.RESET);
         } else {
             // Получаем новое название и описание найденной задачи
-            String[] newTitleAndDescription = updateTitleAndDescription(task.getTitle(), task.getDescription());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            String startTime = task.getStartTime().format(formatter);
+            String duration = String.valueOf(task.getDuration());
+            String[] newTitleAndDescription =
+                    updateTitleAndDescription(task.getTitle(), task.getDescription());
             // Определяем тип задачи
             if (task instanceof Task) {
-                // Это обычная задача
+                System.out.println("Это обычная задача");
+                String[] newTime = updateTime(startTime, duration);
                 boolean statusWasChanged = mustChangeStatus();
-                fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, mustChangeStatus());
+                fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
                 System.out.print(Color.GREEN);
 
                 if (statusWasChanged) {
@@ -231,8 +240,10 @@ public class Main {
                 }
                 System.out.print(Color.RESET);
             } else if (task instanceof EpicTask) {
-                // Это эпик
+                System.out.println("Это эпик");
                 EpicTask epicTask = (EpicTask) task;
+                fileBackedTasksManager.updateEpic((EpicTask) task, newTitleAndDescription);
+
                 String[] menuItems = {"'Да' - '1', 'нет' - любая клавиша"};
                 int[] values = {1};
 
@@ -251,13 +262,27 @@ public class Main {
                     if (subtask != null) {
                         //if (subtasks.containsKey(subtaskId)) {
                         // Обновляем подзадачу
-                       // Subtask subtask = subtasks.get(subtaskId);
+                        // Subtask subtask = subtasks.get(subtaskId);
                         // Получаем новое название и описание подзадачи
-                        String[] changeTitleAndDescription
-                                = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
+/**
+ *
+ *
+ *             String[] newTitleAndDescription =
+ *                     updateTitleAndDescription(task.getTitle(), task.getDescription());
+ *             // Определяем тип задачи
+ *             if (task instanceof Task) {
+ *                 System.out.println("Это обычная задача");
+ *                 String[] newTime = updateTime(startTime, duration);
+ *                 boolean statusWasChanged = mustChangeStatus();
+ *                 fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
+ */
+                        String currentStartTime = subtask.getStartTime().format(formatter);
+                        String currentDuration = String.valueOf(subtask.getDuration());
+                        String[] changeTitleAndDescription = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
 
+                        String[] changeTime = updateTime(currentStartTime, currentDuration);
                         Subtask updatedSubtask = fileBackedTasksManager.updateSubtask(subtask,
-                                changeTitleAndDescription, mustChangeStatus());
+                                changeTitleAndDescription, changeTime, mustChangeStatus());
 
                         Status currentStatus = epicTask.getStatus();
                         // Добавляем обновленную подзадачу к эпику
@@ -315,6 +340,35 @@ public class Main {
         } else {
             System.out.println("Новое описание: " + newDescription);
             newData[1] = newDescription;
+        }
+        return newData;
+    }
+
+    // TODO: 06.03.2023 переделать updateTime
+    private static String[] updateTime(String currentStartTime, String currentDuration) {
+        String[] newData = new String[2];
+        newData[0] = currentStartTime;
+        newData[1] = currentDuration;
+
+        System.out.println("Текущее время начала задачи: " + currentStartTime);
+        System.out.println("Новое время (если ввод будет пустым, то останется старое значение):");
+        String newStartTime = scanner.nextLine();
+
+        if (newStartTime.equals("")) {
+            System.out.println("Время не изменилось: " + currentStartTime);
+        } else {
+            System.out.println("Новое время: " + newStartTime);
+            newData[0] = newStartTime;
+        }
+        System.out.println("Текущая продолжительность задачи: " + currentDuration);
+        System.out.println("Новая продолжительность (если ввод будет пустым, то останется старое значение):");
+        String newDuration = scanner.nextLine();
+
+        if (newDuration.equals("")) {
+            System.out.println("Продолжительность не изменилось: " + currentDuration);
+        } else {
+            System.out.println("Новая продолжительность: " + newDuration);
+            newData[1] = newDuration;
         }
         return newData;
     }

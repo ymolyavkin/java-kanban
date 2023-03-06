@@ -144,21 +144,42 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    public void updateStandardTask(Task task, String[] newTitleAndDescription, boolean mustChangeStatus) {
+    public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
+        long newDuration = Long.parseLong(newTime[1]);
+
+        task.setStartTime(newStartTime);
+        task.setDuration(newDuration);
+
         boolean statusWasChanged = false;
         if (mustChangeStatus) {
             statusWasChanged = task.changeStatus();
         }
     }
 
+    /* TODO  дописать обновление эпика*/
+    public void updateEpic(EpicTask epic, String[] newTitleAndDescription) {
+        epic.setTitle(newTitleAndDescription[0]);
+        epic.setDescription(newTitleAndDescription[1]);
+    }
+
     /**
      * @return Subtask after update
      */
-    public Subtask updateSubtask(Subtask subtask, String[] newTitleAndDescription, boolean mustChangeStatus) {
+    public Subtask updateSubtask(Subtask subtask, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         subtask.setTitle(newTitleAndDescription[0]);
         subtask.setDescription(newTitleAndDescription[1]);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
+        long newDuration = Long.parseLong(newTime[1]);
+
+        subtask.setStartTime(newStartTime);
+        subtask.setDuration(newDuration);
 
         if (mustChangeStatus) {
             subtask.changeStatus();
@@ -211,15 +232,18 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
         int duration = Integer.parseInt(parts[3]);
 
-        EpicTask epicTask = new EpicTask(type, title, description, epicId, startTime, duration);
+        // EpicTask epicTask = new EpicTask(type, title, description, epicId, startTime, duration);
+        EpicTask epicTask = new EpicTask(type, title, description, epicId);
         return epicTask;
     }
 
-    public EpicTask createEpicWithId(int id, String title, String description, LocalDateTime startTime, long duration) {
-        int epicId = generateId(-1);
+    public EpicTask createEpicWithId(int id, String title, String description) {
+        //, LocalDateTime startTime, long duration) {
+        //  int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
+        //EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
+        EpicTask epicTask = new EpicTask(type, title, description, id);
         return epicTask;
     }
 
@@ -278,6 +302,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return null;
     }
+
     public AbstractTask findTaskByIdOrNull(int id) {
         AbstractTask foundTask = null;
         // Ищем среди обычных задач
@@ -296,7 +321,7 @@ public class InMemoryTaskManager implements TaskManager {
                 EpicTask epic = (EpicTask) abstractTask;
                 // Получаем подзадачи эпика
                 TreeSet<Subtask> subtasks = epic.getSubtasks();
-                foundTask=findSubtaskByIdOrNull(id, subtasks);
+                foundTask = findSubtaskByIdOrNull(id, subtasks);
                /* Map<Integer, Subtask> subtasks = epic.getSubtasks();
                 // Ищем среди подзадач текущего эпика
                 if (subtasks.containsKey(id)) {
