@@ -10,18 +10,22 @@ import java.util.TreeSet;
 public final class EpicTask extends AbstractTask {
     // private final Map<Integer, Subtask> subtasks;
     private final TreeSet<Subtask> subtasks;
+    private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private long duration;
 
     public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, long duration) {
         super(title, description, id, startTime, duration);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
     }
+
     public EpicTask(Type type, String title, String description, int id) {
         super(title, description, id);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
     }
+
     public void addSubtask(Subtask subtask) {
         subtasks.add(subtask);
         //subtasks.put(subtask.getId(), subtask);
@@ -103,26 +107,29 @@ public final class EpicTask extends AbstractTask {
         return false;
     }
 
+    public void calculateTime() {
+        startTime = subtasks.first().getStartTime();
+        LocalDateTime startLastTask = subtasks.last().getStartTime();
+        endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+        long totalDuration = 0;
+        for (Subtask subtask : subtasks) {
+            totalDuration += subtask.getDuration();
+        }
+        duration = totalDuration;
+    }
+
     @Override
     public long getDuration() {
-        LocalDateTime startTime = subtasks.first().getStartTime();
-        LocalDateTime startLastTask = subtasks.last().getStartTime();
-        LocalDateTime endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
-        Duration allDuration = Duration.between(startTime, endTime);
-
-        return allDuration.toMinutes();
+        return duration;
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        return subtasks.first().getStartTime();
+        return startTime;
     }
 
     @Override
     public LocalDateTime getEndTime() {
-        LocalDateTime startLastTask = subtasks.last().getStartTime();
-        endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
-
         return endTime;
     }
 
