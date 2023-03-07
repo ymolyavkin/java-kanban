@@ -28,6 +28,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.needWriteToFile = needWriteToFile;
     }
 
+
     public static FileBackedTasksManager loadFromFile(Path path) {
         FileBackedTasksManager fileBackedTasksManager = Managers.getFileBackedTasksManager(path);
         fileBackedTasksManager.restoreDataFromFile();
@@ -168,7 +169,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 startTime = LocalDateTime.parse(taskInfo[4], formatter);
                 duration = Integer.parseInt(taskInfo[5]);
             }
-            Status status= Status.valueOf(taskInfo[6]);
+            Status status = Status.valueOf(taskInfo[6]);
             Type type = Type.valueOf(taskInfo[1]);
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
@@ -193,8 +194,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             int parentId = Integer.parseInt(taskInfoSub[7]);
                             String titleSubtask = taskInfoSub[2];
                             String descriptionSubtask = taskInfoSub[3];
-                            LocalDateTime startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
-                            int durationSubtask = Integer.parseInt(taskInfoSub[5]);
+
+                            LocalDateTime startTimeSubtask = null;
+                            long durationSubtask = 0;
+
+                            if (taskInfoSub[4] != "") {
+                                startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
+                                durationSubtask = Integer.parseInt(taskInfoSub[5]);
+                            }
+
                             Subtask subtask = createSubtaskWithId(idSubtask,
                                                                   titleSubtask,
                                                                   descriptionSubtask,

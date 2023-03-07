@@ -204,6 +204,7 @@ public class Main {
         if (typeTask == 1) {
             fileBackedTasksManager.setNeedWriteToFile(true);
             Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
+
             System.out.print(Color.GREEN);
             System.out.println("Создана обычная задача с id = " + task.getId());
             System.out.print(Color.RESET);

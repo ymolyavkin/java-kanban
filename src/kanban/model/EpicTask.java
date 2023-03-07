@@ -108,9 +108,21 @@ public final class EpicTask extends AbstractTask {
     }
 
     public void calculateTime() {
+        /**
+         * Optional<Admission> admissionOptional = getAdmission(Patient patient);
+         * if (admissionOptional.isPresent()) {
+         *     Admission admission = admissionOptional.get();
+         *     // действия с данными о госпитализации
+         * }
+         */
+
         startTime = subtasks.first().getStartTime();
+        endTime = null;
         LocalDateTime startLastTask = subtasks.last().getStartTime();
-        endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+        if (startLastTask != null) {
+            endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+        }
+
         long totalDuration = 0;
         for (Subtask subtask : subtasks) {
             totalDuration += subtask.getDuration();
@@ -135,9 +147,12 @@ public final class EpicTask extends AbstractTask {
 
     @Override
     public String toString() {
+        String dateTimetask = "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        String dateTimetask = ", время начала: '" + getStartTime().format(formatter) + ", окончание: "
-                + getEndTime().format(formatter) + '\'';
+        if (getStartTime() != null && getEndTime() != null) {
+            dateTimetask = ", время начала: '" + getStartTime().format(formatter) + ", окончание: "
+                    + getEndTime().format(formatter) + '\'';
+        }
         return "Эпик { "
                 + "название: '" + this.getTitle() + '\''
                 + ", описание: '" + this.getDescription() + '\''

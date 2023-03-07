@@ -9,7 +9,7 @@ public class Subtask extends AbstractTask {
         return parentId;
     }
 
-    public Subtask(String title, String description, int id, int parentId, LocalDateTime startTime, int duration) {
+    public Subtask(String title, String description, int id, int parentId, LocalDateTime startTime, long duration) {
         super(title, description, id, startTime, duration);
         this.parentId = parentId;
     }

@@ -213,9 +213,23 @@ public class InMemoryTaskManager implements TaskManager {
 
         usedIds.add(id);
         //   Type type = Type.SUBTASK;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
-        int duration = Integer.parseInt(parts[3]);
+        /**
+         *  LocalDateTime startTime = null;
+         *         long duration = 0;
+         *
+         *         if (!parts[2].equals("0")) {
+         *             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+         *             startTime = LocalDateTime.parse(parts[2], formatter);
+         *             duration = Integer.parseInt(parts[3]);
+         *         }
+         */
+        LocalDateTime startTime = null;
+        long duration = 0;
+        if (!parts[2].equals("0")) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            startTime = LocalDateTime.parse(parts[2], formatter);
+            duration = Integer.parseInt(parts[3]);
+        }
 
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
         return subtask;
@@ -226,7 +240,7 @@ public class InMemoryTaskManager implements TaskManager {
                                        String description,
                                        int parentId,
                                        LocalDateTime startTime,
-                                       int duration,
+                                       long duration,
                                        Status status) {
         //  Type type = Type.SUBTASK;
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
