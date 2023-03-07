@@ -302,18 +302,7 @@ public class Main {
                         // Обновляем подзадачу
                         // Subtask subtask = subtasks.get(subtaskId);
                         // Получаем новое название и описание подзадачи
-/**
- *
- *
- *             String[] newTitleAndDescription =
- *                     updateTitleAndDescription(task.getTitle(), task.getDescription());
- *             // Определяем тип задачи
- *             if (task instanceof Task) {
- *                 System.out.println("Это обычная задача");
- *                 String[] newTime = updateTime(startTime, duration);
- *                 boolean statusWasChanged = mustChangeStatus();
- *                 fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
- */
+
                         String currentStartTime = subtask.getStartTime().format(formatter);
                         String currentDuration = String.valueOf(subtask.getDuration());
                         String[] changeTitleAndDescription = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
