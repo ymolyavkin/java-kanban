@@ -74,15 +74,17 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
 
     @Override
     public int compareTo(AbstractTask anotherTask) {
-        if (this.getStartTime() == null && anotherTask.getStartTime() != null) {
-            return 1;
-        }
-        if (anotherTask.getStartTime() == null && this.getStartTime() != null) {
-            return -1;
-        }
-        int result = this.getStartTime().compareTo(anotherTask.getStartTime());
-        if (result != 0) {
-            return result;
+        if (this.getStartTime() != null || anotherTask.getStartTime() != null) {
+            if (this.getStartTime() == null && anotherTask.getStartTime() != null) {
+                return 1;
+            }
+            if (anotherTask.getStartTime() == null && this.getStartTime() != null) {
+                return -1;
+            }
+            int result = this.getStartTime().compareTo(anotherTask.getStartTime());
+            if (result != 0) {
+                return result;
+            }
         }
         if (this.status == anotherTask.getStatus() && this.id == anotherTask.getId()) {
             return 0;

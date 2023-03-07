@@ -4,8 +4,10 @@ import kanban.core.FileBackedTasksManager;
 import kanban.model.*;
 
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -135,7 +137,41 @@ public class Main {
         System.out.println("Введите описание задачи");
         String description = scanner.nextLine();
 
-        return title + "|" + description;
+        System.out.println("Введите время начала задачи в формате dd.MM.yyyy HH:mm ");
+        String stringStartTime = scanner.nextLine();
+        System.out.println("Введите продолжительность задачи в минутах: ");
+        String stringDuration = scanner.nextLine();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        try { LocalDateTime startTime = LocalDateTime.parse(stringStartTime, formatter);
+           //long duration = Long.parseLong(stringDuration);
+        } catch (DateTimeParseException exception) {
+            System.out.println("Некорректный ввод. Время не введено");
+            stringStartTime="0";
+        }
+        try {long  duration = Long.parseLong(stringDuration);
+        } catch (NumberFormatException exception) {
+           stringDuration="0";
+        }
+
+        /*if (newStartTime.equals("")) {
+            System.out.println("Время не изменилось: " + currentStartTime);
+        } else {
+            System.out.println("Новое время: " + newStartTime);
+            newData[0] = newStartTime;
+        }
+        System.out.println("Текущая продолжительность задачи: " + currentDuration);
+        System.out.println("Новая продолжительность (если ввод будет пустым, то останется старое значение):");
+        String newDuration = scanner.nextLine();
+
+        if (newDuration.equals("")) {
+            System.out.println("Продолжительность не изменилось: " + currentDuration);
+        } else {
+            System.out.println("Новая продолжительность: " + newDuration);
+            newData[1] = newDuration;
+        }*/
+
+        return title + "|" + description + "|" + stringStartTime + "|" + stringDuration;
     }
 
     private static List<String> createSubtaskItemInfo() {
@@ -163,9 +199,10 @@ public class Main {
         String[] menuItems = {"1 - обычная задача", "2 - эпик"};
         int[] values = {1, 2};
         int typeTask = userMenu("Выберите тип создаваемой задачи:", menuItems, values);
-        int taskId;
+        //  int taskId;
 
         if (typeTask == 1) {
+            fileBackedTasksManager.setNeedWriteToFile(true);
             Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
             System.out.print(Color.GREEN);
             System.out.println("Создана обычная задача с id = " + task.getId());

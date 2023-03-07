@@ -119,9 +119,15 @@ public class InMemoryTaskManager implements TaskManager {
         String description = parts[1];
         int id = generateId(-1);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
-        int duration = Integer.parseInt(parts[3]);
+        LocalDateTime startTime = null;
+        long duration = 0;
+
+        if (!parts[2].equals("0")) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            startTime = LocalDateTime.parse(parts[2], formatter);
+            duration = Integer.parseInt(parts[3]);
+        }
+
         Task task = new Task(title, description, id, startTime, duration);
 
         addTask(task);
@@ -206,7 +212,7 @@ public class InMemoryTaskManager implements TaskManager {
         int id = generateId(parentId);
 
         usedIds.add(id);
-        Type type = Type.SUBTASK;
+        //   Type type = Type.SUBTASK;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
         int duration = Integer.parseInt(parts[3]);
@@ -222,7 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
                                        LocalDateTime startTime,
                                        int duration,
                                        Status status) {
-        Type type = Type.SUBTASK;
+        //  Type type = Type.SUBTASK;
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
 
         if (subtask.getStatus() != status) {
@@ -241,9 +247,9 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
-        int duration = Integer.parseInt(parts[3]);
+        //  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        //   LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
+        //  int duration = Integer.parseInt(parts[3]);
 
         // EpicTask epicTask = new EpicTask(type, title, description, epicId, startTime, duration);
         EpicTask epicTask = new EpicTask(type, title, description, epicId);
@@ -407,6 +413,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             standardTasks.clear();
             epicTasks.clear();
+            allTasksSorted.clear();
             return true;
         }
     }
