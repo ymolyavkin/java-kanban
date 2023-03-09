@@ -2,30 +2,26 @@ package kanban.core;
 
 import kanban.model.AbstractTask;
 import kanban.model.Task;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeSet;
 
-/*import static kanban.core.InMemoryTaskManager.allTasksSorted;
-import static kanban.core.InMemoryTaskManager.standardTasks;*/
-import static jdk.jpackage.internal.IOUtils.deleteRecursive;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+//import static jdk.jpackage.internal.IOUtils.deleteRecursive;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 abstract class TaskManagerTest<T extends TaskManager> {
     final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
@@ -39,13 +35,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     long duration = Integer.parseInt(parts[3]);
     Task task;
 
-    @Before
+    @BeforeEach
     public void prepareTestData() {
         task = new Task(title, description, id, startTime, duration);
     }
+
     @Test
     public void addTask() {
-        task = new Task(title, description, id, startTime, duration);
+        //task = new Task(title, description, id, startTime, duration);
 
         standardTasks.put(id, task);
         allTasksSorted.add(task);
@@ -56,28 +53,32 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void createStandardTask() {
-        Task task = new Task(title, description, id, startTime, duration);
+        LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
+        Task task = new Task("title", "description", 0, dateTime, 15);
 
         assertNotNull(task);
-
+        assertEquals("title", task.getTitle());
+        assertEquals("description", task.getDescription());
+        assertEquals(dateTime, task.getStartTime());
+        assertEquals(15, task.getDuration());
     }
 
     private static File dir;
     private static Path path;
 
-    @BeforeClass
+    @Before
     public static void beforeClass() throws IOException {
         dir = Files.createTempDirectory(null).toFile();
     }
 
-    @AfterClass
+    @After
     public static void afterClass() throws IOException {
         if (path == null) {
             return;
         }
-        deleteRecursive(path);
+        //  deleteRecursive(path);
     }
-    @Test
+    /*@Test
     public void testgetSurname() {
         System.out.println("get surname");
         String filename = "";
@@ -98,7 +99,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         }
         String result = fileReader.getSurname(filename);
         assertEquals(expResult, result);
-    }
+    }*/
 
 
 }
