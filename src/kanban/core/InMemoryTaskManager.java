@@ -158,7 +158,8 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    // TODO: 06.03.2023 после обновления времени задачи нужно удалять ее из treeset и обратно добавлять 
+    // TODO: 06.03.2023 после обновления времени задачи нужно удалять ее из treeset и обратно добавлять
+    // TODO: 09.03.2023 написать удаление из treeset by id
     public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);

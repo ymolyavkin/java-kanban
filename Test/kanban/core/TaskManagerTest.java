@@ -1,6 +1,7 @@
 package kanban.core;
 
 import kanban.model.AbstractTask;
+import kanban.model.Status;
 import kanban.model.Task;
 import org.junit.After;
 import org.junit.Before;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-//import static jdk.jpackage.internal.IOUtils.deleteRecursive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -52,7 +52,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createStandardTask() {
+    void testCreateStandardTask() {
         LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
         Task task = new Task("title", "description", 0, dateTime, 15);
 
@@ -61,6 +61,58 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals("description", task.getDescription());
         assertEquals(dateTime, task.getStartTime());
         assertEquals(15, task.getDuration());
+    }
+
+    @Test
+    void createStandardTaskWithId() {
+        LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
+        Status status = Status.IN_PROGRESS;
+        Task task = new Task("title", "description", 0, dateTime, 15);
+
+        assertNotNull(task);
+        assertEquals("title", task.getTitle());
+        assertEquals("description", task.getDescription());
+        assertEquals(dateTime, task.getStartTime());
+        assertEquals(15, task.getDuration());
+        assertEquals(Status.NEW, task.getStatus());
+
+        if (task.getStatus() != status) {
+            task.setStatus(status);
+        }
+        assertEquals(Status.IN_PROGRESS, task.getStatus());
+    }
+
+    @Test
+    void updateStandardTask() {
+
+        String[] newTitleAndDescription = {"New title", "New description"};
+        String[] newTime = {"22.03.2021 15:00", "25"};
+        boolean mustChangeStatus = true;
+        boolean statusWasChanged = false;
+
+        task.setTitle(newTitleAndDescription[0]);
+        task.setDescription(newTitleAndDescription[1]);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
+        long newDuration = Long.parseLong(newTime[1]);
+
+        task.setStartTime(newStartTime);
+        task.setDuration(newDuration);
+
+
+
+        assertEquals("NewTitle", task.getTitle());
+        assertEquals("NewDescription", task.getDescription());
+        assertEquals(newStartTime, task.getStartTime());
+        assertEquals(newDuration, task.getDuration());
+        assertEquals(Status.NEW, task.getStatus());
+
+        if (mustChangeStatus) {
+            statusWasChanged = task.changeStatus();
+        }
+
+        assertEquals(Status.IN_PROGRESS, task.getStatus());
     }
 
     private static File dir;
