@@ -124,19 +124,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createSubtaskWithId(int id,
-                             String title,
-                             String description,
-                             int parentId,
-                             LocalDateTime startTime,
-                             long duration,
-                             Status status) {
-        //  Type type = Type.SUBTASK;
+    void createSubtaskWithId() {
+        Status status = Status.IN_PROGRESS;
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
+
+        assertNotNull(task);
+        assertEquals("Title", subtask.getTitle());
+        assertEquals("Description", subtask.getDescription());
+        assertEquals(startTime, subtask.getStartTime());
+        assertEquals(15, subtask.getDuration());
+        assertEquals(Status.NEW, subtask.getStatus());
 
         if (subtask.getStatus() != status) {
             subtask.setStatus(status);
         }
+        assertEquals(Status.IN_PROGRESS, subtask.getStatus());
     }
 
     @Test
