@@ -181,7 +181,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
                 case EPIC -> {
                     //EpicTask epicTask = createEpicWithId(id, title, description, startTime, duration);
-                    EpicTask epicTask = createEpicWithId(id, title, description, status);
+                    EpicTask epicTask = restoreEpicWithId(id, title, description, status);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла эпик с id = " + id);
                     System.out.print(Color.RESET);

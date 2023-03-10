@@ -128,12 +128,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateEpic() {
         String[] newTitleAndDescription = {"New title", "New description"};
+
         epic.setTitle(newTitleAndDescription[0]);
         epic.setDescription(newTitleAndDescription[1]);
     }
     @Test
     void createSubtask() {
-        Status status = Status.IN_PROGRESS;
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
 
         assertNotNull(task);
@@ -189,7 +189,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(Status.IN_PROGRESS, subtask.getStatus());
     }
 
+    @Test
+    void createEpicWithId() {
+        EpicTask epicTask = new EpicTask(title, description, id);
 
+        assertNotNull(epicTask);
+        assertEquals("Title", epicTask.getTitle());
+        assertEquals("Description", epicTask.getDescription());
+
+        Status status = Status.IN_PROGRESS;
+
+        if (epicTask.getStatus() != status) {
+            epicTask.setStatus(status);
+        }
+    }
 
 
     private static File dir;

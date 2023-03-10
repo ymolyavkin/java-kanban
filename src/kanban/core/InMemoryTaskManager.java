@@ -257,10 +257,10 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
-    public EpicTask createEpicWithId(int id, String title, String description, Status status) {
+    public EpicTask restoreEpicWithId(int id, String title, String description, Status status) {
         //, LocalDateTime startTime, long duration) {
         //  int epicId = generateId(-1);
-        Type type = Type.EPIC;
+        //Type type = Type.EPIC;
 
         //EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
         //EpicTask epicTask = new EpicTask(type, title, description, id);
