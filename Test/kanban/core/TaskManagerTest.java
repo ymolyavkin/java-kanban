@@ -131,7 +131,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epic.setTitle(newTitleAndDescription[0]);
         epic.setDescription(newTitleAndDescription[1]);
     }
+    @Test
+    void createSubtask() {
+        Status status = Status.IN_PROGRESS;
+        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
 
+        assertNotNull(task);
+        assertEquals("Title", subtask.getTitle());
+        assertEquals("Description", subtask.getDescription());
+        assertEquals(startTime, subtask.getStartTime());
+        assertEquals(15, subtask.getDuration());
+        assertEquals(Status.NEW, subtask.getStatus());
+    }
     @Test
     void createSubtaskWithId() {
         Status status = Status.IN_PROGRESS;
@@ -177,6 +188,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         }
         assertEquals(Status.IN_PROGRESS, subtask.getStatus());
     }
+
+
 
 
     private static File dir;
