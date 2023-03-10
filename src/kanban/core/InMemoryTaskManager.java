@@ -165,12 +165,13 @@ public class InMemoryTaskManager implements TaskManager {
         task.setDescription(newTitleAndDescription[1]);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        long newDuration = Long.parseLong(newTime[1]);
+        if (newTime[0] != "") {
+            LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
+            long newDuration = Long.parseLong(newTime[1]);
 
-        task.setStartTime(newStartTime);
-        task.setDuration(newDuration);
-
+            task.setStartTime(newStartTime);
+            task.setDuration(newDuration);
+        }
         boolean statusWasChanged = false;
         if (mustChangeStatus) {
             statusWasChanged = task.changeStatus();

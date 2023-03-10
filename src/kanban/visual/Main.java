@@ -143,15 +143,17 @@ public class Main {
         String stringDuration = scanner.nextLine();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        try { LocalDateTime startTime = LocalDateTime.parse(stringStartTime, formatter);
-           //long duration = Long.parseLong(stringDuration);
+        try {
+            LocalDateTime startTime = LocalDateTime.parse(stringStartTime, formatter);
+            //long duration = Long.parseLong(stringDuration);
         } catch (DateTimeParseException exception) {
             System.out.println("Некорректный ввод. Время не введено");
-            stringStartTime="0";
+            stringStartTime = "0";
         }
-        try {long  duration = Long.parseLong(stringDuration);
+        try {
+            long duration = Long.parseLong(stringDuration);
         } catch (NumberFormatException exception) {
-           stringDuration="0";
+            stringDuration = "0";
         }
 
         /*if (newStartTime.equals("")) {
@@ -259,8 +261,12 @@ public class Main {
         } else {
             // Получаем новое название и описание найденной задачи
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            String startTime = task.getStartTime().format(formatter);
-            String duration = String.valueOf(task.getDuration());
+            String startTime = "";
+            String duration = "";
+            if (task.getStartTime() != null) {
+                startTime = task.getStartTime().format(formatter);
+                duration = String.valueOf(task.getDuration());
+            }
             String[] newTitleAndDescription =
                     updateTitleAndDescription(task.getTitle(), task.getDescription());
             // Определяем тип задачи
