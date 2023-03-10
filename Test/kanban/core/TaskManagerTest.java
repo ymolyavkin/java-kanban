@@ -1,8 +1,6 @@
 package kanban.core;
 
-import kanban.model.AbstractTask;
-import kanban.model.Status;
-import kanban.model.Task;
+import kanban.model.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,18 +24,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 abstract class TaskManagerTest<T extends TaskManager> {
     final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
-    String[] parts = new String[]{"Title", "Description", "21.03.2021 12:00", "15"};
-    String title = parts[0];
-    String description = parts[1];
-    int id = 0;
+    final String[] parts = new String[]{"Title", "Description", "21.03.2021 12:00", "15"};
+    final String title = parts[0];
+    final String description = parts[1];
+    final int id = 0;
+    final int parentId = 1;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
     long duration = Integer.parseInt(parts[3]);
     Task task;
+    Subtask subtask;
+    EpicTask epic;
 
     @BeforeEach
     public void prepareTestData() {
         task = new Task(title, description, id, startTime, duration);
+        subtask = new Subtask(title, description, id, parentId, startTime, duration);
     }
 
     @Test
@@ -101,7 +103,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task.setDuration(newDuration);
 
 
-
         assertEquals("NewTitle", task.getTitle());
         assertEquals("NewDescription", task.getDescription());
         assertEquals(newStartTime, task.getStartTime());
@@ -114,6 +115,58 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(Status.IN_PROGRESS, task.getStatus());
     }
+
+    @Test
+    void updateEpic() {
+        String[] newTitleAndDescription = {"New title", "New description"};
+        epic.setTitle(newTitleAndDescription[0]);
+        epic.setDescription(newTitleAndDescription[1]);
+    }
+
+    @Test
+    void createSubtaskWithId(int id,
+                             String title,
+                             String description,
+                             int parentId,
+                             LocalDateTime startTime,
+                             long duration,
+                             Status status) {
+        //  Type type = Type.SUBTASK;
+        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
+
+        if (subtask.getStatus() != status) {
+            subtask.setStatus(status);
+        }
+    }
+
+    @Test
+    void updateSubtask() {
+        String[] newTitleAndDescription = {"New title", "New description"};
+        String[] newTime = {"22.03.2021 15:00", "25"};
+        boolean mustChangeStatus = true;
+
+        subtask.setTitle(newTitleAndDescription[0]);
+        subtask.setDescription(newTitleAndDescription[1]);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
+        long newDuration = Long.parseLong(newTime[1]);
+
+        subtask.setStartTime(newStartTime);
+        subtask.setDuration(newDuration);
+
+        assertEquals("New title", subtask.getTitle());
+        assertEquals("New description", subtask.getDescription());
+        assertEquals(newStartTime, subtask.getStartTime());
+        assertEquals(newDuration, subtask.getDuration());
+        assertEquals(Status.NEW, subtask.getStatus());
+
+        if (mustChangeStatus) {
+            subtask.changeStatus();
+        }
+        assertEquals(Status.IN_PROGRESS, subtask.getStatus());
+    }
+
 
     private static File dir;
     private static Path path;

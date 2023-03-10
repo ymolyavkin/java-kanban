@@ -213,17 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
         int id = generateId(parentId);
 
         usedIds.add(id);
-        //   Type type = Type.SUBTASK;
-        /**
-         *  LocalDateTime startTime = null;
-         *         long duration = 0;
-         *
-         *         if (!parts[2].equals("0")) {
-         *             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-         *             startTime = LocalDateTime.parse(parts[2], formatter);
-         *             duration = Integer.parseInt(parts[3]);
-         *         }
-         */
+
         LocalDateTime startTime = null;
         long duration = 0;
         if (!parts[2].equals("0")) {
