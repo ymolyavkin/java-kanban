@@ -204,12 +204,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             }
 
                             Subtask subtask = createSubtaskWithId(idSubtask,
-                                                                  titleSubtask,
-                                                                  descriptionSubtask,
-                                                                  parentId,
-                                                                  startTimeSubtask,
-                                                                  durationSubtask,
-                                                                  status);
+                                    titleSubtask,
+                                    descriptionSubtask,
+                                    parentId,
+                                    startTimeSubtask,
+                                    durationSubtask,
+                                    status);
                             if (epicTask.getId() == parentId) {
                                 addSubtaskToEpic(epicTask, subtask);
                             }
@@ -332,10 +332,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public AbstractTask findTaskByIdOrNull(int id) {
         var foundTask = super.findTaskByIdOrNull(id);
-        if (needWriteToFile) {
+        /*if (needWriteToFile) {
             save();
             needWriteToFile = false;
-        }
+        }*/
+        needWriteToFile = true;
+        save();
+        needWriteToFile = false;
 
         return foundTask;
     }

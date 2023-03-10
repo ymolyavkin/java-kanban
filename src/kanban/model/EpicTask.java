@@ -1,10 +1,7 @@
 package kanban.model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeSet;
 
 public final class EpicTask extends AbstractTask {
@@ -14,13 +11,15 @@ public final class EpicTask extends AbstractTask {
     private LocalDateTime endTime;
     private long duration;
 
-    public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, long duration) {
+    public EpicTask(String title, String description, int id, LocalDateTime startTime, long duration) {
+        //public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, long duration) {
         super(title, description, id, startTime, duration);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
     }
 
-    public EpicTask(Type type, String title, String description, int id) {
+    public EpicTask(String title, String description, int id) {
+    //public EpicTask(Type type, String title, String description, int id) {
         super(title, description, id);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();

@@ -252,12 +252,8 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        //  DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        //   LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
-        //  int duration = Integer.parseInt(parts[3]);
-
-        // EpicTask epicTask = new EpicTask(type, title, description, epicId, startTime, duration);
-        EpicTask epicTask = new EpicTask(type, title, description, epicId);
+        //EpicTask epicTask = new EpicTask(type, title, description, epicId);
+        EpicTask epicTask = new EpicTask(title, description, epicId);
         return epicTask;
     }
 
@@ -267,7 +263,8 @@ public class InMemoryTaskManager implements TaskManager {
         Type type = Type.EPIC;
 
         //EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
-        EpicTask epicTask = new EpicTask(type, title, description, id);
+        //EpicTask epicTask = new EpicTask(type, title, description, id);
+        EpicTask epicTask = new EpicTask(title, description, id);
 
         if (epicTask.getStatus() != status) {
             epicTask.setStatus(status);
