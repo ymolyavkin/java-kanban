@@ -13,12 +13,10 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 abstract class TaskManagerTest<T extends TaskManager> {
@@ -60,7 +58,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void testCreateStandardTask() {
         LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
         Task task = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
-        //Task task = new Task("title", "description", 0, dateTime, 15);
+
+        final AbstractTask savedTask = taskManager.findTaskByIdOrNull(task.getId());
+        assertNotNull(savedTask, "Задача не найдена");
+        assertEquals(task, savedTask, "Задачи не совпадают");
+
+        final Map<Integer,AbstractTask> tasks = taskManager.getStandardTasks();
+
+        assertNotNull(tasks, "Задачи не сохраняются");
+        assertEquals(1, tasks.size(), "Неверное количество задач");
+        assertTrue(tasks.containsValue(task), "Задачи не совпадают");
+
 
         assertNotNull(task);
         assertEquals("Title", task.getTitle());
@@ -70,10 +78,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void createStandardTaskWithId() {
+    void restoreStandardTaskWithId() {
         LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
         Status status = Status.IN_PROGRESS;
-        Task task = new Task("title", "description", 0, dateTime, 15);
+        Task task = taskManager.createStandardTask("title|description|01.01.2023 08:00|15");
 
         assertNotNull(task);
         assertEquals("title", task.getTitle());
@@ -107,8 +115,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task.setDuration(newDuration);
 
 
-        assertEquals("NewTitle", task.getTitle());
-        assertEquals("NewDescription", task.getDescription());
+        assertEquals("New title", task.getTitle());
+        assertEquals("New description", task.getDescription());
         assertEquals(newStartTime, task.getStartTime());
         assertEquals(newDuration, task.getDuration());
         assertEquals(Status.NEW, task.getStatus());
@@ -116,16 +124,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
         if (mustChangeStatus) {
             statusWasChanged = task.changeStatus();
         }
-
         assertEquals(Status.IN_PROGRESS, task.getStatus());
+        assertEquals(statusWasChanged, true);
     }
 
     @Test
     void createEpic() {
-       // Type type = Type.EPIC;
+        EpicTask epicTask =  new EpicTask(title, description, epicId);
 
-        //EpicTask epicTask = new EpicTask(type, title, description, epicId);
-        EpicTask epicTask = new EpicTask(title, description, epicId);
+        assertNotNull(epicTask);
+        assertEquals("Title", task.getTitle());
+        assertEquals("Description", task.getDescription());
     }
 
     @Test
@@ -207,11 +216,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         }
     }
 
-
-    private static File dir;
-    private static Path path;
-
-    @Before
+    /*@Before
     public static void beforeClass() throws IOException {
         dir = Files.createTempDirectory(null).toFile();
     }
@@ -222,7 +227,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
             return;
         }
         //  deleteRecursive(path);
-    }
+    }*/
     /*@Test
     public void testgetSurname() {
         System.out.println("get surname");

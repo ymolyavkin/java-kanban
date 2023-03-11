@@ -37,15 +37,17 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @Test
     void testCreateStandardTask() {
-
+        super.testCreateStandardTask();
     }
 
     @Test
-    void createStandardTaskWithId() {
+    void restoreStandardTaskWithId() {
+        super.restoreStandardTaskWithId();
     }
 
     @Test
     void updateStandardTask() {
+        super.updateStandardTask();
     }
 
     @Test

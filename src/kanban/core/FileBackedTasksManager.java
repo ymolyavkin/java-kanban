@@ -62,7 +62,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         addTasksToHistory(idTaskFromHistory);
                     }
                 }
-
             }
         } catch (ManagerSaveException e) {
             throw new RuntimeException(e);
@@ -174,7 +173,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             int id = Integer.parseInt(taskInfo[0]);
             switch (type) {
                 case TASK -> {
-                    createStandardTaskWithId(id, title, description, startTime, duration, status);
+                    restoreStandardTaskWithId(id, title, description, startTime, duration, status);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла обычная задача с id = " + id);
                     System.out.print(Color.RESET);

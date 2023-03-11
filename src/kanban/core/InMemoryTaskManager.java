@@ -143,12 +143,12 @@ public class InMemoryTaskManager implements TaskManager {
         return -1;
     }
 
-    public Task createStandardTaskWithId(int id,
-                                         String title,
-                                         String description,
-                                         LocalDateTime startTime,
-                                         long duration,
-                                         Status status) {
+    public Task restoreStandardTaskWithId(int id,
+                                          String title,
+                                          String description,
+                                          LocalDateTime startTime,
+                                          long duration,
+                                          Status status) {
         Task task = new Task(title, description, id, startTime, duration);
         if (task.getStatus() != status) {
             task.setStatus(status);
