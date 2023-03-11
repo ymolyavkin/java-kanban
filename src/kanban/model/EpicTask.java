@@ -107,15 +107,21 @@ public final class EpicTask extends AbstractTask {
     }
 
     public void calculateTime() {
-        /**
-         * Optional<Admission> admissionOptional = getAdmission(Patient patient);
-         * if (admissionOptional.isPresent()) {
-         *     Admission admission = admissionOptional.get();
-         *     // действия с данными о госпитализации
-         * }
-         */
+       if (!subtasks.isEmpty()) {
+           startTime = subtasks.first().getStartTime();
+           endTime = null;
+           LocalDateTime startLastTask = subtasks.last().getStartTime();
+           if (startLastTask != null) {
+               endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+           }
 
-        startTime = subtasks.first().getStartTime();
+           long totalDuration = 0;
+           for (Subtask subtask : subtasks) {
+               totalDuration += subtask.getDuration();
+           }
+           duration = totalDuration;
+       }
+        /*startTime = subtasks.first().getStartTime();
         endTime = null;
         LocalDateTime startLastTask = subtasks.last().getStartTime();
         if (startLastTask != null) {
@@ -126,7 +132,7 @@ public final class EpicTask extends AbstractTask {
         for (Subtask subtask : subtasks) {
             totalDuration += subtask.getDuration();
         }
-        duration = totalDuration;
+        duration = totalDuration;*/
     }
 
     @Override
