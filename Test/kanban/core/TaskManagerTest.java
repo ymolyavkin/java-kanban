@@ -22,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 abstract class TaskManagerTest<T extends TaskManager> {
-    final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
+    protected T taskManager;
+    //final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
     final String[] parts = new String[]{"Title", "Description", "21.03.2021 12:00", "15"};
     final String title = parts[0];
@@ -39,31 +40,33 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @BeforeEach
     public void prepareTestData() {
+
         task = new Task(title, description, id, startTime, duration);
         subtask = new Subtask(title, description, id, parentId, startTime, duration);
     }
 
-    @Test
+    /*@Test
     public void addTask() {
         //task = new Task(title, description, id, startTime, duration);
 
-        standardTasks.put(id, task);
+       // standardTasks.put(id, task);
         allTasksSorted.add(task);
 
-        assertEquals(1, standardTasks.size());
+       // assertEquals(1, standardTasks.size());
         assertEquals(1, allTasksSorted.size());
-    }
+    }*/
 
     @Test
     void testCreateStandardTask() {
         LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
-        Task task = new Task("title", "description", 0, dateTime, 15);
+        Task task = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
+        //Task task = new Task("title", "description", 0, dateTime, 15);
 
         assertNotNull(task);
-        assertEquals("title", task.getTitle());
-        assertEquals("description", task.getDescription());
+        assertEquals("Title", task.getTitle());
+        assertEquals("Description", task.getDescription());
         assertEquals(dateTime, task.getStartTime());
-        assertEquals(15, task.getDuration());
+        assertEquals(20, task.getDuration());
     }
 
     @Test
