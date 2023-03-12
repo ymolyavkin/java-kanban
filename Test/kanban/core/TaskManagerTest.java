@@ -1,15 +1,10 @@
 package kanban.core;
 
 import kanban.model.*;
-import org.junit.After;
-import org.junit.Before;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -22,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
-    private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
-    private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
-    private static final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
+    private static Map<Integer, AbstractTask> standardTasks = new HashMap<>();
+    private static Map<Integer, AbstractTask> epicTasks = new HashMap<>();
+    private static TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
 
     final String[] parts = new String[]{"Title", "Description", "21.03.2021 12:00", "15"};
     final String title = parts[0];
@@ -45,23 +40,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epic = new EpicTask(title, description, id);
         subtask = new Subtask(title, description, id, parentId, startTime, duration);
         epic.addSubtask(subtask);
-
-        standardTasks.put(task.getId(), task);
-        epicTasks.put(epic.getId(), epic);
-        allTasksSorted.add(task);
-        allTasksSorted.add(epic);
     }
-
-    /*@Test
-    public void addTask() {
-        //task = new Task(title, description, id, startTime, duration);
-
-       // standardTasks.put(id, task);
-        allTasksSorted.add(task);
-
-       // assertEquals(1, standardTasks.size());
-        assertEquals(1, allTasksSorted.size());
-    }*/
 
     @Test
     void testCreateStandardTask() {
@@ -72,12 +51,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(savedTask, "Задача не найдена");
         assertEquals(task, savedTask, "Задачи не совпадают");
 
-        final Map<Integer,AbstractTask> tasks = taskManager.getStandardTasks();
+        final Map<Integer, AbstractTask> tasks = taskManager.getStandardTasks();
 
         assertNotNull(tasks, "Задачи не сохраняются");
         assertEquals(1, tasks.size(), "Неверное количество задач");
         assertTrue(tasks.containsValue(task), "Задачи не совпадают");
-
 
         assertNotNull(task);
         assertEquals("Title", task.getTitle());
@@ -110,36 +88,33 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         String[] newTitleAndDescription = {"New title", "New description"};
         String[] newTime = {"22.03.2021 15:00", "25"};
+        task.setStatus(Status.NEW);
         boolean mustChangeStatus = true;
         boolean statusWasChanged = false;
-
-        task.setTitle(newTitleAndDescription[0]);
-        task.setDescription(newTitleAndDescription[1]);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
         long newDuration = Long.parseLong(newTime[1]);
 
-        task.setStartTime(newStartTime);
-        task.setDuration(newDuration);
-
+        taskManager.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
 
         assertEquals("New title", task.getTitle());
         assertEquals("New description", task.getDescription());
         assertEquals(newStartTime, task.getStartTime());
         assertEquals(newDuration, task.getDuration());
-        assertEquals(Status.NEW, task.getStatus());
+        assertEquals(Status.IN_PROGRESS, task.getStatus());
 
         if (mustChangeStatus) {
             statusWasChanged = task.changeStatus();
         }
-        assertEquals(Status.IN_PROGRESS, task.getStatus());
+        assertEquals(Status.DONE, task.getStatus());
         assertEquals(statusWasChanged, true);
     }
 
     @Test
     void createEpic() {
-        EpicTask epicTask =  new EpicTask(title, description, epicId);
+        String titleAndDescription = title + "|" + description;
+        EpicTask epicTask = taskManager.createEpic(titleAndDescription);
 
         assertNotNull(epicTask);
         assertEquals("Title", task.getTitle());
@@ -150,12 +125,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void updateEpic() {
         String[] newTitleAndDescription = {"New title", "New description"};
 
-        epic.setTitle(newTitleAndDescription[0]);
-        epic.setDescription(newTitleAndDescription[1]);
+        taskManager.updateEpic(epic, newTitleAndDescription);
     }
+
     @Test
     void createSubtask() {
-        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
+        String titleAndDescription = title + "|" + description;
+        Subtask subtask = taskManager.createSubtask(titleAndDescription, parentId);
 
         assertNotNull(task);
         assertEquals("Title", subtask.getTitle());
@@ -164,6 +140,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(15, subtask.getDuration());
         assertEquals(Status.NEW, subtask.getStatus());
     }
+
     @Test
     void createSubtaskWithId() {
         Status status = Status.IN_PROGRESS;
@@ -188,15 +165,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
         String[] newTime = {"22.03.2021 15:00", "25"};
         boolean mustChangeStatus = true;
 
-        subtask.setTitle(newTitleAndDescription[0]);
-        subtask.setDescription(newTitleAndDescription[1]);
+
+        /*subtask.setTitle(newTitleAndDescription[0]);
+        subtask.setDescription(newTitleAndDescription[1]);*/
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
         long newDuration = Long.parseLong(newTime[1]);
 
-        subtask.setStartTime(newStartTime);
-        subtask.setDuration(newDuration);
+        /*subtask.setStartTime(newStartTime);
+        subtask.setDuration(newDuration);*/
+        taskManager.updateSubtask(subtask, newTitleAndDescription, newTime, mustChangeStatus);
 
         assertEquals("New title", subtask.getTitle());
         assertEquals("New description", subtask.getDescription());
@@ -224,84 +203,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
             epicTask.setStatus(status);
         }
     }
+
     @Test
     void deleteTaskById() {
         int idTask = 0;
-        //taskManager.
+        var standard = taskManager.getStandardTasks();
+
+        assertEquals(1, standard.size());
         taskManager.deleteTaskById(idTask);
-      //  inMemoryHistoryManager.remove(id);
-
-        // Ищем среди обычных задач
-        if (!standardTasks.isEmpty()) {
-            if (standardTasks.containsKey(id)) {
-                standardTasks.remove(id);
-
-            }
-        }
-        //Ищем среди эпиков
-        if (!epicTasks.isEmpty()) {
-            if (epicTasks.containsKey(id)) {
-                epicTasks.remove(id);
-
-            }
-        }
-        // Ищем среди подзадач
-        for (AbstractTask abstractTask : epicTasks.values()) {
-            // Получаем эпик
-            EpicTask epic = (EpicTask) abstractTask;
-
-            // Получаем подзадачи эпика
-            //Map<Integer, Subtask> subtasks = epic.getSubtasks();
-            TreeSet<Subtask> subtasks = epic.getSubtasks();
-            // Ищем среди подзадач текущего эпика
-           // Subtask subtask = findSubtaskByIdOrNull(id, subtasks);
-            if (subtask != null) {
-                subtasks.remove(subtask);
-
-            }
-
-            /*if (subtasks.containsKey(id)) {
-                subtasks.remove(id);
-                return true;
-            }*/
-        }
-
+        assertEquals(0, standard.size());
     }
-
-    /*@Before
-    public static void beforeClass() throws IOException {
-        dir = Files.createTempDirectory(null).toFile();
-    }
-
-    @After
-    public static void afterClass() throws IOException {
-        if (path == null) {
-            return;
-        }
-        //  deleteRecursive(path);
-    }*/
-    /*@Test
-    public void testgetSurname() {
-        System.out.println("get surname");
-        String filename = "";
-        String expResult = "";
-        String result = fileReader.getSurname(filename);
-        assertEquals(expResult, result);
-
-        filename = "datafiles/names.txt";
-        String data = "Jack";
-        InputStream stdin = System.in;
-        try{
-            System.setIn(new ByteArrayInputStream(data.getBytes()));
-            Scanner scanner = new Scanner(System.in);
-            System.out.println(scanner.nextLine());
-        } finally {
-            System.setIn(stdin);
-            expResult = "Davis";
-        }
-        String result = fileReader.getSurname(filename);
-        assertEquals(expResult, result);
-    }*/
-
-
 }

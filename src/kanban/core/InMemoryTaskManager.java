@@ -178,7 +178,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /* TODO  дописать обновление эпика*/
+
     public void updateEpic(EpicTask epic, String[] newTitleAndDescription) {
         epic.setTitle(newTitleAndDescription[0]);
         epic.setDescription(newTitleAndDescription[1]);

@@ -9,6 +9,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @BeforeEach
     void setUp() {
        taskManager = new InMemoryTaskManager();
+       taskManager.deleteAllTasks();
     }
 
     @AfterEach
@@ -104,6 +105,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @Test
     void deleteTaskById() {
+        taskManager.addTask(task);
+        taskManager.addEpic(epic);
+        super.deleteTaskById();
     }
 
     @Test
@@ -128,10 +132,6 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @Test
     void testAddEpic() {
-    }
-
-    @Test
-    void testCreateStandardTask1() {
     }
 
     @Test
