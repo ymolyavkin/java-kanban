@@ -8,7 +8,6 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTaskTest {
-    private TreeSet<Subtask> subtasks;
     private final String title = "Title";
     private final String description = "Description";
     private final int epicId = 0;
@@ -39,6 +38,7 @@ class EpicTaskTest {
 
         assertEquals(Status.NEW, epic.getStatus());
     }
+
     @Test
     void testChangeStatusSubtasksNewDone() {
         EpicTask epic = new EpicTask(title, description, epicId);
@@ -57,6 +57,7 @@ class EpicTaskTest {
 
         assertEquals(Status.NEW, epic.getStatus());
     }
+
     @Test
     void testChangeStatusAllSubtasksDone() {
         EpicTask epic = new EpicTask(title, description, epicId);
@@ -77,6 +78,7 @@ class EpicTaskTest {
 
         assertEquals(Status.DONE, epic.getStatus());
     }
+
     @Test
     void testChangeStatusAllSubtasksInProgress() {
         EpicTask epic = new EpicTask(title, description, epicId);
