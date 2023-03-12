@@ -111,8 +111,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @Test
     void deleteTaskById() {
-        taskManager.addTask(task);
-        taskManager.addEpic(epic);
+
         super.deleteTaskById();
     }
 
@@ -120,92 +119,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     void deleteAllTasks() {
         super.deleteAllTasks();
     }
-
     @Test
-    void testGetInMemoryHistoryManager() {
-    }
-
-    @Test
-    void testGetInstance() {
-    }
-
-    @Test
-    void testGetHistory() {
-    }
-
-    @Test
-    void testAddTask1() {
-    }
-
-    @Test
-    void testAddEpic() {
-    }
-
-    @Test
-    void testCreateStandardTaskWithId() {
-    }
-
-    @Test
-    void testUpdateStandardTask() {
-    }
-
-    @Test
-    void testUpdateEpic() {
-    }
-
-    @Test
-    void testUpdateSubtask() {
-    }
-
-    @Test
-    void testCreateSubtask() {
-    }
-
-    @Test
-    void testCreateSubtaskWithId() {
-    }
-
-    @Test
-    void testCreateEpic() {
-    }
-
-    @Test
-    void testCreateEpicWithId() {
-    }
-
-    @Test
-    void testAddSubtaskToEpic() {
-    }
-
-    @Test
-    void testGetStandardTasks() {
-    }
-
-    @Test
-    void testGetPrioritizedTasks() {
-    }
-
-    @Test
-    void testGetEpicTasks() {
-    }
-
-    @Test
-    void testAddTaskIntoHistory() {
-    }
-
-    @Test
-    void testFindSubtaskByIdOrNull() {
-    }
-
-    @Test
-    void testFindTaskByIdOrNull() {
-    }
-
-    @Test
-    void testDeleteTaskById() {
-    }
-
-    @Test
-    void testDeleteAllTasks() {
+    void createStandardTask() {
+        super.testCreateStandardTask();
     }
 }

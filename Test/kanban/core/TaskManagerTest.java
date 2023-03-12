@@ -25,7 +25,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     final String title = parts[0];
     final String description = parts[1];
     final int id = 0;
-  //  final int epicId = 1;
+
     final int parentId = 1;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);
@@ -39,6 +39,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task = new Task(title, description, id, startTime, duration);
         epic = new EpicTask(title, description, id);
         subtask = new Subtask(title, description, id, parentId, startTime, duration);
+        subtask.setStatus(Status.NEW);
         epic.addSubtask(subtask);
     }
 
@@ -130,7 +131,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void createSubtask() {
-        String titleAndDescription = title + "|" + description;
+        String titleAndDescription = title + "|" + description + "|21.03.2021 12:00|15";
         Subtask subtask = taskManager.createSubtask(titleAndDescription, parentId);
 
         assertNotNull(task);
@@ -165,27 +166,16 @@ abstract class TaskManagerTest<T extends TaskManager> {
         String[] newTime = {"22.03.2021 15:00", "25"};
         boolean mustChangeStatus = true;
 
-
-        /*subtask.setTitle(newTitleAndDescription[0]);
-        subtask.setDescription(newTitleAndDescription[1]);*/
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
         long newDuration = Long.parseLong(newTime[1]);
 
-        /*subtask.setStartTime(newStartTime);
-        subtask.setDuration(newDuration);*/
         taskManager.updateSubtask(subtask, newTitleAndDescription, newTime, mustChangeStatus);
 
         assertEquals("New title", subtask.getTitle());
         assertEquals("New description", subtask.getDescription());
         assertEquals(newStartTime, subtask.getStartTime());
         assertEquals(newDuration, subtask.getDuration());
-        assertEquals(Status.NEW, subtask.getStatus());
-
-        if (mustChangeStatus) {
-            subtask.changeStatus();
-        }
         assertEquals(Status.IN_PROGRESS, subtask.getStatus());
     }
 
@@ -206,13 +196,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteTaskById() {
-        int idTask = 0;
+        taskManager.addTask(task);
+
         var standard = taskManager.getStandardTasks();
         var sorted = taskManager.getPrioritizedTasks();
         int standardSize = standard.size();
         int sortedSize = sorted.size();
 
-        taskManager.deleteTaskById(idTask);
+        taskManager.deleteTaskById(task.getId());
 
         assertEquals(standardSize - 1, standard.size());
         assertEquals(sortedSize - 1, sorted.size());

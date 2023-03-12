@@ -213,6 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return Subtask after create
      */
     public Subtask createSubtask(String titleAndDescription, int parentId) {
+        Subtask subtask=null;
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
@@ -222,13 +223,16 @@ public class InMemoryTaskManager implements TaskManager {
 
         LocalDateTime startTime = null;
         long duration = 0;
-        if (!parts[2].equals("0")) {
+        if (parts.length == 4) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
             startTime = LocalDateTime.parse(parts[2], formatter);
             duration = Integer.parseInt(parts[3]);
+
+            subtask = new Subtask(title, description, id, parentId, startTime, duration);
+        } else if (parts.length == 2) {
+            subtask = new Subtask(title, description, id, parentId);
         }
 
-        Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
         return subtask;
     }
 

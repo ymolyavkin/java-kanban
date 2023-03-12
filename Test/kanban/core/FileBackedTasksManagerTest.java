@@ -28,19 +28,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @BeforeEach
     void setUp() throws IOException {
         // path = Path.of("testtask.txt");
-        taskManager = new FileBackedTasksManager(tempFilePath);
         tempFilePath = Files.createTempFile("testtask.txt", "");
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void shouldRestoreTaskFromFile() {
-
+        taskManager = new FileBackedTasksManager(tempFilePath);
 
     }
+
 
     static Stream<String> linesFromFile() {
 
@@ -73,19 +65,16 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
                     String content = multilineFromFile.substring(0, posEnd);
 
                     tasks.addAll(Arrays.asList(content.split(System.lineSeparator())));
-                    System.out.println("size = " + tasks.size());
 
                     switch (content.charAt(0)) {
                         case '0' -> {
-                            System.out.println("0");
                             assertEquals(1, tasks.size());
                         }
                         case '1' -> {
-                            System.out.println("1");
                             assertEquals(2, tasks.size());
                         }
                         case '3' -> {
-                            System.out.println("3");
+                            System.out.println();
                             assertEquals(1, tasks.size());
                         }
                     }
@@ -104,7 +93,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void shouldCreateFile() throws IOException {
-        final Path tempFilePath = Files.createTempFile("testtask.txt", "");
+   //     final Path tempFilePath = Files.createTempFile("testtask.txt", "");
 
         try (BufferedWriter writer = Files.newBufferedWriter(tempFilePath, StandardCharsets.UTF_8)) {
             if (Files.notExists(tempFilePath)) {
@@ -135,20 +124,49 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     }
 
     @Test
-    void testAddEpic() {
-       // taskManager.addEpic();
+    void createStandardTask() {
+        super.testCreateStandardTask();
     }
 
     @Test
-    void testAddTask() {
+    void restoreStandardTaskWithId() {
+        super.restoreStandardTaskWithId();
+    }
+
+    @Test
+    void createSubtask() {
+        super.createSubtask();
+    }
+
+    @Test
+    void createSubtaskWithId() {
+        super.createSubtaskWithId();
     }
 
     @Test
     void updateStandardTask() {
+        super.updateStandardTask();
     }
 
     @Test
-    void findTaskByIdOrNull() {
+    void updateSubtask() {
+        super.updateSubtask();
+    }
+
+    @Test
+    void updateEpic() {
+        super.updateEpic();
+    }
+
+
+    @Test
+    void createEpic() {
+        super.createEpic();
+    }
+
+    @Test
+    void createEpicWithId() {
+        super.createEpicWithId();
     }
 
     @Test
@@ -158,6 +176,6 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void deleteAllTasks() {
-       super.deleteAllTasks();
+        super.deleteAllTasks();
     }
 }
