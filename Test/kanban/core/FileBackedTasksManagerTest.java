@@ -1,11 +1,11 @@
 package kanban.core;
 
 import kanban.exceptions.ManagerSaveException;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,34 +37,65 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void setNeedWriteToFile() {
+    void shouldRestoreTaskFromFile() {
+
+
     }
 
-    @Test
-    void loadFromFile() {
+    static Stream<String> linesFromFile() {
+
+        final String oneTaskInHistory = "id, type, name, description, status, startTime, duration, epic\r\n" +
+                "0,TASK,Title,Description,01.01.2023 08:00,20,NEW\r\n\r\n0";
+        final String noTask = "id, type, name, description, status, startTime, duration, epic\r\n\r\n";
+        final String emptyHistory = "id, type, name, description, status, startTime, duration, epic\r\n" +
+                "1,TASK,Физминутка,Выполнить десять приседаний,23.02.2023 12:24,15,NEW\r\n2,TASK,Почитать новости," +
+                "Открыть мессенджер и просмотреть новые сообщения,24.02.2023 12:24,15,NEW\r\n\r\n";
+        final String epicWithoutHistory = "id, type, name, description, status, startTime, duration, epic\r\n" +
+                "3,EPIC,Прочитать почту,Прочитать все входящие письма и сообщения из мессенджеров,23.02.2023 " +
+                "12:53,45,NEW\r\n\r\n";
+
+        return Stream.of(oneTaskInHistory, noTask, emptyHistory, epicWithoutHistory);
+    }
+
+    @ParameterizedTest
+    @MethodSource("linesFromFile")
+    void restoreDataFromFile(String lineFromFile) {
         List<String> tasks = new ArrayList<>();
         try {
-            String multilineFromFile = readFileOrNull();
+            String multilineFromFile = lineFromFile;
 
             if (multilineFromFile != null) {
                 int poSeparator = multilineFromFile.indexOf(System.lineSeparator());
                 multilineFromFile = multilineFromFile.substring(poSeparator + 2, multilineFromFile.length());
+
                 int posEnd = multilineFromFile.indexOf("\r\n\r\n");
                 if (posEnd != -1) {
                     String content = multilineFromFile.substring(0, posEnd);
 
                     tasks.addAll(Arrays.asList(content.split(System.lineSeparator())));
-                    createTaskFromFile(tasks);
+                    System.out.println("size = " + tasks.size());
 
+                    switch (content.charAt(0)) {
+                        case '0' -> {
+                            System.out.println("0");
+                            assertEquals(1, tasks.size());
+                        }
+                        case '1' -> {
+                            System.out.println("1");
+                            assertEquals(2, tasks.size());
+                        }
+                        case '3' -> {
+                            System.out.println("3");
+                            assertEquals(1, tasks.size());
+                        }
+                    }
                     int posHystory = posEnd + 4;
                     String history = multilineFromFile.substring(posHystory, multilineFromFile.length());
 
                     if (!history.isEmpty()) {
-                        List<Integer> idTaskFromHistory = historyFromFile(history);
-                        addTasksToHistory(idTaskFromHistory);
+                        assertEquals("0", history);
                     }
                 }
-
             }
         } catch (ManagerSaveException e) {
             throw new RuntimeException(e);
@@ -120,6 +152,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Test
     void deleteTaskById() {
+        super
     }
 
     @Test

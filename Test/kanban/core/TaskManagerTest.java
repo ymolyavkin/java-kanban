@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -21,8 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
-    //final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
-    final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
+    private static final Map<Integer, AbstractTask> standardTasks = new HashMap<>();
+    private static final Map<Integer, AbstractTask> epicTasks = new HashMap<>();
+    private static final TreeSet<AbstractTask> allTasksSorted = new TreeSet<>();
+
     final String[] parts = new String[]{"Title", "Description", "21.03.2021 12:00", "15"};
     final String title = parts[0];
     final String description = parts[1];
@@ -38,9 +41,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @BeforeEach
     public void prepareTestData() {
-
         task = new Task(title, description, id, startTime, duration);
+        epic = new EpicTask(title, description, id);
         subtask = new Subtask(title, description, id, parentId, startTime, duration);
+        epic.addSubtask(subtask);
+
+        standardTasks.put(task.getId(), task);
+        epicTasks.put(epic.getId(), epic);
+        allTasksSorted.add(task);
+        allTasksSorted.add(epic);
     }
 
     /*@Test
@@ -214,6 +223,49 @@ abstract class TaskManagerTest<T extends TaskManager> {
         if (epicTask.getStatus() != status) {
             epicTask.setStatus(status);
         }
+    }
+    @Test
+    void deleteTaskById() {
+        int idTask = 0;
+        //taskManager.
+        taskManager.deleteTaskById(idTask);
+      //  inMemoryHistoryManager.remove(id);
+
+        // Ищем среди обычных задач
+        if (!standardTasks.isEmpty()) {
+            if (standardTasks.containsKey(id)) {
+                standardTasks.remove(id);
+
+            }
+        }
+        //Ищем среди эпиков
+        if (!epicTasks.isEmpty()) {
+            if (epicTasks.containsKey(id)) {
+                epicTasks.remove(id);
+
+            }
+        }
+        // Ищем среди подзадач
+        for (AbstractTask abstractTask : epicTasks.values()) {
+            // Получаем эпик
+            EpicTask epic = (EpicTask) abstractTask;
+
+            // Получаем подзадачи эпика
+            //Map<Integer, Subtask> subtasks = epic.getSubtasks();
+            TreeSet<Subtask> subtasks = epic.getSubtasks();
+            // Ищем среди подзадач текущего эпика
+           // Subtask subtask = findSubtaskByIdOrNull(id, subtasks);
+            if (subtask != null) {
+                subtasks.remove(subtask);
+
+            }
+
+            /*if (subtasks.containsKey(id)) {
+                subtasks.remove(id);
+                return true;
+            }*/
+        }
+
     }
 
     /*@Before

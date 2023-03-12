@@ -11,7 +11,7 @@ import java.util.Map;
 public interface TaskManager {
     List<AbstractTask> getHistory();
 
-   // void addEpic(EpicTask epicTask);
+    void addEpic(EpicTask epicTask);
     //void addTask(Task Task);
 
     Task createStandardTask(String titleAndDescription);

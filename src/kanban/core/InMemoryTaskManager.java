@@ -40,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager.getHistory();
     }
 
-    protected void addTask(Task task) {
+    public void addTask(Task task) {
         int id = task.getId();
 
         int idOver = idOverlap(task);
@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
         allTasksSorted.add(task);
     }
 
-    protected void addEpic(EpicTask epicTask) {
+    public void addEpic(EpicTask epicTask) {
         epicTasks.put(epicTask.getId(), epicTask);
         allTasksSorted.add(epicTask);
     }
