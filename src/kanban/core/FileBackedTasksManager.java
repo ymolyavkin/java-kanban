@@ -15,7 +15,7 @@ import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
-    //private boolean needWriteToFile = false;
+
     private boolean needWriteToFile;
 
     public FileBackedTasksManager(Path path) {
@@ -214,10 +214,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             }
                         }
                     }
-                    // needWriteToFile = true;
                     epicTask.calculateTime();
                     addEpic(epicTask);
-                    //super.addEpic(epicTask);
+
                 }
             }
         }
@@ -232,10 +231,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return result;
     }
 
-    /**
-     * Здесь отказался от использования StringJoiner, т.к. мне показалось, что код получился более громоздким,
-     * по причине того, что разделитель нужно ставить не везде.
-     */
     private String toString(AbstractTask task) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         StringBuilder sb = new StringBuilder();
@@ -258,8 +253,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             sb.append(",");
             sb.append(",");
         }
-        // sb.append(task.getStartTime().format(formatter) + ",");
-        //sb.append(task.getDuration() + ",");
+
         sb.append(task.getStatus());
         switch (typeTask) {
             case SUBTASK -> {
@@ -270,8 +264,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case EPIC -> {
                 sb.append(System.lineSeparator());
                 EpicTask epic = (EpicTask) task;
-                // Map<Integer, Subtask> subtasks = epic.getSubtasks();
-                // for (Subtask subtask : subtasks.values())
+
                 TreeSet<Subtask> subtasks = epic.getSubtasks();
                 for (Subtask subtask : subtasks) {
                     sb.append(subtask.getId() + ",");
@@ -285,8 +278,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         sb.append(",");
                         sb.append(",");
                     }
-                    // sb.append(subtask.getStartTime().format(formatter) + ",");
-                    //  sb.append(subtask.getDuration() + ",");
+
                     sb.append(subtask.getStatus() + ",");
                     sb.append(subtask.getParentId());
                     sb.append(System.lineSeparator());
@@ -310,14 +302,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void addTask(Task task) {
-        //public void addTask(Task task, boolean flag) {
-        // super.addTask(task, flag);
+
         super.addTask(task);
         if (needWriteToFile) {
             save();
             needWriteToFile = false;
         }
-       // System.out.println("Call child method");
     }
 
     @Override
@@ -330,10 +320,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public AbstractTask findTaskByIdOrNull(int id) {
         var foundTask = super.findTaskByIdOrNull(id);
-        /*if (needWriteToFile) {
-            save();
-            needWriteToFile = false;
-        }*/
+
         needWriteToFile = true;
         save();
         needWriteToFile = false;

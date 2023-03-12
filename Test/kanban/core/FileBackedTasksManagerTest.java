@@ -20,9 +20,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-//InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager>
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-    //class FileBackedTasksManagerTest<T extends TaskManager> extends TaskManagerTest {
+
     private static Path tempFilePath;
 
     @BeforeEach

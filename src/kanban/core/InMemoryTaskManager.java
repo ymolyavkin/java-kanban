@@ -111,9 +111,6 @@ public class InMemoryTaskManager implements TaskManager {
                 for (Subtask subtask : subtasks) {
                     usedIds.add(subtask.getId());
                 }
-                /*for (int key : subtasks.keySet()) {
-                    usedIds.add(key);
-                }*/
             }
         }
     }
@@ -163,8 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    // TODO: 06.03.2023 после обновления времени задачи нужно удалять ее из treeset и обратно добавлять
-    // TODO: 09.03.2023 написать удаление из treeset by id
+
     public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
@@ -243,7 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
                                        LocalDateTime startTime,
                                        long duration,
                                        Status status) {
-        //  Type type = Type.SUBTASK;
+
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
 
         if (subtask.getStatus() != status) {
@@ -262,18 +258,12 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = generateId(-1);
         Type type = Type.EPIC;
 
-        //EpicTask epicTask = new EpicTask(type, title, description, epicId);
         EpicTask epicTask = new EpicTask(title, description, epicId);
         return epicTask;
     }
 
     public EpicTask restoreEpicWithId(int id, String title, String description, Status status) {
-        //, LocalDateTime startTime, long duration) {
-        //  int epicId = generateId(-1);
-        //Type type = Type.EPIC;
 
-        //EpicTask epicTask = new EpicTask(type, title, description, id, startTime, duration);
-        //EpicTask epicTask = new EpicTask(type, title, description, id);
         EpicTask epicTask = new EpicTask(title, description, id);
 
         if (epicTask.getStatus() != status) {
@@ -282,7 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask;
     }
 
-    // public EpicTask addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
@@ -315,18 +305,6 @@ public class InMemoryTaskManager implements TaskManager {
         inMemoryHistoryManager.add(task);
     }
 
-    /*public AbstractTask findTaskByIdSetOrNull(int id) {
-        AbstractTask foundTask = null;
-        Iterator<AbstractTask> iterator = allTasks.iterator();
-        while (iterator.hasNext()) {
-            AbstractTask task = iterator.next();
-            if (task.getId() == id){
-                foundTask=task;
-                addTaskIntoHistory(foundTask);
-            }
-        }
-        return foundTask;
-    }*/
 
     public Subtask findSubtaskByIdOrNull(int id, TreeSet<Subtask> subtasks) {
         Iterator<Subtask> iterator = subtasks.iterator();
@@ -357,12 +335,6 @@ public class InMemoryTaskManager implements TaskManager {
                 // Получаем подзадачи эпика
                 TreeSet<Subtask> subtasks = epic.getSubtasks();
                 foundTask = findSubtaskByIdOrNull(id, subtasks);
-               /* Map<Integer, Subtask> subtasks = epic.getSubtasks();
-                // Ищем среди подзадач текущего эпика
-                if (subtasks.containsKey(id)) {
-
-                    foundTask = subtasks.get(id);
-                }*/
             }
         }
         if (foundTask != null) {
