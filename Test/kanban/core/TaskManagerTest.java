@@ -25,7 +25,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     final String title = parts[0];
     final String description = parts[1];
     final int id = 0;
-    final int epicId = 1;
+  //  final int epicId = 1;
     final int parentId = 1;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     LocalDateTime startTime = LocalDateTime.parse(parts[2], formatter);

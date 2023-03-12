@@ -1,6 +1,7 @@
 package kanban.core;
 
 import kanban.model.*;
+import kanban.visual.Color;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,9 +46,13 @@ public class InMemoryTaskManager implements TaskManager {
 
         int idOver = idOverlap(task);
         if (idOver != -1) {
-            System.out.println("Task " + id + " intersects with task " + idOver);
+            System.out.print(Color.RED);
+            System.out.println("Задача " + id + " пересекается по времени с задачей " + idOver);
+            System.out.print(Color.RESET);
         } else {
-            System.out.println("This is no overlap");
+            System.out.print(Color.GREEN);
+            System.out.println("Пересечений по времени нет");
+            System.out.print(Color.RESET);
         }
 
         standardTasks.put(id, task);

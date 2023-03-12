@@ -317,8 +317,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             save();
             needWriteToFile = false;
         }
-
-        System.out.println("Call child method");
+       // System.out.println("Call child method");
     }
 
     @Override

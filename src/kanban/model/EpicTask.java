@@ -11,15 +11,16 @@ public final class EpicTask extends AbstractTask {
     private LocalDateTime endTime;
     private long duration;
 
-    public EpicTask(String title, String description, int id, LocalDateTime startTime, long duration) {
+
+    /*public EpicTask(String title, String description, int id, LocalDateTime startTime, long duration) {
         //public EpicTask(Type type, String title, String description, int id, LocalDateTime startTime, long duration) {
         super(title, description, id, startTime, duration);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
-    }
+    }*/
 
     public EpicTask(String title, String description, int id) {
-    //public EpicTask(Type type, String title, String description, int id) {
+        //public EpicTask(Type type, String title, String description, int id) {
         super(title, description, id);
         //this.subtasks = new HashMap<>();
         this.subtasks = new TreeSet<>();
@@ -41,7 +42,9 @@ public final class EpicTask extends AbstractTask {
     @Override
     public boolean changeStatus() {
         Status currentStatus = this.getStatus();
-
+        if (subtasks.isEmpty()) {
+            return false;
+        }
         // Если хотя бы одна из подзадач в статусе IN_PROGRESS, то статус эпика должен быть IN_PROGRESS
         if (oneStatusIsProgress(subtasks) && currentStatus == Status.IN_PROGRESS) {
             return false; //Статус задачи не изменился
@@ -107,20 +110,20 @@ public final class EpicTask extends AbstractTask {
     }
 
     public void calculateTime() {
-       if (!subtasks.isEmpty()) {
-           startTime = subtasks.first().getStartTime();
-           endTime = null;
-           LocalDateTime startLastTask = subtasks.last().getStartTime();
-           if (startLastTask != null) {
-               endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
-           }
+        if (!subtasks.isEmpty()) {
+            startTime = subtasks.first().getStartTime();
+            endTime = null;
+            LocalDateTime startLastTask = subtasks.last().getStartTime();
+            if (startLastTask != null) {
+                endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+            }
 
-           long totalDuration = 0;
-           for (Subtask subtask : subtasks) {
-               totalDuration += subtask.getDuration();
-           }
-           duration = totalDuration;
-       }
+            long totalDuration = 0;
+            for (Subtask subtask : subtasks) {
+                totalDuration += subtask.getDuration();
+            }
+            duration = totalDuration;
+        }
         /*startTime = subtasks.first().getStartTime();
         endTime = null;
         LocalDateTime startLastTask = subtasks.last().getStartTime();

@@ -13,6 +13,10 @@ public class Subtask extends AbstractTask {
         super(title, description, id, startTime, duration);
         this.parentId = parentId;
     }
+    public Subtask(String title, String description, int id, int parentId) {
+        super(title, description, id);
+        this.parentId = parentId;
+    }
 
     @Override
     public String toString() {
