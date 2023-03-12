@@ -5,11 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-//public class InMemoryTaskManagerTest<T extends TaskManager> extends TaskManagerTest {
+    //public class InMemoryTaskManagerTest<T extends TaskManager> extends TaskManagerTest {
     @BeforeEach
     void setUp() {
-       taskManager = new InMemoryTaskManager();
-       taskManager.deleteAllTasks();
+        taskManager = new InMemoryTaskManager();
+        taskManager.deleteAllTasks();
     }
 
     @AfterEach
@@ -105,11 +105,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     }
 
     @Test
-    void findSubtaskByIdOrNull() {
-    }
-
-    @Test
     void findTaskByIdOrNull() {
+
     }
 
     @Test
@@ -121,6 +118,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
     @Test
     void deleteAllTasks() {
+        super.deleteAllTasks();
     }
 
     @Test

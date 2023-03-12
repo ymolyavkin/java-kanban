@@ -153,10 +153,11 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void deleteTaskById() {
-        //super
+        super.deleteTaskById();
     }
 
     @Test
     void deleteAllTasks() {
+       super.deleteAllTasks();
     }
 }

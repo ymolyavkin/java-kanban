@@ -208,9 +208,26 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void deleteTaskById() {
         int idTask = 0;
         var standard = taskManager.getStandardTasks();
+        var sorted = taskManager.getPrioritizedTasks();
+        int standardSize = standard.size();
+        int sortedSize = sorted.size();
 
-        assertEquals(1, standard.size());
         taskManager.deleteTaskById(idTask);
+
+        assertEquals(standardSize - 1, standard.size());
+        assertEquals(sortedSize - 1, sorted.size());
+    }
+
+    @Test
+    void deleteAllTasks() {
+        var standard = taskManager.getStandardTasks();
+        var epics = taskManager.getEpicTasks();
+        var sorted = taskManager.getPrioritizedTasks();
+
+        taskManager.deleteAllTasks();
+
         assertEquals(0, standard.size());
+        assertEquals(0, epics.size());
+        assertEquals(0, sorted.size());
     }
 }
