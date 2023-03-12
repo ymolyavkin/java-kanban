@@ -156,23 +156,6 @@ public class Main {
             stringDuration = "0";
         }
 
-        /*if (newStartTime.equals("")) {
-            System.out.println("Время не изменилось: " + currentStartTime);
-        } else {
-            System.out.println("Новое время: " + newStartTime);
-            newData[0] = newStartTime;
-        }
-        System.out.println("Текущая продолжительность задачи: " + currentDuration);
-        System.out.println("Новая продолжительность (если ввод будет пустым, то останется старое значение):");
-        String newDuration = scanner.nextLine();
-
-        if (newDuration.equals("")) {
-            System.out.println("Продолжительность не изменилось: " + currentDuration);
-        } else {
-            System.out.println("Новая продолжительность: " + newDuration);
-            newData[1] = newDuration;
-        }*/
-
         return title + "|" + description + "|" + stringStartTime + "|" + stringDuration;
     }
 

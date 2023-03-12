@@ -371,14 +371,19 @@ public class InMemoryTaskManager implements TaskManager {
         // Ищем среди обычных задач
         if (!standardTasks.isEmpty()) {
             if (standardTasks.containsKey(id)) {
+                var removalTask = standardTasks.get(id);
+
                 standardTasks.remove(id);
+                allTasksSorted.remove(removalTask);
                 return true;
             }
         }
         //Ищем среди эпиков
         if (!epicTasks.isEmpty()) {
             if (epicTasks.containsKey(id)) {
+                var removalEpic = epicTasks.get(id);
                 epicTasks.remove(id);
+                allTasksSorted.remove(removalEpic);
                 return true;
             }
         }
@@ -394,13 +399,9 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask subtask = findSubtaskByIdOrNull(id, subtasks);
             if (subtask != null) {
                 subtasks.remove(subtask);
+                allTasksSorted.remove(subtask);
                 return true;
             }
-
-            /*if (subtasks.containsKey(id)) {
-                subtasks.remove(id);
-                return true;
-            }*/
         }
         return false;
     }
