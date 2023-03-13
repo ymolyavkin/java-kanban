@@ -1,5 +1,6 @@
 package kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -9,11 +10,11 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     private String description;
     private int id;
     private Status status;
-    private long duration;
+    private Duration duration;
     private LocalDateTime startTime;
 
 
-    public AbstractTask(String title, String description, int id, LocalDateTime startTime, long duration) {
+    public AbstractTask(String title, String description, int id, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.id = id;
@@ -152,7 +153,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         this.status = status;
     }
 
-    public void setDuration(long duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
     }
 
@@ -160,7 +161,7 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         this.startTime = startTime;
     }
 
-    public long getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 
@@ -169,6 +170,6 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration);
+        return startTime.plusMinutes(duration.toMinutes());
     }
 }

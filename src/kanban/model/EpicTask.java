@@ -1,5 +1,6 @@
 package kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TreeSet;
@@ -8,7 +9,7 @@ public final class EpicTask extends AbstractTask {
     private final TreeSet<Subtask> subtasks;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private long duration;
+    private Duration duration;
 
     public EpicTask(String title, String description, int id) {
 
@@ -77,19 +78,19 @@ public final class EpicTask extends AbstractTask {
             endTime = null;
             LocalDateTime startLastTask = subtasks.last().getStartTime();
             if (startLastTask != null) {
-                endTime = startLastTask.plusMinutes(subtasks.last().getDuration());
+                endTime = startLastTask.plusMinutes(subtasks.last().getDuration().toMinutes());
             }
 
-            long totalDuration = 0;
+            Duration totalDuration = Duration.ZERO;
             for (Subtask subtask : subtasks) {
-                totalDuration += subtask.getDuration();
+                totalDuration = totalDuration.plus(subtask.getDuration());
             }
             duration = totalDuration;
         }
     }
 
     @Override
-    public long getDuration() {
+    public Duration getDuration() {
         return duration;
     }
 

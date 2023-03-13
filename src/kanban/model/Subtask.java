@@ -1,5 +1,6 @@
 package kanban.model;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Subtask extends AbstractTask {
@@ -9,7 +10,7 @@ public class Subtask extends AbstractTask {
         return parentId;
     }
 
-    public Subtask(String title, String description, int id, int parentId, LocalDateTime startTime, long duration) {
+    public Subtask(String title, String description, int id, int parentId, LocalDateTime startTime, Duration duration) {
         super(title, description, id, startTime, duration);
         this.parentId = parentId;
     }

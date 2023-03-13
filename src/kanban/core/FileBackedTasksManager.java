@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -163,11 +164,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String description = taskInfo[3];
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
             LocalDateTime startTime = null;
-            long duration = 0;
+            Duration duration = null;
 
             if (taskInfo[4] != "") {
                 startTime = LocalDateTime.parse(taskInfo[4], formatter);
-                duration = Integer.parseInt(taskInfo[5]);
+                /*Long minutes = Long.parseLong(taskInfo[5]);
+                duration = Duration.ofMinutes(minutes);*/
+                duration = Duration.parse(taskInfo[5]);
             }
             Status status = Status.valueOf(taskInfo[6]);
             Type type = Type.valueOf(taskInfo[1]);
@@ -196,11 +199,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                             String descriptionSubtask = taskInfoSub[3];
 
                             LocalDateTime startTimeSubtask = null;
-                            long durationSubtask = 0;
+                            Duration durationSubtask = null;
 
                             if (taskInfoSub[4] != "") {
                                 startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
-                                durationSubtask = Integer.parseInt(taskInfoSub[5]);
+                               /* Long minutes=Long.parseLong(taskInfoSub[5]);
+                                durationSubtask = Duration.ofMinutes(minutes);*/
+                                durationSubtask = Duration.parse(taskInfo[5]);
                             }
 
                             Subtask subtask = createSubtaskWithId(idSubtask,

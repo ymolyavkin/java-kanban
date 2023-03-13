@@ -3,6 +3,7 @@ package kanban.core;
 import kanban.model.*;
 import kanban.visual.Color;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -113,7 +114,7 @@ public class InMemoryTaskManager implements TaskManager {
             for (AbstractTask epicTask : epicTasks.values()) {
                 EpicTask epic = (EpicTask) epicTask;
                 usedIds.add(epic.getId());
-                //Map<Integer, Subtask> subtasks = epic.getSubtasks();
+
                 TreeSet<Subtask> subtasks = epic.getSubtasks();
                 for (Subtask subtask : subtasks) {
                     usedIds.add(subtask.getId());
@@ -129,12 +130,13 @@ public class InMemoryTaskManager implements TaskManager {
         int id = generateId(-1);
 
         LocalDateTime startTime = null;
-        long duration = 0;
+        Duration duration = null;
 
         if (!parts[2].equals("0")) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
             startTime = LocalDateTime.parse(parts[2], formatter);
-            duration = Integer.parseInt(parts[3]);
+            Long minutes = Long.parseLong(parts[3]);
+            duration = Duration.ofMinutes(minutes);
         }
 
         Task task = new Task(title, description, id, startTime, duration);
@@ -159,7 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
                                           String title,
                                           String description,
                                           LocalDateTime startTime,
-                                          long duration,
+                                          Duration duration,
                                           Status status) {
         Task task = new Task(title, description, id, startTime, duration);
         if (task.getStatus() != status) {
@@ -178,7 +180,8 @@ public class InMemoryTaskManager implements TaskManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         if (newTime[0] != "") {
             LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-            long newDuration = Long.parseLong(newTime[1]);
+            Long minutes = Long.parseLong(newTime[1]);
+            Duration newDuration = Duration.ofMinutes(minutes);
 
             task.setStartTime(newStartTime);
             task.setDuration(newDuration);
@@ -204,7 +207,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        long newDuration = Long.parseLong(newTime[1]);
+        Long minutes = Long.parseLong(newTime[1]);
+        Duration newDuration = Duration.ofMinutes(minutes);
 
         subtask.setStartTime(newStartTime);
         subtask.setDuration(newDuration);
@@ -228,11 +232,12 @@ public class InMemoryTaskManager implements TaskManager {
         usedIds.add(id);
 
         LocalDateTime startTime = null;
-        long duration = 0;
+        Duration duration = null;
         if (parts.length == 4) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
             startTime = LocalDateTime.parse(parts[2], formatter);
-            duration = Integer.parseInt(parts[3]);
+            long minutes = Integer.parseInt(parts[3]);
+            duration = Duration.ofMinutes(minutes);
 
             subtask = new Subtask(title, description, id, parentId, startTime, duration);
         } else if (parts.length == 2) {
@@ -247,7 +252,7 @@ public class InMemoryTaskManager implements TaskManager {
                                        String description,
                                        int parentId,
                                        LocalDateTime startTime,
-                                       long duration,
+                                       Duration duration,
                                        Status status) {
 
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
