@@ -4,7 +4,6 @@ import kanban.core.FileBackedTasksManager;
 import kanban.model.*;
 
 import java.nio.file.Path;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -184,7 +183,6 @@ public class Main {
         String[] menuItems = {"1 - обычная задача", "2 - эпик"};
         int[] values = {1, 2};
         int typeTask = userMenu("Выберите тип создаваемой задачи:", menuItems, values);
-        //  int taskId;
 
         if (typeTask == 1) {
             fileBackedTasksManager.setNeedWriteToFile(true);

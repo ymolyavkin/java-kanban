@@ -52,6 +52,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     String content = multilineFromFile.substring(0, posEnd);
 
                     tasks.addAll(Arrays.asList(content.split(System.lineSeparator())));
+
                     createTaskFromFile(tasks);
 
                     int posHystory = posEnd + 4;

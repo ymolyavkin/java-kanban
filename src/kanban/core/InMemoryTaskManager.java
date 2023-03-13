@@ -43,19 +43,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void addTask(Task task) {
         int id = task.getId();
-        int idOver = idOverlap(task);
+        int idOver = -1;
+        if (task.getStartTime() != null) {
 
+            idOver = idOverlap(task);
+        }
         printOverlapMessage(id, idOver);
-
-        /*if (idOver != -1) {
-            System.out.print(Color.RED);
-            System.out.println("Задача " + id + " пересекается по времени с задачей " + idOver);
-            System.out.print(Color.RESET);
-        } else {
-            System.out.print(Color.GREEN);
-            System.out.println("Пересечений по времени нет");
-            System.out.print(Color.RESET);
-        }*/
 
         standardTasks.put(id, task);
         allTasksSorted.add(task);
@@ -152,6 +145,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     private static int idOverlap(AbstractTask task) {
         for (AbstractTask itemTask : allTasksSorted) {
+            if (itemTask.getStartTime() == null) {
+                continue;
+            }
             if (itemTask.isOverlap(task)) {
                 return itemTask.getId();
             }
@@ -288,10 +284,12 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
-        int id = subtask.getId();
-        int idOver = idOverlap(subtask);
+        if (subtask.getStartTime() != null) {
+            int id = subtask.getId();
+            int idOver = idOverlap(subtask);
 
-        printOverlapMessage(id, idOver);
+            printOverlapMessage(id, idOver);
+        }
 
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
