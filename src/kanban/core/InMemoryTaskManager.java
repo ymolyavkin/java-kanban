@@ -43,9 +43,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void addTask(Task task) {
         int id = task.getId();
-
         int idOver = idOverlap(task);
-        if (idOver != -1) {
+
+        printOverlapMessage(id, idOver);
+
+        /*if (idOver != -1) {
             System.out.print(Color.RED);
             System.out.println("Задача " + id + " пересекается по времени с задачей " + idOver);
             System.out.print(Color.RESET);
@@ -53,10 +55,22 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.print(Color.GREEN);
             System.out.println("Пересечений по времени нет");
             System.out.print(Color.RESET);
-        }
+        }*/
 
         standardTasks.put(id, task);
         allTasksSorted.add(task);
+    }
+
+    private void printOverlapMessage(int idTask, int idOverlapTask) {
+        if (idOverlapTask != -1) {
+            System.out.print(Color.RED);
+            System.out.println("Задача " + idTask + " пересекается по времени с задачей " + idOverlapTask);
+            System.out.print(Color.RESET);
+        } else {
+            System.out.print(Color.GREEN);
+            System.out.println("Пересечений по времени нет");
+            System.out.print(Color.RESET);
+        }
     }
 
     public void addEpic(EpicTask epicTask) {
@@ -136,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    private static int idOverlap(Task task) {
+    private static int idOverlap(AbstractTask task) {
         for (AbstractTask itemTask : allTasksSorted) {
             if (itemTask.isOverlap(task)) {
                 return itemTask.getId();
@@ -209,7 +223,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return Subtask after create
      */
     public Subtask createSubtask(String titleAndDescription, int parentId) {
-        Subtask subtask=null;
+        Subtask subtask = null;
         String[] parts = titleAndDescription.split("\\|");
         String title = parts[0];
         String description = parts[1];
@@ -274,6 +288,11 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
+        int id = subtask.getId();
+        int idOver = idOverlap(subtask);
+
+        printOverlapMessage(id, idOver);
+
         epicTask.addSubtask(subtask);
         // Меняем статус эпика, если изменились статусы всех подзадач
         epicTask.changeStatus();
