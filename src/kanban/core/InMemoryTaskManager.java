@@ -180,8 +180,9 @@ public class InMemoryTaskManager implements TaskManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         if (newTime[0] != "") {
             LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-            Long minutes = Long.parseLong(newTime[1]);
-            Duration newDuration = Duration.ofMinutes(minutes);
+            /*Long minutes = Long.parseLong(newTime[1]);
+            Duration newDuration = Duration.ofMinutes(minutes);*/
+            Duration newDuration = Duration.parse(newTime[1]);
 
             task.setStartTime(newStartTime);
             task.setDuration(newDuration);
@@ -207,8 +208,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        Long minutes = Long.parseLong(newTime[1]);
-        Duration newDuration = Duration.ofMinutes(minutes);
+        /*Long minutes = Long.parseLong(newTime[1]);
+        Duration newDuration = Duration.ofMinutes(minutes);*/
+        Duration newDuration = Duration.parse(newTime[1]);
 
         subtask.setStartTime(newStartTime);
         subtask.setDuration(newDuration);

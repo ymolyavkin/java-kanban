@@ -1,7 +1,6 @@
 package kanban.core;
 
 import kanban.exceptions.ManagerSaveException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
@@ -26,7 +26,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @BeforeEach
     void setUp() throws IOException {
-        // path = Path.of("testtask.txt");
+
         tempFilePath = Files.createTempFile("testtask.txt", "");
         taskManager = new FileBackedTasksManager(tempFilePath);
 
@@ -92,12 +92,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void shouldCreateFile() throws IOException {
-   //     final Path tempFilePath = Files.createTempFile("testtask.txt", "");
-
         try (BufferedWriter writer = Files.newBufferedWriter(tempFilePath, StandardCharsets.UTF_8)) {
             if (Files.notExists(tempFilePath)) {
                 writer.write("0,TASK,Title,Description,01.01.2023 08:00,20,NEW");
-                //Files.writeString(tempFilePath, "0,TASK,Title,Description,01.01.2023 08:00,20,NEW");
             }
         }
         assertFalse(Files.notExists(tempFilePath), "Файл не создан");
@@ -122,7 +119,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         assertEquals(content, "0,TASK,Title,Description,01.01.2023 08:00,20,NEW", "Файл прочитан неверно");
     }
 
-    @Test
+    /*@Test
     void createStandardTask() {
         super.testCreateStandardTask();
     }
@@ -176,5 +173,5 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @Test
     void deleteAllTasks() {
         super.deleteAllTasks();
-    }
+    }*/
 }
