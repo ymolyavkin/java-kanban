@@ -222,4 +222,61 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(0, epics.size());
         assertEquals(0, sorted.size());
     }
+
+    @Test
+    void shouldGetMessageAboutOverlapTasksWhenCreateTasks() {
+        Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
+        Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
+
+        String titleAndDescription = title + "|" + description;
+        EpicTask epicTask = taskManager.createEpic(titleAndDescription);
+
+        String titleAndDescriptionSubtask = title + "|" + description + "|01.01.2023 07:50|15";
+        Subtask subtask = taskManager.createSubtask(titleAndDescriptionSubtask, epicTask.getId());
+        epic.addSubtask(subtask);
+
+        assertTrue(firstTask.isOverlap(secondTask));
+        assertTrue(firstTask.isOverlap(subtask));
+        assertFalse(subtask.isOverlap(secondTask));
+    }
+
+    @Test
+    void shouldGetMessageAboutOverlapTasksWhenUpdateSubtasks() {
+        Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 06:00|20");
+        Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
+
+        String titleAndDescription = title + "|" + description;
+        EpicTask epicTask = taskManager.createEpic(titleAndDescription);
+
+        String titleAndDescriptionSubtask = title + "|" + description + "|02.01.2023 07:50|15";
+        Subtask subtask = taskManager.createSubtask(titleAndDescriptionSubtask, epicTask.getId());
+        epic.addSubtask(subtask);
+
+        String[] newTitleAndDescription = {"New title", "New description"};
+        String[] newTime = {"01.01.2023 08:10", "PT25M"};
+        boolean mustChangeStatus = true;
+
+        assertFalse(secondTask.isOverlap(subtask));
+
+        taskManager.updateSubtask(subtask, newTitleAndDescription, newTime, mustChangeStatus);
+
+        assertFalse(firstTask.isOverlap(subtask));
+        assertTrue(secondTask.isOverlap(subtask));
+    }
+    @Test
+    void shouldGetMessageAboutOverlapTasksWhenUpdateupdateStandardTask() {
+        Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 06:00|20");
+        Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
+
+        String[] newTitleAndDescription = {"New title", "New description"};
+        String[] newTime = {"01.01.2023 08:10", "PT25M"};
+        boolean mustChangeStatus = true;
+
+        assertFalse(firstTask.isOverlap(secondTask));
+
+        taskManager.updateStandardTask(firstTask, newTitleAndDescription, newTime, mustChangeStatus);
+
+        assertTrue(firstTask.isOverlap(secondTask));
+    }
+
 }

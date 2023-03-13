@@ -97,23 +97,13 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
         }
     }
 
-    /**
-     * Так как данный метод используется при определении пересечений.
-     * Если у задачи не будет времени начала то она не сможет пересечься с другими.
-     * Но по логике работы мы все равно сравним все задачи, хотя могли бы закончить раньше.
-     * Предлагаю часть условий отсюда вынести в метод менеджера, чтобы сократить кол-во сравнений.
-     * @param otherTask
-     * @return
-     */
     public boolean isOverlap(AbstractTask otherTask) {
-        /*if (this.getStartTime() == null || otherTask.getStartTime() == null) {
-            return false;
-        }*/
+
         if (this.getStartTime().isEqual(otherTask.getStartTime())) {
             return true;
         }
         if (this.getStartTime().isBefore(otherTask.getStartTime())) {
-            //Duration timeDuration = Duration.between(startTime, otherTask.getEndTime());
+
             if (otherTask.getStartTime().isBefore(this.getEndTime())) {
                 return true;
             }
