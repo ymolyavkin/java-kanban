@@ -180,8 +180,6 @@ public class InMemoryTaskManager implements TaskManager {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         if (newTime[0] != "") {
             LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-            /*Long minutes = Long.parseLong(newTime[1]);
-            Duration newDuration = Duration.ofMinutes(minutes);*/
             Duration newDuration = Duration.parse(newTime[1]);
 
             task.setStartTime(newStartTime);
@@ -208,8 +206,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        /*Long minutes = Long.parseLong(newTime[1]);
-        Duration newDuration = Duration.ofMinutes(minutes);*/
         Duration newDuration = Duration.parse(newTime[1]);
 
         subtask.setStartTime(newStartTime);
@@ -398,7 +394,6 @@ public class InMemoryTaskManager implements TaskManager {
             EpicTask epic = (EpicTask) abstractTask;
 
             // Получаем подзадачи эпика
-            //Map<Integer, Subtask> subtasks = epic.getSubtasks();
             TreeSet<Subtask> subtasks = epic.getSubtasks();
             // Ищем среди подзадач текущего эпика
             Subtask subtask = findSubtaskByIdOrNull(id, subtasks);

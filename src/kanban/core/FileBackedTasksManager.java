@@ -168,8 +168,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             if (taskInfo[4] != "") {
                 startTime = LocalDateTime.parse(taskInfo[4], formatter);
-                /*Long minutes = Long.parseLong(taskInfo[5]);
-                duration = Duration.ofMinutes(minutes);*/
                 duration = Duration.parse(taskInfo[5]);
             }
             Status status = Status.valueOf(taskInfo[6]);
@@ -203,8 +201,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
                             if (taskInfoSub[4] != "") {
                                 startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
-                               /* Long minutes=Long.parseLong(taskInfoSub[5]);
-                                durationSubtask = Duration.ofMinutes(minutes);*/
                                 durationSubtask = Duration.parse(taskInfo[5]);
                             }
 
