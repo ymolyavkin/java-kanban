@@ -257,7 +257,7 @@ public class Main {
             String duration = "";
             if (task.getStartTime() != null) {
                 startTime = task.getStartTime().format(formatter);
-                duration = String.valueOf(task.getDuration());
+                duration = String.valueOf(task.getDuration().toMinutes());
             }
             String[] newTitleAndDescription =
                     updateTitleAndDescription(task.getTitle(), task.getDescription());
@@ -302,7 +302,7 @@ public class Main {
                     Subtask subtask = fileBackedTasksManager.findSubtaskByIdOrNull(subtaskId, subtasks);
                     if (subtask != null) {
                         String currentStartTime = subtask.getStartTime().format(formatter);
-                        String currentDuration = String.valueOf(subtask.getDuration());
+                        String currentDuration = String.valueOf(subtask.getDuration().toMinutes());
                         String[] changeTitleAndDescription = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
 
                         String[] changeTime = updateTime(currentStartTime, currentDuration);
