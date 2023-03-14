@@ -168,7 +168,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             if (taskInfo[4] != "") {
                 startTime = LocalDateTime.parse(taskInfo[4], formatter);
-                duration = Duration.parse(taskInfo[5]);
+                //duration = Duration.parse(taskInfo[5]);
+                long minutes = Long.parseLong(taskInfo[5]);
+                duration = Duration.ofMinutes(minutes);
             }
             Status status = Status.valueOf(taskInfo[6]);
             Type type = Type.valueOf(taskInfo[1]);
@@ -181,7 +183,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     System.out.print(Color.RESET);
                 }
                 case EPIC -> {
-                    //EpicTask epicTask = createEpicWithId(id, title, description, startTime, duration);
                     EpicTask epicTask = restoreEpicWithId(id, title, description, status);
                     System.out.print(Color.GREEN);
                     System.out.println("Прочитана из файла эпик с id = " + id);
@@ -201,7 +202,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
                             if (taskInfoSub[4] != "") {
                                 startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
-                                durationSubtask = Duration.parse(taskInfo[5]);
+                                long minutes = Long.parseLong(taskInfo[5]);
+                                durationSubtask = Duration.ofMinutes(minutes);
+                              //  durationSubtask = Duration.parse(taskInfo[5]);
                             }
 
                             Subtask subtask = createSubtaskWithId(idSubtask,
@@ -250,7 +253,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         sb.append(task.getDescription() + ",");
         if (task.getStartTime() != null) {
             sb.append(task.getStartTime().format(formatter) + ",");
-            sb.append(task.getDuration() + ",");
+            long minutes = task.getDuration().toMinutes();
+            //sb.append(task.getDuration() + ",");
+            sb.append(minutes + ",");
         } else {
             sb.append(",");
             sb.append(",");
@@ -275,7 +280,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     sb.append(subtask.getDescription() + ",");
                     if (subtask.getStartTime() != null) {
                         sb.append(subtask.getStartTime().format(formatter) + ",");
-                        sb.append(subtask.getDuration() + ",");
+                        long minutes = subtask.getDuration().toMinutes();
+                        sb.append(minutes + ",");
+                        //sb.append(subtask.getDuration() + ",");
                     } else {
                         sb.append(",");
                         sb.append(",");
@@ -313,10 +320,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
-        super.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
+    public boolean updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
+        boolean result = super.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
         save();
         needWriteToFile = false;
+        return result;
     }
 
     @Override

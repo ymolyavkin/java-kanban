@@ -17,7 +17,7 @@ public interface TaskManager {
 
     Task createStandardTask(String titleAndDescription);
 
-    void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus);
+    boolean updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus);
 
     Subtask updateSubtask(Subtask subtask, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus);
     void updateEpic(EpicTask epic, String[] newTitleAndDescription);

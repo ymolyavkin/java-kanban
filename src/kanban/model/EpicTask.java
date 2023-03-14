@@ -18,7 +18,9 @@ public final class EpicTask extends AbstractTask {
     }
 
     public void addSubtask(Subtask subtask) {
-        subtasks.add(subtask);
+        if (subtask!=null) {
+            subtasks.add(subtask);
+        }
     }
 
     public TreeSet<Subtask> getSubtasks() {

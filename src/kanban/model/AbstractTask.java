@@ -98,7 +98,9 @@ public abstract class AbstractTask implements Comparable<AbstractTask> {
     }
 
     public boolean isOverlap(AbstractTask otherTask) {
-
+        if (this == otherTask) {
+            return false;
+        }
         if (this.getStartTime().isEqual(otherTask.getStartTime())) {
             return true;
         }

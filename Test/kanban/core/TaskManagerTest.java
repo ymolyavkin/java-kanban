@@ -228,16 +228,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
         Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
 
+        assertNull(secondTask);
         String titleAndDescription = title + "|" + description;
         EpicTask epicTask = taskManager.createEpic(titleAndDescription);
 
         String titleAndDescriptionSubtask = title + "|" + description + "|01.01.2023 07:50|15";
         Subtask subtask = taskManager.createSubtask(titleAndDescriptionSubtask, epicTask.getId());
-        epic.addSubtask(subtask);
 
-        assertTrue(firstTask.isOverlap(secondTask));
-        assertTrue(firstTask.isOverlap(subtask));
-        assertFalse(subtask.isOverlap(secondTask));
+        assertNull(subtask);
     }
 
     @Test

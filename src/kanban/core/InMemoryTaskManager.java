@@ -44,18 +44,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void addTask(Task task) {
         int id = task.getId();
-        int idOver = -1;
+        /*int idOver = -1;
         if (task.getStartTime() != null) {
 
             idOver = idOverlap(task);
         }
-        printOverlapMessage(id, idOver);
+        printOverlapMessage(id, idOver);*/
 
         standardTasks.put(id, task);
         allTasksSorted.add(task);
     }
 
-    private void printOverlapMessage(int idTask, int idOverlapTask) {
+    private static void printOverlapMessage(int idTask, int idOverlapTask) {
         if (idOverlapTask != -1) {
             System.out.print(Color.RED);
             System.out.println("Задача " + idTask + " пересекается по времени с задачей " + idOverlapTask);
@@ -97,6 +97,12 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return taskId;
 
+    }
+
+    private void deleteIdFromListAllIds(int id) {
+        if (usedIds.contains(id)) {
+            usedIds.remove(id);
+        }
     }
 
     private void fillListAllIds() {
@@ -141,14 +147,38 @@ public class InMemoryTaskManager implements TaskManager {
 
         Task task = new Task(title, description, id, startTime, duration);
 
-        addTask(task);
-        return task;
+        if (notOverlap(task)) {
+            addTask(task);
+            return task;
+        } else {
+            deleteIdFromListAllIds(id);
+            return null;
+        }
+    }
+
+    private static boolean notOverlap(AbstractTask task) {
+        if (task.getStartTime() == null) {
+            printOverlapMessage(task.getId(), -1);
+            return true;
+        } else {
+            int idOver = idOverlap(task);
+            printOverlapMessage(task.getId(), idOver);
+            return idOver == -1;
+        }
     }
 
     private static int idOverlap(AbstractTask task) {
         for (AbstractTask itemTask : allTasksSorted) {
             if (itemTask.getStartTime() == null) {
                 continue;
+            }
+            if (itemTask instanceof EpicTask) {
+                TreeSet<Subtask> subtasks = ((EpicTask) itemTask).getSubtasks();
+                for (Subtask subtask : subtasks) {
+                    if (subtask.isOverlap(task)) {
+                        return subtask.getId();
+                    }
+                }
             }
             if (itemTask.isOverlap(task)) {
                 return itemTask.getId();
@@ -167,15 +197,32 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStatus() != status) {
             task.setStatus(status);
         }
+        /*int idOver = -1;
+        if (task.getStartTime() != null) {
+            idOver = idOverlap(task);
+        }
+        if (idOver == -1) {
+            addTask(task);
+        }
+        printOverlapMessage(id, idOver);*/
+        if (notOverlap(task)) {
+            addTask(task);
+            return task;
+        }
 
-        addTask(task);
-        return task;
+        // addTask(task);
+        return null;
     }
 
 
-    public void updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
+    public boolean updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
         task.setTitle(newTitleAndDescription[0]);
         task.setDescription(newTitleAndDescription[1]);
+
+        boolean statusWasChanged = false;
+        if (mustChangeStatus) {
+            statusWasChanged = task.changeStatus();
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         if (newTime[0] != "") {
@@ -184,11 +231,23 @@ public class InMemoryTaskManager implements TaskManager {
 
             task.setStartTime(newStartTime);
             task.setDuration(newDuration);
+
+           /* int idOver = -1;
+            if (task.getStartTime() != null) {
+                idOver = idOverlap(task);
+            }
+            if (idOver == -1) {
+                addTask(task);
+            }
+            printOverlapMessage(id, idOver);*/
+            if (notOverlap(task)) {
+                addTask(task);
+                return true;
+            } else {
+                return false;
+            }
         }
-        boolean statusWasChanged = false;
-        if (mustChangeStatus) {
-            statusWasChanged = task.changeStatus();
-        }
+        return true;
     }
 
 
@@ -201,6 +260,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return Subtask after update
      */
     public Subtask updateSubtask(Subtask subtask, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
+        Subtask oldSubtask = subtask;
         subtask.setTitle(newTitleAndDescription[0]);
         subtask.setDescription(newTitleAndDescription[1]);
 
@@ -214,7 +274,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (mustChangeStatus) {
             subtask.changeStatus();
         }
-        return subtask;
+        if (notOverlap(subtask)) {
+            return subtask;
+        }
+        return oldSubtask;
     }
 
     /**
@@ -238,10 +301,15 @@ public class InMemoryTaskManager implements TaskManager {
             duration = Duration.ofMinutes(minutes);
 
             subtask = new Subtask(title, description, id, parentId, startTime, duration);
+
+            if (notOverlap(subtask)) {
+                return subtask;
+            } else {
+                return null;
+            }
         } else if (parts.length == 2) {
             subtask = new Subtask(title, description, id, parentId);
         }
-
         return subtask;
     }
 
@@ -255,6 +323,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         Subtask subtask = new Subtask(title, description, id, parentId, startTime, duration);
 
+        if (!notOverlap(subtask)) {
+            return null;
+        }
         if (subtask.getStatus() != status) {
             subtask.setStatus(status);
         }
@@ -287,16 +358,17 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     public void addSubtaskToEpic(EpicTask epicTask, Subtask subtask) {
-        if (subtask.getStartTime() != null) {
+       /* if (subtask.getStartTime() != null) {
             int id = subtask.getId();
             int idOver = idOverlap(subtask);
 
             printOverlapMessage(id, idOver);
+        }*/
+        if (subtask != null) {
+            epicTask.addSubtask(subtask);
+            // Меняем статус эпика, если изменились статусы всех подзадач
+            epicTask.changeStatus();
         }
-
-        epicTask.addSubtask(subtask);
-        // Меняем статус эпика, если изменились статусы всех подзадач
-        epicTask.changeStatus();
     }
 
     /**
@@ -399,7 +471,7 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask subtask = findSubtaskByIdOrNull(id, subtasks);
             if (subtask != null) {
                 subtasks.remove(subtask);
-                allTasksSorted.remove(subtask);
+                // allTasksSorted.remove(subtask);
                 return true;
             }
         }

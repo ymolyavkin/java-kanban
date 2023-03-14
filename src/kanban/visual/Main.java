@@ -187,10 +187,15 @@ public class Main {
         if (typeTask == 1) {
             fileBackedTasksManager.setNeedWriteToFile(true);
             Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
-
-            System.out.print(Color.GREEN);
-            System.out.println("Создана обычная задача с id = " + task.getId());
-            System.out.print(Color.RESET);
+            if (task != null) {
+                System.out.print(Color.GREEN);
+                System.out.println("Создана обычная задача с id = " + task.getId());
+                System.out.print(Color.RESET);
+            } else {
+                System.out.print(Color.RED);
+                System.out.println("Задача не создана");
+                System.out.print(Color.RESET);
+            }
         } else if (typeTask == 2) {
             EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription());
             System.out.print(Color.GREEN);
@@ -201,8 +206,14 @@ public class Main {
             for (String titleAndDescription : titleAndDescriptions) {
                 // Создаем подзадачу
                 Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
+                if (subtask != null) {
+                    fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                } else {
+                    System.out.print(Color.RED);
+                    System.out.println("Подзадача не создана");
+                    System.out.print(Color.RESET);
+                }
 
-                fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
             }
             fileBackedTasksManager.setNeedWriteToFile(true);
             fileBackedTasksManager.addEpic(epicTask);
@@ -255,15 +266,21 @@ public class Main {
                 System.out.println("Это обычная задача");
                 String[] newTime = updateTime(startTime, duration);
                 boolean statusWasChanged = mustChangeStatus();
-                fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
-                System.out.print(Color.GREEN);
+                boolean taskIsUpdated = fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
+                if (taskIsUpdated) {
+                    System.out.print(Color.GREEN);
 
-                if (statusWasChanged) {
-                    System.out.println("Статус изменён");
+                    if (statusWasChanged) {
+                        System.out.println("Статус изменён");
+                    } else {
+                        System.out.println("Статус не изменён");
+                    }
+                    System.out.print(Color.RESET);
                 } else {
-                    System.out.println("Статус не изменён");
+                    System.out.print(Color.RED);
+                    System.out.println("Задача не обновлена");
+                    System.out.print(Color.RESET);
                 }
-                System.out.print(Color.RESET);
             } else if (task instanceof EpicTask) {
                 System.out.println("Это эпик");
                 EpicTask epicTask = (EpicTask) task;
@@ -281,15 +298,9 @@ public class Main {
                     String strSubtaskId = scanner.nextLine();
                     int subtaskId = stringToInt(strSubtaskId);
 
-                    //Map<Integer, Subtask> subtasks = epicTask.getSubtasks();
                     TreeSet<Subtask> subtasks = epicTask.getSubtasks();
                     Subtask subtask = fileBackedTasksManager.findSubtaskByIdOrNull(subtaskId, subtasks);
                     if (subtask != null) {
-                        //if (subtasks.containsKey(subtaskId)) {
-                        // Обновляем подзадачу
-                        // Subtask subtask = subtasks.get(subtaskId);
-                        // Получаем новое название и описание подзадачи
-
                         String currentStartTime = subtask.getStartTime().format(formatter);
                         String currentDuration = String.valueOf(subtask.getDuration());
                         String[] changeTitleAndDescription = updateTitleAndDescription(subtask.getTitle(), subtask.getDescription());
@@ -300,15 +311,21 @@ public class Main {
 
                         Status currentStatus = epicTask.getStatus();
                         // Добавляем обновленную подзадачу к эпику
+                        if (updatedSubtask != null) {
+                            fileBackedTasksManager.addSubtaskToEpic(epicTask, updatedSubtask);
+                            Status newStatus = epicTask.getStatus();
 
-                        fileBackedTasksManager.addSubtaskToEpic(epicTask, updatedSubtask);
-                        Status newStatus = epicTask.getStatus();
-
-                        if (newStatus != currentStatus) {
-                            System.out.print(Color.GREEN);
-                            System.out.println("Статус эпика был изменён на " + newStatus);
-                            System.out.print(Color.RESET);
+                            if (newStatus != currentStatus) {
+                                System.out.print(Color.GREEN);
+                                System.out.println("Статус эпика был изменён на " + newStatus);
+                                System.out.print(Color.RESET);
+                            } else {
+                                System.out.print(Color.RED);
+                                System.out.println("Подзадача не обновлена");
+                                System.out.print(Color.RESET);
+                            }
                         }
+
                         // Отправляем для добавления в мапу эпиков
                         fileBackedTasksManager.setNeedWriteToFile(true);
                         fileBackedTasksManager.addEpic(epicTask);
@@ -358,7 +375,6 @@ public class Main {
         return newData;
     }
 
-    // TODO: 06.03.2023 переделать updateTime
     private static String[] updateTime(String currentStartTime, String currentDuration) {
         String[] newData = new String[2];
         newData[0] = currentStartTime;
@@ -418,79 +434,33 @@ public class Main {
         }
     }
 
-    /*private static void createSeveralTestTasksOld() {
-        // Создаём стандартную задачу
-        String titleAndDescription = "Физминутка|Выполнить десять приседаний";
-        Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
-
-        // Создаём стандартную задачу
-        titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения";
-        task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
-
-        // Создаём эпик
-        titleAndDescription = "Понять условие домашнего задания" +
-                "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ";
-        EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
-
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
-
-        // Создаем список названий и описаний подзадач
-        String[] importantTitleAndDescriptions = {"Подзадача 1|Прочитать ТЗ", "Подзадача 2|Понять ТЗ"};
-        for (String titleDescription : importantTitleAndDescriptions) {
-
-            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-        }
-        fileBackedTasksManager.addEpic(epicTask);
-
-        // Создаём эпик
-        titleAndDescription = "Прочитать почту" +
-                "|Прочитать все входящие письма и сообщения из мессенджеров";
-        epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
-
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
-
-        // Создаем список названий и описаний подзадач
-        String[] secondaryTitleAndDescriptions = {
-                "Подзадача 1|Прочитать электронную почту",
-                "Подзадача 2|Прочитать мессенджеры",
-                "Подзадача 3|Прочитать соцсети"};
-        for (String titleDescription : secondaryTitleAndDescriptions) {
-            // Создаем подзадачу
-            Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-        }
-        fileBackedTasksManager.addEpic(epicTask);
-    }*/
-
     private static void createSeveralTestTasks() {
         // Создаём стандартную задачу
         String titleAndDescription = "Физминутка|Выполнить десять приседаний|23.02.2023 12:24|15";
         Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
+        if (task != null) {
+            System.out.print(Color.GREEN);
+            System.out.println("Создана обычная задача с id = " + task.getId());
+            System.out.print(Color.RESET);
+        } else {
+            System.out.print(Color.RED);
+            System.out.println("Задача не создана");
+            System.out.print(Color.RESET);
+        }
 
         // Создаём стандартную задачу
         titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения|24.02.2023 12:24|15";
         task = fileBackedTasksManager.createStandardTask(titleAndDescription);
 
-        System.out.print(Color.GREEN);
-        System.out.println("Создана обычная задача с id = " + task.getId());
-        System.out.print(Color.RESET);
+        if (task != null) {
+            System.out.print(Color.GREEN);
+            System.out.println("Создана обычная задача с id = " + task.getId());
+            System.out.print(Color.RESET);
+        } else {
+            System.out.print(Color.RED);
+            System.out.println("Задача не создана");
+            System.out.print(Color.RESET);
+        }
 
         // Создаём эпик
         titleAndDescription = "Понять условие домашнего задания" +
@@ -501,22 +471,30 @@ public class Main {
         System.out.println("Создан эпик с id = " + (epicTask.getId()));
         System.out.print(Color.RESET);
 
-        // Создаем список названий и описаний подзадач
+
         String[] importantTitleAndDescriptions = {
-                "Подзадача 1|Прочитать ТЗ|25.02.2023 12:24|15"
-                , "Подзадача 2|Понять ТЗ|25.02.2023 12:39|15"};
+                "Подзадача 1|Прочитать ТЗ|26.02.2023 12:20|15"
+                , "Подзадача 2|Понять ТЗ|27.02.2023 12:39|15"};
         for (String titleDescription : importantTitleAndDescriptions) {
 
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
-
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            if (subtask != null) {
+                fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                System.out.print(Color.GREEN);
+                System.out.println("Создана подзадача с id = " + subtask.getId());
+                System.out.print(Color.RESET);
+            } else {
+                System.out.print(Color.RED);
+                System.out.println("Подзадача не создана");
+                System.out.print(Color.RESET);
+            }
         }
         fileBackedTasksManager.setNeedWriteToFile(true);
         fileBackedTasksManager.addEpic(epicTask);
 
         // Создаём эпик
         titleAndDescription = "Прочитать почту" +
-                "|Прочитать все входящие письма и сообщения из мессенджеров|26.02.2023 12:24|45";
+                "|Прочитать все входящие письма и сообщения из мессенджеров|28.02.2023 12:24|45";
         epicTask = fileBackedTasksManager.createEpic(titleAndDescription);
 
         System.out.print(Color.GREEN);
@@ -525,15 +503,25 @@ public class Main {
 
         // Создаем список названий и описаний подзадач
         String[] secondaryTitleAndDescriptions = {
-                "Подзадача 1|Прочитать электронную почту|26.02.2023 12:24|15",
-                "Подзадача 2|Прочитать мессенджеры|26.02.2023 12:39|15",
-                "Подзадача 3|Прочитать соцсети|23.02.2023 12:53|15"};
+                "Подзадача 1|Прочитать электронную почту|21.02.2023 12:24|15",
+                "Подзадача 2|Прочитать мессенджеры|22.02.2023 12:39|15",
+                "Подзадача 3|Прочитать соцсети|22.02.2023 12:59|15"};
         for (String titleDescription : secondaryTitleAndDescriptions) {
             // Создаем подзадачу
             Subtask subtask = fileBackedTasksManager.createSubtask(titleDescription, epicTask.getId());
             // Добавляем её к эпику
             //  epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-            fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            // fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+            if (subtask != null) {
+                fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                System.out.print(Color.GREEN);
+                System.out.println("Создана подзадача с id = " + subtask.getId());
+                System.out.print(Color.RESET);
+            } else {
+                System.out.print(Color.RED);
+                System.out.println("Подзадача не создана");
+                System.out.print(Color.RESET);
+            }
         }
         fileBackedTasksManager.setNeedWriteToFile(true);
         fileBackedTasksManager.addEpic(epicTask);
