@@ -175,12 +175,11 @@ public class InMemoryTaskManager implements TaskManager {
             if (itemTask instanceof EpicTask) {
                 TreeSet<Subtask> subtasks = ((EpicTask) itemTask).getSubtasks();
                 for (Subtask subtask : subtasks) {
-                    if (subtask.isOverlap(task)) {
+                    if (task.isOverlap(subtask)) {
                         return subtask.getId();
                     }
                 }
-            }
-            if (itemTask.isOverlap(task)) {
+            } else if (itemTask.isOverlap(task)) {
                 return itemTask.getId();
             }
         }
