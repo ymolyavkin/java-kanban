@@ -266,7 +266,8 @@ public class Main {
                 System.out.println("Это обычная задача");
                 String[] newTime = updateTime(startTime, duration);
                 boolean statusWasChanged = mustChangeStatus();
-                boolean taskIsUpdated = fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
+                //boolean taskIsUpdated = fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
+                boolean taskIsUpdated = fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, statusWasChanged);
                 if (taskIsUpdated) {
                     System.out.print(Color.GREEN);
 
