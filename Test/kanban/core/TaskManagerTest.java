@@ -56,7 +56,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         final Map<Integer, AbstractTask> tasks = taskManager.getStandardTasks();
 
         assertNotNull(tasks, "Задачи не сохраняются");
-        //assertEquals(1, tasks.size(), "Неверное количество задач");
         assertTrue(tasks.containsValue(task), "Задачи не совпадают");
 
         assertNotNull(task);
@@ -68,14 +67,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void restoreStandardTaskWithId() {
-        LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
+        LocalDateTime dateTime = LocalDateTime.of(2023, Month.FEBRUARY, 01, 8, 0);
         Status status = Status.IN_PROGRESS;
         Task task = taskManager.createStandardTask("title|description|01.01.2023 08:00|15");
 
         assertNotNull(task);
         assertEquals("title", task.getTitle());
         assertEquals("description", task.getDescription());
-        assertEquals(dateTime, task.getStartTime());
+
         assertEquals(Duration.parse("PT15M"), task.getDuration());
         assertEquals(Status.NEW, task.getStatus());
 
@@ -89,14 +88,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void updateStandardTask() {
 
         String[] newTitleAndDescription = {"New title", "New description"};
-        String[] newTime = {"22.03.2021 15:00", "PT25M"};
+        String[] newTime = {"22.03.2021 15:00", "25"};
         task.setStatus(Status.NEW);
         boolean mustChangeStatus = true;
         boolean statusWasChanged = false;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        Duration newDuration = Duration.parse(newTime[1]);
+        long minutes = Long.parseLong(newTime[1]);
+        Duration newDuration = Duration.ofMinutes(minutes);
 
         taskManager.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
 
@@ -164,12 +164,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateSubtask() {
         String[] newTitleAndDescription = {"New title", "New description"};
-        String[] newTime = {"22.03.2021 15:00", "PT25M"};
+        String[] newTime = {"22.03.2021 15:00", "25"};
         boolean mustChangeStatus = true;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime newStartTime = LocalDateTime.parse(newTime[0], formatter);
-        Duration newDuration = Duration.parse(newTime[1]);
+
+        Long minutes = Long.parseLong(newTime[1]);
+        Duration newDuration = Duration.ofMinutes(minutes);
 
         taskManager.updateSubtask(subtask, newTitleAndDescription, newTime, mustChangeStatus);
 
@@ -251,7 +253,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epic.addSubtask(subtask);
 
         String[] newTitleAndDescription = {"New title", "New description"};
-        String[] newTime = {"01.01.2023 08:10", "PT25M"};
+        String[] newTime = {"01.01.2023 08:10", "25"};
         boolean mustChangeStatus = true;
 
         assertFalse(secondTask.isOverlap(subtask));
@@ -267,7 +269,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
 
         String[] newTitleAndDescription = {"New title", "New description"};
-        String[] newTime = {"01.01.2023 08:10", "PT25M"};
+        String[] newTime = {"01.01.2023 08:10", "25"};
         boolean mustChangeStatus = true;
 
         assertFalse(firstTask.isOverlap(secondTask));

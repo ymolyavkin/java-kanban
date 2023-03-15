@@ -29,7 +29,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
         tempFilePath = Files.createTempFile("testtask.txt", "");
         taskManager = new FileBackedTasksManager(tempFilePath);
-
+        taskManager.deleteAllTasks();
     }
 
 
