@@ -2,7 +2,9 @@ package kanban.visual;
 
 import kanban.core.FileBackedTasksManager;
 import kanban.model.*;
+import kanban.tasksAPI.KVServer;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,10 +21,16 @@ public class Main {
 
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
-
+    public static final int PORT = 8078;
 
     public static void main(String[] args) {
 
+        try {
+            new KVServer().start();
+            System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         scanner = new Scanner(System.in);
         String userInput;
 

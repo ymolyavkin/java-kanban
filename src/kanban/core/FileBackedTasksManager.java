@@ -25,6 +25,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         needWriteToFile = false;
     }
 
+    public FileBackedTasksManager() {
+    }
+
     public void setNeedWriteToFile(boolean needWriteToFile) {
         this.needWriteToFile = needWriteToFile;
     }
