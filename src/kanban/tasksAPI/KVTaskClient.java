@@ -1,11 +1,12 @@
 package kanban.tasksAPI;
 
-import java.net.URL;
+import java.net.URI;
 
 public class KVTaskClient {
-    private URL url;
+    private URI url;
 
-    public KVTaskClient(URL url) {
+    public KVTaskClient(URI url) {
+        // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища 
         this.url = url;
     }
 
@@ -24,6 +25,7 @@ public class KVTaskClient {
      * @return
      */
     private String load(String key) {
-
+// TODO: 21.03.2023 add return
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package kanban.visual;
 
 import kanban.core.FileBackedTasksManager;
+import kanban.core.HttpTaskManager;
+import kanban.core.Managers;
 import kanban.model.*;
 import kanban.tasksAPI.KVServer;
 
@@ -21,6 +23,8 @@ public class Main {
 
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
+
+    private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     public static final int PORT = 8078;
 
     public static void main(String[] args) {

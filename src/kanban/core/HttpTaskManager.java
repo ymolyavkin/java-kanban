@@ -1,9 +1,11 @@
 package kanban.core;
 
-import java.net.URL;
+import kanban.tasksAPI.KVTaskClient;
+
+import java.net.URI;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    public HttpTaskManager(URL url) {
-       // super(path);
+    public HttpTaskManager(URI url) {
+        KVTaskClient kvTaskClient = new KVTaskClient(url);
     }
 }

@@ -26,6 +26,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public FileBackedTasksManager() {
+        // TODO: 21.03.2023
+        this.path=null;
     }
 
     public void setNeedWriteToFile(boolean needWriteToFile) {
