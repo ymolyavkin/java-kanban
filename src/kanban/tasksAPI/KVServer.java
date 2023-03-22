@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static kanban.visual.Main.PORT;
+import static kanban.visual.Main.KV_PORT;
 
 public class KVServer {
     //public static final int PORT = 8078;
@@ -19,7 +19,7 @@ public class KVServer {
 
     public KVServer() throws IOException {
         apiToken = generateApiToken();
-        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        server = HttpServer.create(new InetSocketAddress("localhost", KV_PORT), 0);
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
@@ -77,8 +77,8 @@ public class KVServer {
     }
 
     public void start() {
-        System.out.println("Запускаем сервер на порту " + PORT);
-        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
+        System.out.println("Запускаем сервер на порту " + KV_PORT);
+        System.out.println("Открой в браузере http://localhost:" + KV_PORT + "/");
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }

@@ -1,12 +1,15 @@
 package kanban.visual;
 
+import com.sun.net.httpserver.HttpServer;
 import kanban.core.FileBackedTasksManager;
 import kanban.core.HttpTaskManager;
 import kanban.core.Managers;
 import kanban.model.*;
+import kanban.tasksAPI.HttpTaskServer;
 import kanban.tasksAPI.KVServer;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,16 +28,21 @@ public class Main {
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
 
     private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
-    public static final int PORT = 8078;
+    public static final int KV_PORT = 8078;
+    public static final int TASK_PORT = 8080;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        HttpServer httpServer = HttpServer.create();
 
-        try {
-            new KVServer().start();
-            System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        httpServer.bind(new InetSocketAddress(TASK_PORT), 0);
+        httpServer.createContext("/tasks", new HttpTaskServer());
+        httpServer.start();
+
+        System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");
+
+        new KVServer().start();
+        System.out.println("HTTP-KV-сервер запущен на " + KV_PORT + " порту!");
+
         scanner = new Scanner(System.in);
         String userInput;
 
@@ -58,6 +66,7 @@ public class Main {
     }
 
     static void getProritizedTask() {
+        TreeSet<AbstractTask> apiTasks = httpTaskManager.getPrioritizedTasks();
         TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
