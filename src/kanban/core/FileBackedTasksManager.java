@@ -121,7 +121,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      *
      * @throws IOException
      */
-    private void save() throws ManagerSaveException {
+    protected void save() throws ManagerSaveException {
         Map<Integer, AbstractTask> standardTasks = getStandardTasks();
         Map<Integer, AbstractTask> epicTasks = getEpicTasks();
         List<String> tasksInStringForm = tasksIntoListString(standardTasks);

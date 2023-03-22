@@ -2,12 +2,15 @@ package kanban.tasksAPI;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import kanban.core.HttpTaskManager;
+import kanban.model.AbstractTask;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.TreeSet;
 
 import static kanban.tasksAPI.Endpoint.*;
 
@@ -15,6 +18,9 @@ public class HttpTaskServer implements HttpHandler {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Charset CP1251_CHARSET = Charset.forName("Cp1251");
+   // private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+   // TODO: 22.03.2023 get key
+    private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -43,6 +49,9 @@ public class HttpTaskServer implements HttpHandler {
             }
             case GET_PRIORITIZED_TASKS -> {
                 writeResponse(exchange, "Получен запрос на получение упорядоченного по времени списка задач", 200);
+                TreeSet<AbstractTask> apiTasks = httpTaskManager.getPrioritizedTasks();
+                System.out.println("apiTasks" + apiTasks);
+
             }
             case GET_FIND_TASK_BY_ID -> {
                 writeResponse(exchange, "Получен запрос на получение задачи по id", 200);

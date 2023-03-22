@@ -2,8 +2,6 @@ package kanban.visual;
 
 import com.sun.net.httpserver.HttpServer;
 import kanban.core.FileBackedTasksManager;
-import kanban.core.HttpTaskManager;
-import kanban.core.Managers;
 import kanban.model.*;
 import kanban.tasksAPI.HttpTaskServer;
 import kanban.tasksAPI.KVServer;
@@ -27,7 +25,7 @@ public class Main {
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
 
-    private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+  //  private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     public static final int KV_PORT = 8078;
     public static final int TASK_PORT = 8080;
 
@@ -66,7 +64,7 @@ public class Main {
     }
 
     static void getProritizedTask() {
-        TreeSet<AbstractTask> apiTasks = httpTaskManager.getPrioritizedTasks();
+
         TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
