@@ -9,10 +9,13 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static kanban.tasksAPI.Endpoint.*;
+
 public class HttpTaskServer implements HttpHandler {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Charset CP1251_CHARSET = Charset.forName("Cp1251");
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -26,20 +29,46 @@ public class HttpTaskServer implements HttpHandler {
         Endpoint endpoint = getEndpoint(requestPath, method);
 
         switch (endpoint) {
-            case GET_POSTS: {
-                writeResponse(exchange, "Получен запрос на получение постов", 200);
-                break;
+            case GET_HISTORY -> {
+                writeResponse(exchange, "Получен запрос на получение истории задач", 200);
             }
-            case GET_COMMENTS: {
-                writeResponse(exchange, "Получен запрос на получение комментариев", 200);
-                break;
+            case GET_ALL_TASKS -> {
+                writeResponse(exchange, "Получен запрос на получение списка всех задач", 200);
             }
-            case POST_COMMENT: {
-                writeResponse(exchange, "Получен запрос на добавление комментария", 200);
-                break;
+            case GET_STANDARD_TASKS -> {
+                writeResponse(exchange, "Получен запрос на получение обычных задач", 200);
             }
-            default:
-                writeResponse(exchange, "Answer: Такого эндпоинта не существует", 404);
+            case GET_EPIC_TASKS -> {
+                writeResponse(exchange, "Получен запрос на получение эпиков", 200);
+            }
+            case GET_PRIORITIZED_TASKS -> {
+                writeResponse(exchange, "Получен запрос на получение упорядоченного по времени списка задач", 200);
+            }
+            case GET_FIND_TASK_BY_ID -> {
+                writeResponse(exchange, "Получен запрос на получение задачи по id", 200);
+            }
+            case POST_ADD_EPIC -> {
+                writeResponse(exchange, "Получен запрос на добавление эпика", 200);
+            }
+            case POST_ADD_TASK -> {
+                writeResponse(exchange, "Получен запрос на добавления задачи", 200);
+            }
+            case POST_CREATE_TASK -> {
+                writeResponse(exchange, "Получен запрос на создание задачи", 200);
+            }
+            case POST_CREATE_SUBTASK -> {
+                writeResponse(exchange, "Получен запрос на создание подзадачи", 200);
+            }
+            case POST_CREATE_EPIC -> {
+                writeResponse(exchange, "Получен запрос на создание эпика", 200);
+            }
+            case POST_DELETE_TASK_BY_ID -> {
+                writeResponse(exchange, "Получен запрос на удаление задачи по id", 200);
+            }
+            case POST_DELETE_ALL_TASKS -> {
+                writeResponse(exchange, "Получен запрос на удаление всех задач", 200);
+            }
+            default -> writeResponse(exchange, "Такого эндпоинта не существует", 404);
         }
     }
 
@@ -49,24 +78,51 @@ public class HttpTaskServer implements HttpHandler {
         String[] splitStrings = requestPath.split("/");
         String lastPart = splitStrings[splitStrings.length - 1];
 
-
-        switch (requestMethod) {
-            case "POST":
-                if (lastPart.equals("comments")) {
-                    return Endpoint.POST_COMMENT;
+        if (requestMethod.equals("GET")) {
+            switch (lastPart) {
+                case "history" -> {
+                    return GET_HISTORY;
                 }
-                break;
-            case "GET":
-                //response = "Вы использовали метод GET!";
-                if (lastPart.equals("comments")) {
-                    return Endpoint.GET_COMMENTS;
-                } else if (lastPart.equals("posts")) {
-                    return Endpoint.GET_POSTS;
+                case "alltasks" -> {
+                    return GET_ALL_TASKS;
                 }
-                break;
-            default:
-                // "Вы использовали какой-то другой метод!";
-                return Endpoint.UNKNOWN;
+                case "standardtasks" -> {
+                    return GET_STANDARD_TASKS;
+                }
+                case "epics" -> {
+                    return GET_EPIC_TASKS;
+                }
+                case "prioritizedtasks" -> {
+                    return GET_PRIORITIZED_TASKS;
+                }
+                case "findtaskbyid" -> {
+                    return GET_FIND_TASK_BY_ID;
+                }
+            }
+        } else if (requestMethod.equals("POST")) {
+            switch (lastPart) {
+                case "addepic" -> {
+                    return POST_ADD_EPIC;
+                }
+                case "addtask" -> {
+                    return POST_ADD_TASK;
+                }
+                case "createtask" -> {
+                    return POST_CREATE_TASK;
+                }
+                case "createsubtask" -> {
+                    return POST_CREATE_SUBTASK;
+                }
+                case "createepic" -> {
+                    return POST_CREATE_EPIC;
+                }
+                case "deletetaskbyid" -> {
+                    return POST_DELETE_TASK_BY_ID;
+                }
+                case "deletealltasks" -> {
+                    return POST_DELETE_ALL_TASKS;
+                }
+            }
         }
         return Endpoint.UNKNOWN;
     }
