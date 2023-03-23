@@ -102,4 +102,12 @@ public class KVServer {
         h.sendResponseHeaders(200, resp.length);
         h.getResponseBody().write(resp);
     }
+
+    /*private void createHttpClient(String resources) {
+        // используем код состояния как часть URL-адреса
+        URI uri = URI.create("http://localhost:8080/tasks/" + resources);
+        KVTaskClient kvTaskClient = new KVTaskClient(uri);
+        String response = kvTaskClient.sendRequest(uri);
+        System.out.println("response = " + response);
+    }*/
 }
