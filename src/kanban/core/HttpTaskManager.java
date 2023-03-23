@@ -10,9 +10,15 @@ import java.util.List;
 public class HttpTaskManager extends FileBackedTasksManager {
     private KVTaskClient kvTaskClient;
     private URI url;
+    //private String key;
     public HttpTaskManager(URI url) {
         this.url=url;
-        KVTaskClient kvTaskClient = new KVTaskClient(url);
+        kvTaskClient=new KVTaskClient(url);
+       // this.key= kvTaskClient.getKey();
+    }
+
+    public KVTaskClient getKvTaskClient() {
+        return kvTaskClient;
     }
 
     @Override
@@ -26,11 +32,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
      * @param key
      * @return
      */
-    public static HttpTaskManager load(String key) {
-        HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
-        httpTaskManager.restoreDataFromServer();
+    public HttpTaskManager load(String key) {
+        //HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+        //httpTaskManager.restoreDataFromServer();
+        this.restoreDataFromServer();
 
-        return httpTaskManager;
+        return this;
     }
 
     private void restoreDataFromServer() {
@@ -54,13 +61,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String response = kvTaskClient.sendRequest(url);
         System.out.println("response = " + response);
     }
-    @Override
+   /* @Override
     public List<AbstractTask> getHistory() {
         kvTaskClient.doSomething();
         sendRequest("history");
         // TODO: 23.03.2023 add return value
         return new ArrayList<>();
-    }
+    }*/
 
 // .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
 }

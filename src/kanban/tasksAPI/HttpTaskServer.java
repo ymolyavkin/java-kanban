@@ -3,6 +3,7 @@ package kanban.tasksAPI;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
+import kanban.core.Managers;
 import kanban.model.AbstractTask;
 
 import java.io.IOException;
@@ -19,16 +20,27 @@ public class HttpTaskServer implements HttpHandler {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Charset CP1251_CHARSET = Charset.forName("Cp1251");
-    // private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+    //private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     // TODO: 22.03.2023 get key
     //private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
-    private HttpTaskManager httpTaskManager;
+   private HttpTaskManager httpTaskManager;
+  //  private final String key;
+
+  /*  public HttpTaskServer(String key) {
+        //this.key = key;
+        httpTaskManager = HttpTaskManager.load(key);
+    }*/
+   public HttpTaskServer() {
+       httpTaskManager = (HttpTaskManager) Managers.getDefault();
+       /*String key = httpTaskManager.getKvTaskClient().getKey();
+       httpTaskManager = httpTaskManager.load(key);*/
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
-        String key = kvTaskClient.getKey();
-        httpTaskManager = HttpTaskManager.load(key);
+        /*KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
+        String key = kvTaskClient.getKey();*/
+//        httpTaskManager = HttpTaskManager.load(key);
 
         String method = exchange.getRequestMethod();
 
@@ -43,6 +55,7 @@ public class HttpTaskServer implements HttpHandler {
             case GET_HISTORY -> {
                 writeResponse(exchange, "Получен запрос на получение истории задач", 200);
                List<AbstractTask> historyTask = httpTaskManager.getHistory();
+                System.out.println("Test exist httpTaskManager");
                 //sendRequest("history");
             }
             case GET_ALL_TASKS -> {

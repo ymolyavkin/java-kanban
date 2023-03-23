@@ -13,7 +13,8 @@ public class Managers {
 
     public static TaskManager getDefault() {
         httpTaskManager = new HttpTaskManager(URI.create(url));
-
+        String key = httpTaskManager.getKvTaskClient().getKey();
+        httpTaskManager = httpTaskManager.load(key);
         return httpTaskManager;
     }
 
