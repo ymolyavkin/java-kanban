@@ -12,6 +12,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import static kanban.tasksAPI.Endpoint.*;
@@ -23,15 +24,15 @@ public class HttpTaskServer implements HttpHandler {
     //private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     // TODO: 22.03.2023 get key
     //private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
-   private HttpTaskManager httpTaskManager;
-  //  private final String key;
+    private HttpTaskManager httpTaskManager;
+    //  private final String key;
 
-  /*  public HttpTaskServer(String key) {
-        //this.key = key;
-        httpTaskManager = HttpTaskManager.load(key);
-    }*/
-   public HttpTaskServer() {
-       httpTaskManager = (HttpTaskManager) Managers.getDefault();
+    /*  public HttpTaskServer(String key) {
+          //this.key = key;
+          httpTaskManager = HttpTaskManager.load(key);
+      }*/
+    public HttpTaskServer() {
+        httpTaskManager = (HttpTaskManager) Managers.getDefault();
        /*String key = httpTaskManager.getKvTaskClient().getKey();
        httpTaskManager = httpTaskManager.load(key);*/
     }
@@ -54,12 +55,15 @@ public class HttpTaskServer implements HttpHandler {
         switch (endpoint) {
             case GET_HISTORY -> {
                 writeResponse(exchange, "Получен запрос на получение истории задач", 200);
-               List<AbstractTask> historyTask = httpTaskManager.getHistory();
+                List<AbstractTask> historyTask = httpTaskManager.getHistory();
                 System.out.println("Test exist httpTaskManager");
                 //sendRequest("history");
             }
             case GET_ALL_TASKS -> {
                 writeResponse(exchange, "Получен запрос на получение списка всех задач", 200);
+                Map<Integer, AbstractTask> standardTasks = httpTaskManager.getStandardTasks();
+                Map<Integer, AbstractTask> epics = httpTaskManager.getEpicTasks();
+                System.out.println("Test get standard tasks" + standardTasks + " " + epics);
             }
             case GET_STANDARD_TASKS -> {
                 writeResponse(exchange, "Получен запрос на получение обычных задач", 200);
