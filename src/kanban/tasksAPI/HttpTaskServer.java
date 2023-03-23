@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.TreeSet;
 
 import static kanban.tasksAPI.Endpoint.*;
@@ -20,10 +21,14 @@ public class HttpTaskServer implements HttpHandler {
     private static final Charset CP1251_CHARSET = Charset.forName("Cp1251");
     // private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     // TODO: 22.03.2023 get key
-    private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
+    //private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
+    private HttpTaskManager httpTaskManager;
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
+        String key = kvTaskClient.getKey();
+        httpTaskManager = HttpTaskManager.load(key);
 
         String method = exchange.getRequestMethod();
 
@@ -37,7 +42,8 @@ public class HttpTaskServer implements HttpHandler {
         switch (endpoint) {
             case GET_HISTORY -> {
                 writeResponse(exchange, "Получен запрос на получение истории задач", 200);
-                sendRequest("history");
+               List<AbstractTask> historyTask = httpTaskManager.getHistory();
+                //sendRequest("history");
             }
             case GET_ALL_TASKS -> {
                 writeResponse(exchange, "Получен запрос на получение списка всех задач", 200);
@@ -156,12 +162,12 @@ public class HttpTaskServer implements HttpHandler {
         }
     }
 
-    private void sendRequest(String resources) {
+  /*  private void sendRequest(String resources) {
         // используем код состояния как часть URL-адреса
        // URI uri = URI.create("http://localhost:8078/register/" + resources);
         URI uri = URI.create("http://localhost:8078/register/");
         KVTaskClient kvTaskClient = new KVTaskClient(uri);
         String response = kvTaskClient.sendRequest(uri);
         System.out.println("response = " + response);
-    }
+    }*/
 }

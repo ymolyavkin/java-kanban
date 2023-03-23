@@ -8,7 +8,7 @@ public class Managers {
     private static InMemoryHistoryManager historyManager;
     private static FileBackedTasksManager fileBackedTasksManager;
     private static HttpTaskManager httpTaskManager;
-    private static String url = "http://localhost/";
+    private static String url = "http://localhost:8078/register";
 
 
     public static TaskManager getDefault() {

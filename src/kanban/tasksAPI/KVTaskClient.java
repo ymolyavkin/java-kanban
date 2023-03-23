@@ -9,12 +9,19 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
     private URI url;
     private HttpClient client;
+    private String key;
 
     public KVTaskClient(URI url) {
         // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища
         this.url = url;
         client = HttpClient.newHttpClient();
+        key = sendRequest(url);
+        System.out.println("From consructor client: key = " + key);
     }
+    public String getKey() {
+        return key;
+    }
+
 
     public String sendRequest(URI uri) {
         String answer = "";
@@ -46,6 +53,10 @@ public class KVTaskClient {
                     "Проверьте, пожалуйста, адрес и повторите попытку.";
         }
         return answer;
+    }
+
+    public void doSomething() {
+        System.out.println("Do Something");
     }
 
 }
