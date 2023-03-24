@@ -2,14 +2,18 @@ package kanban.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import kanban.model.AbstractTask;
+import kanban.model.Task;
 import kanban.serialization.DurationTypeAdapter;
 import kanban.serialization.LocalDateTimeConverter;
 import kanban.tasksAPI.KVTaskClient;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpTaskManager extends FileBackedTasksManager {
@@ -28,9 +32,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         this.url = url;
         kvTaskClient = new KVTaskClient(url);
 
-        GsonBuilder gSonBuilder=  new GsonBuilder();
-      //  gSonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
-      //  gSonBuilder.registerTypeAdapter(Time.class, new TimeDeserializer());
+        GsonBuilder gSonBuilder = new GsonBuilder();
+        //  gSonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+        //  gSonBuilder.registerTypeAdapter(Time.class, new TimeDeserializer());
         //gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
         gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
         gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
@@ -48,18 +52,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
     protected void save() {
         Map<Integer, AbstractTask> tasks = this.getStandardTasks();
 
-
-
-
-
-
-      /*  Type typeOfMap = new TypeToken<Map<String, Task>>() {
-        }.getType();
-        Gson gson = new GsonBuilder().create();
-        String json = gson.toJson(tasks, typeOfMap);
-        System.out.println(json);*/
         String jsonString = gson.toJson(tasks);
         System.out.println(jsonString);
+
+        Type type = new TypeToken<Map<Integer, Task>>(){}.getType();
+
+        Map<Integer,Object> myMap = new HashMap<Integer,Object>();
+        myMap = (Map<Integer,Object>) gson.fromJson(jsonString, myMap.getClass());
+       /* Type typeMapStandardTask = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();
+        HashMap<Integer, Task> clonedMap = gson.fromJson(jsonString, typeMapStandardTask);*/
+
+        System.out.println(myMap);
+        System.out.println();
+
     }
     /*
     Map<String, File> myMap;
