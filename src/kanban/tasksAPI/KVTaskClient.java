@@ -54,6 +54,18 @@ public class KVTaskClient {
         }
         return answer;
     }
+    /**
+     * Метод должен сохранять состояние менеджера задач через запрос POST /save/<ключ>?API_TOKEN=.
+     *
+     * @param key
+     * @param json
+     */
+    public void put(String key, String json) {
+
+    }
+    public  String load(String key) {
+        return "Json";
+    }
 
     public void doSomething() {
         System.out.println("Do Something");

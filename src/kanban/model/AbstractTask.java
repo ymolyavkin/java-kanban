@@ -1,11 +1,13 @@
 package kanban.model;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public abstract class AbstractTask implements Comparable<AbstractTask> {
+public abstract class AbstractTask implements Comparable<AbstractTask>, Serializable {
+    private static final long serialVersionUID = 1L;
     private String title;
     private String description;
     private int id;
