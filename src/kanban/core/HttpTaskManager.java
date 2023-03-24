@@ -59,11 +59,19 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         Map<Integer,Object> myMap = new HashMap<Integer,Object>();
         myMap = (Map<Integer,Object>) gson.fromJson(jsonString, myMap.getClass());
-       /* Type typeMapStandardTask = new TypeToken<HashMap<Integer, Task>>() {
+        /*Type typeMapStandardTask = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();*/
+        Type typeStandardTask = new TypeToken<Task>() {
         }.getType();
-        HashMap<Integer, Task> clonedMap = gson.fromJson(jsonString, typeMapStandardTask);*/
+       /* HashMap<Integer, Task> clonedMap = gson.fromJson(jsonString, typeMapStandardTask);*/
+        System.out.println("Name : " + myMap.get("0"));
+       /* var v = myMap.get("0").toString();
+        Task task = gson.fromJson(v, typeStandardTask);*/
+       /* System.out.println("Mobile : " + userData.get("Mobile"));
+        System.out.println("Designation : " + userData.get("Designation"));
+        System.out.println("Pet : " + userData.get("Pet"));
+        System.out.println("Address : " + userData.get("Address"));*/
 
-        System.out.println(myMap);
         System.out.println();
 
     }
