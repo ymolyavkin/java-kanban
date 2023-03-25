@@ -66,8 +66,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String jsonStringTasks = gson.toJson(tasks);
         System.out.println(jsonStringTasks);
 
-      //  Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
-      //  HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
+        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
+        HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
 
 
 
