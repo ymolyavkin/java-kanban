@@ -32,6 +32,10 @@ public abstract class AbstractTask implements Comparable<AbstractTask>, Serializ
         status = Status.NEW;
     }
 
+    public AbstractTask() {
+
+    }
+
     public boolean changeStatus() {
         Status currentStatus = this.status;
 
@@ -165,5 +169,9 @@ public abstract class AbstractTask implements Comparable<AbstractTask>, Serializ
 
     public LocalDateTime getEndTime() {
         return startTime.plusMinutes(duration.toMinutes());
+    }
+
+    public void setId(int id) {
+        this.id=id;
     }
 }

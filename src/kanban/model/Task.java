@@ -11,6 +11,10 @@ public final class Task extends AbstractTask {
         super(title, description, id);
     }
 
+    public Task() {
+        super();
+    }
+
     @Override
     public String toString() {
         return super.toString() + " }";

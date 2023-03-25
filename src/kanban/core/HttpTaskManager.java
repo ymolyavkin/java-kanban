@@ -66,10 +66,31 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String jsonStringTasks = gson.toJson(tasks);
         System.out.println(jsonStringTasks);
 
+      //  Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
+      //  HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
+
+
+
+
+
+        Task singleTask = (Task)tasks.get(0);
+        String jsonStringSingleTask = gson.toJson(singleTask);
+
+
         EpicTask epic = (EpicTask) epics.get(6);
 
         String jsonStringEpic = gson.toJson(epic);
-        System.out.println(jsonStringEpic);
+
+        Task task = gson.fromJson(jsonStringSingleTask, Task.class);
+      /*  Type singtleTaskType = new TypeToken<Task>() {}.getType();
+        Task task = gson.fromJson(jsonStringSingleTask, singtleTaskType);
+        Type epicType = new TypeToken<EpicTask>() {}.getType();
+        EpicTask epicTask = gson.fromJson(jsonStringEpic, epicType);
+
+
+*/
+        String jsonStringAllEpics = gson.toJson(epics);
+        System.out.println(jsonStringAllEpics);
 
         Map<Integer, Object> myMap = new HashMap<>();
         Map<Integer, AbstractTask> myMap1 = new HashMap<>();

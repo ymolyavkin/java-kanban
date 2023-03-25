@@ -2,6 +2,7 @@ package kanban.serialization;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
@@ -20,7 +21,11 @@ public class DurationTypeAdapter extends TypeAdapter<Duration> {
 
     @Override
     public Duration read(JsonReader jsonReader) throws IOException {
-        return null;
+        if (jsonReader.peek() == JsonToken.NULL) {
+            jsonReader.nextNull();
+            return null;
+        }
+        return  Duration.ofMinutes(jsonReader.nextLong());
     }
     /*
     public void write(JsonWriter writer, Duration value) throws IOException {
@@ -31,5 +36,11 @@ public class DurationTypeAdapter extends TypeAdapter<Duration> {
 
     writer.value(duration.getStandardSeconds());
   }
+  public Duration read(JsonReader in) throws IOException {
+    if (in.peek() == JsonToken.NULL) {
+      in.nextNull();
+      return null;
+    }
+    return new Duration(in.nextString());
      */
 }
