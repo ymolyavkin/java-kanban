@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 public final class EpicTask extends AbstractTask {
     private final TreeSet<Subtask> subtasks;
-    private LocalDateTime startTime;
+    //private LocalDateTime startTime;
     private LocalDateTime endTime;
    // private Duration duration;
 
@@ -76,7 +76,7 @@ public final class EpicTask extends AbstractTask {
 
     public void calculateTime() {
         if (!subtasks.isEmpty()) {
-            startTime = subtasks.first().getStartTime();
+            setStartTime(subtasks.first().getStartTime());
             endTime = null;
             LocalDateTime startLastTask = subtasks.last().getStartTime();
             if (startLastTask != null) {
@@ -96,10 +96,10 @@ public final class EpicTask extends AbstractTask {
         return duration;
     }*/
 
-    @Override
+    /*@Override
     public LocalDateTime getStartTime() {
         return startTime;
-    }
+    }*/
 
     @Override
     public LocalDateTime getEndTime() {
