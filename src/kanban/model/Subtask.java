@@ -1,9 +1,10 @@
 package kanban.model;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Subtask extends AbstractTask {
+public class Subtask extends AbstractTask implements Serializable {
     private final int parentId;
 
     public int getParentId() {

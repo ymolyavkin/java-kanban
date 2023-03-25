@@ -1,12 +1,18 @@
 package kanban.tasksAPI;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static kanban.visual.Main.KV_PORT;
@@ -27,6 +33,13 @@ public class KVServer {
 
     private void load(HttpExchange h) {
         // TODO Добавьте получение значения по ключу
+        Headers rmap = h.getRequestHeaders();
+        System.out.println("rmap = " + rmap);
+        InputStream inputStream =h.getRequestBody();
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
+
     }
 
     private void save(HttpExchange h) throws IOException {
