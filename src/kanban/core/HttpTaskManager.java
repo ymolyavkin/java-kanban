@@ -22,7 +22,7 @@ import java.util.Map;
 public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_TASKS = "Tasks";
     private static final String KEY_EPICS = "Epics";
-    private static final String KEY_SUBTASKS = "Subtasks";
+    private static final String KEY_PRIORITIZED = "Prioritized";
     private static final String KEY_HISTORY = "History";
     private static Gson gson;
     private boolean needSendToServer;
@@ -52,6 +52,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     }
 
+    public void setNeedSendToServer(boolean needSendToServer) {
+        this.needSendToServer = needSendToServer;
+    }
+
     public KVTaskClient getKvTaskClient() {
         return kvTaskClient;
     }
@@ -79,11 +83,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
         String jsonStringTasks = gson.toJson(tasks);
         System.out.println(tasks);
-        //URI url = URI.create("http://localhost:8080/tasks/task/");
-        kvTaskClient.sendTaskToStorage(jsonStringTasks);
+        //URI url = URI.create("http://localhost:8080/tasks/addtask/");
+        kvTaskClient.sendDataToStorage(jsonStringTasks, KEY_TASKS);
+    }
+    private void sendEpicsToKV(Map<Integer, AbstractTask> epics) throws IOException, InterruptedException {
+        String jsonStringEpics = gson.toJson(epics);
+        System.out.println(epics);
+        //URI url = URI.create("http://localhost:8080/tasks/addepic/");
+        kvTaskClient.sendDataToStorage(jsonStringEpics, KEY_EPICS);
     }
 
-    private void getAndSendTasks(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
+   /* private void getAndSendTasks(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
         String jsonStringTasks = gson.toJson(tasks);
         System.out.println(jsonStringTasks);
         //  System.out.println();
@@ -95,7 +105,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         //  System.out.println(taskHashMap);
         //  System.out.println();
-    }
+    }*/
 
     private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
 
@@ -123,14 +133,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
 
     public HttpTaskManager load(String key) {
-        // restoreDataFromServer();
+        restoreDataFromServer();
         return this;
     }
 
     public void restoreDataFromServer() {
         String jsonStandardTasks = kvTaskClient.getStandardTasksFromServer();
-        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {
-        }.getType();
+        if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("Данные не найдены")) {
+            return;
+        }
+        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
         HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStandardTasks, taskMapType);
         //deleteAllTasks();
         for (Task task : taskHashMap.values()) {
@@ -144,7 +156,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     /*  private void put(String key, String json) {
 
       }*/
-    private void sendRequest(String resources) throws IOException, InterruptedException {
+    /*private void sendRequest(String resources) throws IOException, InterruptedException {
 
         String url = "http://localhost:8080/tasks/addtask";
 
@@ -152,9 +164,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         URI uri = URI.create(url);
 
 
-        kvTaskClient.sendTaskToStorage(resources);
+        kvTaskClient.sendDataToStorage(resources);
 
-    }
+    }*/
    /* @Override
     public List<AbstractTask> getHistory() {
         kvTaskClient.doSomething();
@@ -167,6 +179,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void addEpic(EpicTask epicTask) {
         epicTask.calculateTime();
         super.addEpic(epicTask);
+        if (needSendToServer) {
+            save();
+            needSendToServer = false;
+        }
     }
 
     @Override

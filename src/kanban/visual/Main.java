@@ -215,8 +215,10 @@ public class Main {
         int typeTask = userMenu("Выберите тип создаваемой задачи:", menuItems, values);
 
         if (typeTask == 1) {
-            fileBackedTasksManager.setNeedWriteToFile(true);
-            Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
+            //fileBackedTasksManager.setNeedWriteToFile(true);
+            httpTaskManager.setNeedSendToServer(true);
+           // Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
+            Task task = httpTaskManager.createStandardTask(titleAndDescription());
             if (task != null) {
                 System.out.print(Color.GREEN);
                 System.out.println("Создана обычная задача с id = " + task.getId());
@@ -227,7 +229,8 @@ public class Main {
                 System.out.print(Color.RESET);
             }
         } else if (typeTask == 2) {
-            EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription());
+           // EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription());
+            EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription());
             System.out.print(Color.GREEN);
             System.out.println("Создан эпик с id = " + (epicTask.getId()));
             System.out.print(Color.RESET);
@@ -235,9 +238,11 @@ public class Main {
             List<String> titleAndDescriptions = createSubtaskItemInfo();
             for (String titleAndDescription : titleAndDescriptions) {
                 // Создаем подзадачу
-                Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
+                //Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
+                Subtask subtask = httpTaskManager.createSubtask(titleAndDescription, epicTask.getId());
                 if (subtask != null) {
-                    fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                   // fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
+                    httpTaskManager.addSubtaskToEpic(epicTask, subtask);
                 } else {
                     System.out.print(Color.RED);
                     System.out.println("Подзадача не создана");
@@ -245,8 +250,10 @@ public class Main {
                 }
 
             }
-            fileBackedTasksManager.setNeedWriteToFile(true);
-            fileBackedTasksManager.addEpic(epicTask);
+           // fileBackedTasksManager.setNeedWriteToFile(true);
+            httpTaskManager.setNeedWriteToFile(true);
+           // fileBackedTasksManager.addEpic(epicTask);
+            httpTaskManager.addEpic(epicTask);
         }
     }
 

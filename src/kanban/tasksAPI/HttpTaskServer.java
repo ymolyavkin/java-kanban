@@ -199,14 +199,11 @@ public class HttpTaskServer implements HttpHandler {
                     case "addtask" -> {
                         return POST_ADD_TASK;
                     }
-                    case "createtask" -> {
-                        return POST_CREATE_TASK;
+                    case "addprioritized" -> {
+                        return POST_ADD_PRIORITIZED;
                     }
-                    case "createsubtask" -> {
-                        return POST_CREATE_SUBTASK;
-                    }
-                    case "createepic" -> {
-                        return POST_CREATE_EPIC;
+                    case "addhistory" -> {
+                        return POST_ADD_HISTORY;
                     }
                 }
             }
@@ -226,6 +223,13 @@ public class HttpTaskServer implements HttpHandler {
         }
         return UNKNOWN;
     }
+    /*
+    case "addepic" -> {return POST_ADD_EPIC;}
+                    case "addtask" -> { return POST_ADD_TASK; }
+                    case "addprioritized " -> {return POST_ADD_PRIORITIZED;}
+                    case " addhistory " -> {return POST_ADD_HISTORY; }}}
+
+     */
 
     private void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
 

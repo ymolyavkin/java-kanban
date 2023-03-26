@@ -6,6 +6,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static kanban.tasksAPI.Endpoint.GET_HISTORY;
+
 public class KVTaskClient {
     private final URI url;
     private final HttpClient client;
@@ -15,20 +17,43 @@ public class KVTaskClient {
         // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища
         this.url = url;
         client = HttpClient.newHttpClient();
-       // key = sendRequest(url);
-      //  System.out.println("From consructor client: key = " + key);
+        // key = sendRequest(url);
+        //  System.out.println("From consructor client: key = " + key);
     }
+
     /*public String getKey() {
         return key;
     }*/
-
-public void sendTaskToStorage(String json) throws IOException, InterruptedException {
-        URI allTasksUrl = URI.create("http://localhost:8080/tasks/addtask");
+/*
+Tasks";
+    private static final String KEY_EPICS = "Epics";
+    private static final String KEY_SUBTASKS = "Subtasks";
+    private static final String KEY_HISTORY = "History";
+ */
+    public void sendDataToStorage(String json, String key) throws IOException, InterruptedException {
+        String url="http://localhost:8080/tasks/";
+        switch (key) {
+            case "Tasks" -> {
+                url += "addtask";
+            }
+            case "Epics" -> {
+                url += "addepic";
+            }
+            case "Prioritized" -> {
+                url += "addprioritized";
+            }
+            case "History" -> {
+                url += "addhistory";
+            }
+        }
+        URI allTasksUrl = URI.create(url);
 
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder().uri(allTasksUrl).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
     }
+
     public String sendRequest(URI uri) {
         String answer = "";
 
@@ -38,7 +63,7 @@ public void sendTaskToStorage(String json) throws IOException, InterruptedExcept
                 .POST(HttpRequest.BodyPublishers.ofString("Sample request body"))
                 .build();
 
-     //   HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
+        //   HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -67,6 +92,7 @@ public void sendTaskToStorage(String json) throws IOException, InterruptedExcept
         }
         return answer;
     }
+
     /**
      * Метод должен сохранять состояние менеджера задач через запрос POST /save/<ключ>?API_TOKEN=.
      *
@@ -76,7 +102,8 @@ public void sendTaskToStorage(String json) throws IOException, InterruptedExcept
     public void put(String key, String json) {
 
     }
-    public  String load(String key) {
+
+    public String load(String key) {
         return "Json";
     }
 
@@ -86,17 +113,9 @@ public void sendTaskToStorage(String json) throws IOException, InterruptedExcept
 
     public String getStandardTasksFromServer() {
         String url = "http://localhost:8078/load/KEY_TASK?API_TOKEN=DEBUG";
-
-        // добавьте отлов и обработку исключений вокруг кода ниже
         URI uri = URI.create(url);
-
-        // создаём запрос
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
 
-        // создаём HTTP-клиент
-       // HttpClient client = HttpClient.newHttpClient();
-
-        // отправляем запрос
         HttpResponse<String> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
