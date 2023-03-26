@@ -30,13 +30,16 @@ public class KVServer {
 
     private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
-        String fromKV = data.get("KEY_TASK");
-        System.out.println("fromKV= " + fromKV);
-        System.out.println();
-        String taskSerialized = "{0=Задача: { название: 'Физминутка', описание: 'Выполнить десять приседаний', id = 0, время начала: '23.02.2023 12:24, окончание: 23.02.2023 12:39', статус: 'NEW' }, 1=Задача: { название: 'Почитать новости', описание: 'Открыть мессенджер и просмотреть новые сообщения', id = 1, время начала: '24.02.2023 12:24, окончание: 24.02.2023 12:39', статус: 'NEW' }, 5=Задача: { название: 'hghf', описание: 'uytuyt uytuyt', id = 5, время начала: '23.02.2023 15:00, окончание: 23.02.2023 15:50', статус: 'NEW' }}";
+        String response;
+        if (data.isEmpty()) {
+           response="Данные не найдены";
+        } else {
+            response = data.get("KEY_TASK");
+            System.out.println("fromKV= " + response);
+        }
         h.sendResponseHeaders(200, 0);
         try (OutputStream os = h.getResponseBody()) {
-            os.write(taskSerialized.getBytes());
+            os.write(response.getBytes());
         }
         String[] pathParts = h.getRequestURI().getPath().split("/");
         for (String pathPart : pathParts) {

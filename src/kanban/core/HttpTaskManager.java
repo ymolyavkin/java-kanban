@@ -129,6 +129,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public void restoreDataFromServer() {
         String jsonStandardTasks = kvTaskClient.getStandardTasksFromServer();
+        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();
+        HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStandardTasks, taskMapType);
+        //deleteAllTasks();
+        for (Task task : taskHashMap.values()) {
+            addTask(task);
+        }
         System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
         //save();
     }
