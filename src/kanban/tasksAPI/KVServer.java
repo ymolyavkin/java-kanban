@@ -4,10 +4,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -31,11 +28,23 @@ public class KVServer {
         server.createContext("/load", this::load);
     }
 
-    private void load(HttpExchange h) {
+    private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
+        String fromKV = data.get("KEY_TASK");
+        System.out.println("fromKV= " + fromKV);
+        System.out.println();
+        String taskSerialized = "{0=Задача: { название: 'Физминутка', описание: 'Выполнить десять приседаний', id = 0, время начала: '23.02.2023 12:24, окончание: 23.02.2023 12:39', статус: 'NEW' }, 1=Задача: { название: 'Почитать новости', описание: 'Открыть мессенджер и просмотреть новые сообщения', id = 1, время начала: '24.02.2023 12:24, окончание: 24.02.2023 12:39', статус: 'NEW' }, 5=Задача: { название: 'hghf', описание: 'uytuyt uytuyt', id = 5, время начала: '23.02.2023 15:00, окончание: 23.02.2023 15:50', статус: 'NEW' }}";
+        h.sendResponseHeaders(200, 0);
+        try (OutputStream os = h.getResponseBody()) {
+            os.write(taskSerialized.getBytes());
+        }
+        String[] pathParts = h.getRequestURI().getPath().split("/");
+        for (String pathPart : pathParts) {
+            System.out.println("pahtPart: " + pathPart);
+        }
         Headers rmap = h.getRequestHeaders();
         System.out.println("rmap = " + rmap);
-        InputStream inputStream =h.getRequestBody();
+        InputStream inputStream = h.getRequestBody();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));

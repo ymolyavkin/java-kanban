@@ -88,6 +88,7 @@ public class Main {
     }
 
     static void getListOfAllTasks() {
+        httpTaskManager.restoreDataFromServer();
         var standardTasks = fileBackedTasksManager.getStandardTasks();
         var epicTasks = fileBackedTasksManager.getEpicTasks();
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {

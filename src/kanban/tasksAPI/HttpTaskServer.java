@@ -1,13 +1,13 @@
 package kanban.tasksAPI;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
 import kanban.core.Managers;
 import kanban.model.AbstractTask;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -79,8 +79,9 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(exchange, "Получен запрос на добавление эпика", 200);
             }
             case POST_ADD_TASK -> {
-                writeResponse(exchange, "Получен запрос на добавления задачи", 200);
-                System.out.println("Получен запрос на добавления задачи");
+                writeResponse(exchange, "Получен запрос на добавление задачи", 200);
+                System.out.println("Получен запрос на добавление задачи");
+                handPostAddTask(exchange);
             }
             case POST_CREATE_TASK -> {
                 writeResponse(exchange, "Получен запрос на создание задачи", 200);
@@ -100,6 +101,67 @@ public class HttpTaskServer implements HttpHandler {
             default -> writeResponse(exchange, "Такого эндпоинта не существует", 404);
         }
     }
+
+    private void handPostAddTask(HttpExchange httpExchange) throws IOException {
+
+
+        InputStream inputStream = httpExchange.getRequestBody();
+        System.out.println();
+        String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+        System.out.println("Тело запроса:\n" + body);
+        System.out.println();
+
+
+
+
+        /*// read the query string from the request body
+        String qry;
+        InputStream in = httpExchange.getRequestBody();
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte buf[] = new byte[4096];
+            for (int n = in.read(buf); n > 0; n = in.read(buf)) {
+                out.write(buf, 0, n);
+            }
+            qry = new String(out.toByteArray(), DEFAULT_CHARSET);
+        } finally {
+            in.close();
+        }
+
+        var query = httpExchange.getRequestURI().getQuery();
+        Headers requestHeaders = httpExchange.getRequestHeaders();
+        // извлеките тело запроса
+        InputStream inputStream = httpExchange.getRequestBody();
+
+        String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+        System.out.println("Тело запроса:\n" + body);
+*/
+
+    }
+    /*
+     // извлеките тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+               // String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+
+                //String body = ... bufferedReader.readLine();
+
+                // извлеките path из запроса
+                String path = httpExchange.getRequestURI().getPath();
+                String[] splitStrings = path.split("/");
+                String profession = splitStrings[2];
+                String name = splitStrings[3];
+                // String path = ...
+                // а из path — профессию и имя
+                //  String profession = ...
+                //    String name = ...
+
+                // извлеките заголовок
+                Headers requestHeaders = httpExchange.getRequestHeaders();
+     */
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         // реализуйте этот метод

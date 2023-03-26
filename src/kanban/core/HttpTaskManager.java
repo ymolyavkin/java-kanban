@@ -13,9 +13,6 @@ import kanban.tasksAPI.KVTaskClient;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.net.http.HttpRequest;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -50,7 +47,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
 
-      //  restoreDataFromServer();
+        //  restoreDataFromServer();
 
 
     }
@@ -66,7 +63,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         Map<Integer, AbstractTask> tasks = getStandardTasks();
         Map<Integer, AbstractTask> epics = getEpicTasks();
         try {
-            getAndSendTasks(tasks);
+            sendTasksToKV(tasks);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -79,30 +76,37 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     }
 
+    private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
+        String jsonStringTasks = gson.toJson(tasks);
+        System.out.println(tasks);
+        //URI url = URI.create("http://localhost:8080/tasks/task/");
+        kvTaskClient.sendTaskToStorage(jsonStringTasks);
+    }
+
     private void getAndSendTasks(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
         String jsonStringTasks = gson.toJson(tasks);
-      //  System.out.println(jsonStringTasks);
-      //  System.out.println();
+        System.out.println(jsonStringTasks);
+        //  System.out.println();
 
         sendRequest(jsonStringTasks);
         Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {
         }.getType();
         HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
 
-      //  System.out.println(taskHashMap);
-      //  System.out.println();
+        //  System.out.println(taskHashMap);
+        //  System.out.println();
     }
 
     private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
 
         String jsonStringEpics = gson.toJson(epics);
-     //   System.out.println(jsonStringEpics);
+        //   System.out.println(jsonStringEpics);
         Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {
         }.getType();
         HashMap<Integer, EpicTask> epicTaskHashMap = gson.fromJson(jsonStringEpics, epicMapType);
 
-     //   System.out.println(epicTaskHashMap);
-     //   System.out.println();
+        //   System.out.println(epicTaskHashMap);
+        //   System.out.println();
     }
 
     private String getDataFromKVServer() {
@@ -119,11 +123,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
 
     public HttpTaskManager load(String key) {
-       // restoreDataFromServer();
+        // restoreDataFromServer();
         return this;
     }
 
-    private void restoreDataFromServer() {
+    public void restoreDataFromServer() {
        /* gson=new GsonBuilder()
                 .registerTypeAdapter(Duration.class, new DurationA)*/
         save();
@@ -141,7 +145,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         URI uri = URI.create(url);
 
 
-        kvTaskClient.sendAllTasksToStorage(resources);
+        kvTaskClient.sendTaskToStorage(resources);
 
     }
    /* @Override
@@ -156,14 +160,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void addEpic(EpicTask epicTask) {
         epicTask.calculateTime();
         super.addEpic(epicTask);
-
     }
 
     @Override
     public void addTask(Task task) {
 
         super.addTask(task);
-
+        if (needSendToServer) {
+            save();
+            needSendToServer = false;
+        }
     }
 
     @Override

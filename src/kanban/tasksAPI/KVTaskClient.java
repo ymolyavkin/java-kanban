@@ -22,14 +22,12 @@ public class KVTaskClient {
         return key;
     }*/
 
-public void sendAllTasksToStorage(String json) throws IOException, InterruptedException {
-        URI allTasksUrl = URI.create("http://localhost:8080/tasks/task/");
+public void sendTaskToStorage(String json) throws IOException, InterruptedException {
+        URI allTasksUrl = URI.create("http://localhost:8080/tasks/addtask");
 
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder().uri(allTasksUrl).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-
     }
     public String sendRequest(URI uri) {
         String answer = "";
