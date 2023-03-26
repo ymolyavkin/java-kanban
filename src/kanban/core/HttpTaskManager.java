@@ -28,6 +28,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_SUBTASKS = "Subtasks";
     private static final String KEY_HISTORY = "History";
     private static Gson gson;
+    private boolean needSendToServer;
 
     private final KVTaskClient kvTaskClient;
    // private final TaskStorageClient taskStorageClient;
@@ -38,6 +39,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         super();
         this.url = url;
         kvTaskClient = new KVTaskClient(url);
+        needSendToServer = false;
 
         GsonBuilder gSonBuilder = new GsonBuilder();
         //  gSonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
@@ -68,50 +70,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
         getAndSendTasks(tasks);
         getAndSendEpics(epics);
 
-        /*String jsonStringTasks = gson.toJson(tasks);
-        System.out.println(jsonStringTasks);
-        String jsonStringEpic = gson.toJson(epics);
-
-        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
-        HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
-
-        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {}.getType();
-        HashMap<Integer, EpicTask> epicTaskHashMap = gson.fromJson(jsonStringEpic, epicMapType);
 
 
-
-        Task singleTask = (Task)tasks.get(0);
-        String jsonStringSingleTask = gson.toJson(singleTask);
-
-
-        EpicTask epic = (EpicTask) epics.get(6);
-
-       // String jsonStringEpic = gson.toJson(epic);
-
-        Task task = gson.fromJson(jsonStringSingleTask, Task.class);
-      *//*  Type singtleTaskType = new TypeToken<Task>() {}.getType();
-        Task task = gson.fromJson(jsonStringSingleTask, singtleTaskType);
-        Type epicType = new TypeToken<EpicTask>() {}.getType();
-        EpicTask epicTask = gson.fromJson(jsonStringEpic, epicType);
-
-
-*//*
-        String jsonStringAllEpics = gson.toJson(epics);
-        System.out.println(jsonStringAllEpics);
-*/
-        /*Map<Integer, Object> myMap = new HashMap<>();
-        Map<Integer, AbstractTask> myMap1 = new HashMap<>();
-        Map<Integer, Task> myMap2 = new HashMap<>();
-
-        myMap = (Map<Integer, Object>) gson.fromJson(jsonStringTasks, myMap.getClass());
-        try {
-            putDataToKVServer(jsonStringTasks);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        String resources = getDataFromKVServer();
-*/
-        System.out.println();
 
     }
     private void getAndSendTasks(Map<Integer, AbstractTask> tasks) {
@@ -227,6 +187,55 @@ public class HttpTaskManager extends FileBackedTasksManager {
         // TODO: 23.03.2023 add return value
         return new ArrayList<>();
     }*/
+
+    @Override
+    public void addEpic(EpicTask epicTask) {
+        epicTask.calculateTime();
+        super.addEpic(epicTask);
+
+    }
+    @Override
+    public void addTask(Task task) {
+
+        super.addTask(task);
+
+    }
+    @Override
+    public boolean updateStandardTask(Task task, String[] newTitleAndDescription, String[] newTime, boolean mustChangeStatus) {
+        boolean result = super.updateStandardTask(task, newTitleAndDescription, newTime, mustChangeStatus);
+        save();
+        needSendToServer = false;
+        return result;
+    }
+
+    @Override
+    public AbstractTask findTaskByIdOrNull(int id) {
+        var foundTask = super.findTaskByIdOrNull(id);
+
+        needSendToServer = true;
+        save();
+        needSendToServer = false;
+
+        return foundTask;
+    }
+
+    @Override
+    public boolean deleteTaskById(int id) {
+        boolean oneTaskWasDeleted = super.deleteTaskById(id);
+        save();
+        needSendToServer = false;
+
+        return oneTaskWasDeleted;
+    }
+
+    @Override
+    public boolean deleteAllTasks() {
+        boolean wasDeleted = super.deleteAllTasks();
+        save();
+        needSendToServer = false;
+
+        return wasDeleted;
+    }
 
 // .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
 }

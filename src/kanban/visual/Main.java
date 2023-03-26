@@ -72,8 +72,8 @@ public class Main {
     }
 
     static void getProritizedTask() {
-
-        TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
+        TreeSet<AbstractTask> myTasks = httpTaskManager.getPrioritizedTasks();
+       // TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
             System.out.println("У Вас нет задач");
@@ -461,8 +461,98 @@ public class Main {
             System.out.print(Color.RESET);
         }
     }
-
     private static void createSeveralTestTasks() {
+        // Создаём стандартную задачу
+        String titleAndDescription = "Физминутка|Выполнить десять приседаний|23.02.2023 12:24|15";
+        Task task = httpTaskManager.createStandardTask(titleAndDescription);
+        if (task != null) {
+            System.out.print(Color.GREEN);
+            System.out.println("Создана обычная задача с id = " + task.getId());
+            System.out.print(Color.RESET);
+        } else {
+            System.out.print(Color.RED);
+            System.out.println("Задача не создана");
+            System.out.print(Color.RESET);
+        }
+
+        // Создаём стандартную задачу
+        titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения|24.02.2023 12:24|15";
+        task = httpTaskManager.createStandardTask(titleAndDescription);
+
+        if (task != null) {
+            System.out.print(Color.GREEN);
+            System.out.println("Создана обычная задача с id = " + task.getId());
+            System.out.print(Color.RESET);
+        } else {
+            System.out.print(Color.RED);
+            System.out.println("Задача не создана");
+            System.out.print(Color.RESET);
+        }
+
+        // Создаём эпик
+        titleAndDescription = "Понять условие домашнего задания" +
+                "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ|25.02.2023 12:24|30";
+        EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+
+        String[] importantTitleAndDescriptions = {
+                "Подзадача 1|Прочитать ТЗ|26.02.2023 12:20|15"
+                , "Подзадача 2|Понять ТЗ|27.02.2023 12:39|15"};
+        for (String titleDescription : importantTitleAndDescriptions) {
+
+            Subtask subtask = httpTaskManager.createSubtask(titleDescription, epicTask.getId());
+            if (subtask != null) {
+                httpTaskManager.addSubtaskToEpic(epicTask, subtask);
+                System.out.print(Color.GREEN);
+                System.out.println("Создана подзадача с id = " + subtask.getId());
+                System.out.print(Color.RESET);
+            } else {
+                System.out.print(Color.RED);
+                System.out.println("Подзадача не создана");
+                System.out.print(Color.RESET);
+            }
+        }
+        httpTaskManager.setNeedWriteToFile(true);
+        httpTaskManager.addEpic(epicTask);
+
+        // Создаём эпик
+        titleAndDescription = "Прочитать почту" +
+                "|Прочитать все входящие письма и сообщения из мессенджеров|28.02.2023 12:24|45";
+        epicTask = httpTaskManager.createEpic(titleAndDescription);
+
+        System.out.print(Color.GREEN);
+        System.out.println("Создан эпик с id = " + (epicTask.getId()));
+        System.out.print(Color.RESET);
+
+        // Создаем список названий и описаний подзадач
+        String[] secondaryTitleAndDescriptions = {
+                "Подзадача 1|Прочитать электронную почту|21.02.2023 12:24|15",
+                "Подзадача 2|Прочитать мессенджеры|22.02.2023 12:39|15",
+                "Подзадача 3|Прочитать соцсети|22.02.2023 12:59|15"};
+        for (String titleDescription : secondaryTitleAndDescriptions) {
+            // Создаем подзадачу
+            Subtask subtask = httpTaskManager.createSubtask(titleDescription, epicTask.getId());
+            // Добавляем её к эпику
+
+            if (subtask != null) {
+                httpTaskManager.addSubtaskToEpic(epicTask, subtask);
+                System.out.print(Color.GREEN);
+                System.out.println("Создана подзадача с id = " + subtask.getId());
+                System.out.print(Color.RESET);
+            } else {
+                System.out.print(Color.RED);
+                System.out.println("Подзадача не создана");
+                System.out.print(Color.RESET);
+            }
+        }
+        httpTaskManager.setNeedWriteToFile(true);
+        httpTaskManager.addEpic(epicTask);
+    }
+    private static void createSeveralTestTasksOld() {
         // Создаём стандартную задачу
         String titleAndDescription = "Физминутка|Выполнить десять приседаний|23.02.2023 12:24|15";
         Task task = fileBackedTasksManager.createStandardTask(titleAndDescription);
