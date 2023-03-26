@@ -29,7 +29,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_HISTORY = "History";
     private static Gson gson;
 
-    private KVTaskClient kvTaskClient;
+    private final KVTaskClient kvTaskClient;
+   // private final TaskStorageClient taskStorageClient;
     private URI url;
 
 
@@ -49,7 +50,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
 
-        this.restoreDataFromServer();
+        restoreDataFromServer();
+       // taskStorageClient = new TaskStorageClient(kvTaskClient);
+
     }
 
     public KVTaskClient getKvTaskClient() {
@@ -60,10 +63,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
     protected void save() {
 
 
-        Map<Integer, AbstractTask> tasks = this.getStandardTasks();
-        Map<Integer, AbstractTask> epics = this.getEpicTasks();
+        Map<Integer, AbstractTask> tasks = getStandardTasks();
+        Map<Integer, AbstractTask> epics = getEpicTasks();
+        getAndSendTasks(tasks);
+        getAndSendEpics(epics);
 
-        String jsonStringTasks = gson.toJson(tasks);
+        /*String jsonStringTasks = gson.toJson(tasks);
         System.out.println(jsonStringTasks);
         String jsonStringEpic = gson.toJson(epics);
 
@@ -84,17 +89,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
        // String jsonStringEpic = gson.toJson(epic);
 
         Task task = gson.fromJson(jsonStringSingleTask, Task.class);
-      /*  Type singtleTaskType = new TypeToken<Task>() {}.getType();
+      *//*  Type singtleTaskType = new TypeToken<Task>() {}.getType();
         Task task = gson.fromJson(jsonStringSingleTask, singtleTaskType);
         Type epicType = new TypeToken<EpicTask>() {}.getType();
         EpicTask epicTask = gson.fromJson(jsonStringEpic, epicType);
 
 
-*/
+*//*
         String jsonStringAllEpics = gson.toJson(epics);
         System.out.println(jsonStringAllEpics);
-
-        Map<Integer, Object> myMap = new HashMap<>();
+*/
+        /*Map<Integer, Object> myMap = new HashMap<>();
         Map<Integer, AbstractTask> myMap1 = new HashMap<>();
         Map<Integer, Task> myMap2 = new HashMap<>();
 
@@ -105,11 +110,31 @@ public class HttpTaskManager extends FileBackedTasksManager {
             throw new RuntimeException(e);
         }
         String resources = getDataFromKVServer();
-
+*/
         System.out.println();
 
     }
+    private void getAndSendTasks(Map<Integer, AbstractTask> tasks) {
+        String jsonStringTasks = gson.toJson(tasks);
+        System.out.println(jsonStringTasks);
+        System.out.println();
 
+        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
+        HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
+
+        System.out.println(taskHashMap);
+        System.out.println();
+    }
+    private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
+
+        String jsonStringEpics = gson.toJson(epics);
+        System.out.println(jsonStringEpics);
+        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {}.getType();
+        HashMap<Integer, EpicTask> epicTaskHashMap = gson.fromJson(jsonStringEpics, epicMapType);
+
+        System.out.println(epicTaskHashMap);
+        System.out.println();
+    }
     private String getDataFromKVServer() {
         return "da";
     }
