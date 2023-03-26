@@ -29,16 +29,18 @@ public class Main {
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
 
-    private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+   // private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+    private static HttpTaskManager httpTaskManager;
     public static final int KV_PORT = 8078;
     public static final int TASK_PORT = 8080;
 
     public static void main(String[] args) throws IOException {
         //KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
         //String key = kvTaskClient.getKey();
+        new KVServer().start();
+        System.out.println("HTTP-KV-сервер запущен на " + KV_PORT + " порту!");
 
         HttpServer httpServer = HttpServer.create();
-
         httpServer.bind(new InetSocketAddress(TASK_PORT), 0);
         //httpServer.createContext("/tasks", new HttpTaskServer(key));
         httpServer.createContext("/tasks", new HttpTaskServer(httpTaskManager));
@@ -46,8 +48,7 @@ public class Main {
 
         System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");
 
-        new KVServer().start();
-        System.out.println("HTTP-KV-сервер запущен на " + KV_PORT + " порту!");
+        httpTaskManager = (HttpTaskManager) Managers.getDefault();
 
         scanner = new Scanner(System.in);
         String userInput;

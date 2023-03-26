@@ -7,9 +7,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    private URI url;
-    private HttpClient client;
-    private String key;
+    private final URI url;
+    private final HttpClient client;
+    private final String key;
 
     public KVTaskClient(URI url) {
         // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища

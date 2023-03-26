@@ -70,7 +70,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         getAndSendTasks(tasks);
         getAndSendEpics(epics);
 
-
+sendRequest("This is Test");
 
 
     }
