@@ -3,6 +3,7 @@ package kanban.visual;
 import com.sun.net.httpserver.HttpServer;
 import kanban.core.FileBackedTasksManager;
 import kanban.core.HttpTaskManager;
+import kanban.core.Managers;
 import kanban.model.*;
 import kanban.tasksAPI.HttpTaskServer;
 import kanban.tasksAPI.KVServer;
@@ -28,7 +29,7 @@ public class Main {
     private static final FileBackedTasksManager fileBackedTasksManager
             = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));
 
-    //  private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
+    private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     public static final int KV_PORT = 8078;
     public static final int TASK_PORT = 8080;
 
@@ -40,7 +41,7 @@ public class Main {
 
         httpServer.bind(new InetSocketAddress(TASK_PORT), 0);
         //httpServer.createContext("/tasks", new HttpTaskServer(key));
-        httpServer.createContext("/tasks", new HttpTaskServer());
+        httpServer.createContext("/tasks", new HttpTaskServer(httpTaskManager));
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");

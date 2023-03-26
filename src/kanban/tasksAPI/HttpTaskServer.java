@@ -31,8 +31,8 @@ public class HttpTaskServer implements HttpHandler {
           //this.key = key;
           httpTaskManager = HttpTaskManager.load(key);
       }*/
-    public HttpTaskServer() {
-        httpTaskManager = (HttpTaskManager) Managers.getDefault();
+    public HttpTaskServer(HttpTaskManager httpTaskManager) {
+       // httpTaskManager = (HttpTaskManager) Managers.getDefault();
        /*String key = httpTaskManager.getKvTaskClient().getKey();
        httpTaskManager = httpTaskManager.load(key);*/
     }
