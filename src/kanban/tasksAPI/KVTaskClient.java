@@ -84,4 +84,31 @@ public void sendTaskToStorage(String json) throws IOException, InterruptedExcept
         System.out.println("Do Something");
     }
 
+    public String getStandardTasksFromServer() {
+        String url = "http://localhost:8078/load/KEY_TASK?API_TOKEN=DEBUG";
+
+        // добавьте отлов и обработку исключений вокруг кода ниже
+        URI uri = URI.create(url);
+
+        // создаём запрос
+        HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
+
+        // создаём HTTP-клиент
+       // HttpClient client = HttpClient.newHttpClient();
+
+        // отправляем запрос
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // выводим код состояния и тело ответа
+        System.out.println("Код состояния: " + response.statusCode());
+        System.out.println("Тело ответа: " + response.body());
+        return response.body();
+    }
 }

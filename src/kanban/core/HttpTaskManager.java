@@ -128,9 +128,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void restoreDataFromServer() {
-       /* gson=new GsonBuilder()
-                .registerTypeAdapter(Duration.class, new DurationA)*/
-        save();
+        String jsonStandardTasks = kvTaskClient.getStandardTasksFromServer();
+        System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
+        //save();
     }
 
 
