@@ -83,16 +83,22 @@ public class HttpTaskServer implements HttpHandler {
                 System.out.println("Получен запрос на добавление задачи");
                 handPostAddTask(exchange);
             }
-            case POST_CREATE_TASK -> {
-                writeResponse(exchange, "Получен запрос на создание задачи", 200);
+            case POST_ADD_PRIORITIZED -> {
+                writeResponse(exchange, "Получен запрос на добавление отсортированного списка", 200);
             }
-            case POST_CREATE_SUBTASK -> {
-                writeResponse(exchange, "Получен запрос на создание подзадачи", 200);
-            }
-            case POST_CREATE_EPIC -> {
-                writeResponse(exchange, "Получен запрос на создание эпика", 200);
+            case POST_ADD_HISTORY -> {
+                writeResponse(exchange, "Получен запрос на добавление истории просмотров", 200);
             }
             case DELETE_DELETE_TASK_BY_ID -> {
+                int id = 0; //requestPath
+                if (id != -1) {
+                    httpTaskManager.deleteTaskById(id);
+                    System.out.println("Удалена задача с id " + id);
+                    exchange.sendResponseHeaders(200, 0);
+                } else {
+                    System.out.println("Получен некорректный id: " + id);
+                    exchange.sendResponseHeaders(405, 0);
+                }
                 writeResponse(exchange, "Получен запрос на удаление задачи по id", 200);
             }
             case DELETE_DELETE_ALL_TASKS -> {
@@ -223,13 +229,7 @@ public class HttpTaskServer implements HttpHandler {
         }
         return UNKNOWN;
     }
-    /*
-    case "addepic" -> {return POST_ADD_EPIC;}
-                    case "addtask" -> { return POST_ADD_TASK; }
-                    case "addprioritized " -> {return POST_ADD_PRIORITIZED;}
-                    case " addhistory " -> {return POST_ADD_HISTORY; }}}
 
-     */
 
     private void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
 
