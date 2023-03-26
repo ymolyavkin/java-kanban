@@ -13,7 +13,9 @@ public class Managers {
 
     public static TaskManager getDefault() {
         httpTaskManager = new HttpTaskManager(URI.create(url));
-        String key = httpTaskManager.getKvTaskClient().getKey();
+       // String key = httpTaskManager.getKvTaskClient().getKey();
+        String key = "SomeKey";
+        System.out.println("From managers/getDefault: key = " + key);
         httpTaskManager = httpTaskManager.load(key);
         return httpTaskManager;
     }

@@ -32,16 +32,12 @@ public class HttpTaskServer implements HttpHandler {
           httpTaskManager = HttpTaskManager.load(key);
       }*/
     public HttpTaskServer(HttpTaskManager httpTaskManager) {
-       // httpTaskManager = (HttpTaskManager) Managers.getDefault();
-       /*String key = httpTaskManager.getKvTaskClient().getKey();
-       httpTaskManager = httpTaskManager.load(key);*/
+        this.httpTaskManager = httpTaskManager;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        /*KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
-        String key = kvTaskClient.getKey();*/
-//        httpTaskManager = HttpTaskManager.load(key);
+
 
         String method = exchange.getRequestMethod();
 
@@ -84,6 +80,7 @@ public class HttpTaskServer implements HttpHandler {
             }
             case POST_ADD_TASK -> {
                 writeResponse(exchange, "Получен запрос на добавления задачи", 200);
+                System.out.println("Получен запрос на добавления задачи");
             }
             case POST_CREATE_TASK -> {
                 writeResponse(exchange, "Получен запрос на создание задачи", 200);
@@ -174,7 +171,8 @@ public class HttpTaskServer implements HttpHandler {
 
         if (!responseString.isEmpty()) {
             try (OutputStream os = exchange.getResponseBody()) {
-                os.write(responseString.getBytes(CP1251_CHARSET));
+                //os.write(responseString.getBytes(CP1251_CHARSET));
+                os.write(responseString.getBytes(DEFAULT_CHARSET));
             }
         }
     }

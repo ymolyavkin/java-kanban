@@ -7,11 +7,11 @@ import kanban.core.Managers;
 import kanban.model.*;
 import kanban.tasksAPI.HttpTaskServer;
 import kanban.tasksAPI.KVServer;
-import kanban.tasksAPI.KVTaskClient;
+
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URI;
+
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,10 +35,11 @@ public class Main {
     public static final int TASK_PORT = 8080;
 
     public static void main(String[] args) throws IOException {
-        //KVTaskClient kvTaskClient = new KVTaskClient(URI.create("http://localhost:8078/register/"));
-        //String key = kvTaskClient.getKey();
+
         new KVServer().start();
         System.out.println("HTTP-KV-сервер запущен на " + KV_PORT + " порту!");
+
+        httpTaskManager = (HttpTaskManager) Managers.getDefault();
 
         HttpServer httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(TASK_PORT), 0);
@@ -48,7 +49,7 @@ public class Main {
 
         System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");
 
-        httpTaskManager = (HttpTaskManager) Managers.getDefault();
+       // httpTaskManager = (HttpTaskManager) Managers.getDefault();
 
         scanner = new Scanner(System.in);
         String userInput;

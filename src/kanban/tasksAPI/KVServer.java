@@ -78,6 +78,7 @@ public class KVServer {
     private void register(HttpExchange h) throws IOException {
         try {
             System.out.println("\n/register");
+            System.out.println("h.getRequestMethod() = " + h.getRequestMethod());
             if ("GET".equals(h.getRequestMethod())) {
                 sendText(h, apiToken);
             } else {

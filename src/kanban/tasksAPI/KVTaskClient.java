@@ -9,23 +9,38 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
     private final URI url;
     private final HttpClient client;
-    private final String key;
+    //private final String key;
 
     public KVTaskClient(URI url) {
         // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища
         this.url = url;
         client = HttpClient.newHttpClient();
-        key = sendRequest(url);
-        System.out.println("From consructor client: key = " + key);
+       // key = sendRequest(url);
+      //  System.out.println("From consructor client: key = " + key);
     }
-    public String getKey() {
+    /*public String getKey() {
         return key;
+    }*/
+
+public void sendAllTasksToStorage(String json) throws IOException, InterruptedException {
+        URI allTasksUrl = URI.create("http://localhost:8080/tasks/task/");
+
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        HttpRequest request = HttpRequest.newBuilder().uri(allTasksUrl).POST(body).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
     }
-
-
     public String sendRequest(URI uri) {
         String answer = "";
-        HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .headers("Content-Type", "text/plain;charset=UTF-8")
+                .POST(HttpRequest.BodyPublishers.ofString("Sample request body"))
+                .build();
+
+     //   HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
