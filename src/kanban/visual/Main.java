@@ -261,7 +261,7 @@ public class Main {
         System.out.println("Ведите id задачи");
         String stringId = scanner.nextLine();
         int id = stringToInt(stringId);
-        var task = fileBackedTasksManager.findTaskByIdOrNull(id);
+        var task = fileBackedTasksManager.findTaskByIdOrNull(id, true);
 
         if (task == null) {
             System.out.print(Color.RED);
@@ -280,7 +280,7 @@ public class Main {
         int id = stringToInt(stringId);
 
         // Ищем задачу по id
-        var task = fileBackedTasksManager.findTaskByIdOrNull(id);
+        var task = fileBackedTasksManager.findTaskByIdOrNull(id, true);
 
         if (task == null || task instanceof Subtask) {
             System.out.print(Color.RED);

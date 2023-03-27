@@ -221,8 +221,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public AbstractTask findTaskByIdOrNull(int id) {
-        var foundTask = super.findTaskByIdOrNull(id);
+    public AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory) {
+        var foundTask = super.findTaskByIdOrNull(id, savedToHistory);
 
         needSendToServer = true;
         save();

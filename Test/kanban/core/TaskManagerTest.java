@@ -48,7 +48,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         LocalDateTime dateTime = LocalDateTime.of(2023, Month.JANUARY, 01, 8, 0);
         Task task = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
 
-        final AbstractTask savedTask = taskManager.findTaskByIdOrNull(task.getId());
+        final AbstractTask savedTask = taskManager.findTaskByIdOrNull(task.getId(), false);
         assertNotNull(savedTask, "Задача не найдена");
         assertEquals(task, savedTask, "Задачи не совпадают");
 

@@ -77,7 +77,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void addTasksToHistory(List<Integer> taskIds) {
         for (Integer id : taskIds) {
-            findTaskByIdOrNull(id);
+            findTaskByIdOrNull(id, true);
         }
     }
 
@@ -333,8 +333,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public AbstractTask findTaskByIdOrNull(int id) {
-        var foundTask = super.findTaskByIdOrNull(id);
+    public AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory) {
+        var foundTask = super.findTaskByIdOrNull(id, savedToHistory);
 
         needWriteToFile = true;
         save();

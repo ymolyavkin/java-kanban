@@ -33,7 +33,7 @@ public interface TaskManager {
     Map<Integer, AbstractTask> getEpicTasks();
     TreeSet<AbstractTask> getPrioritizedTasks();
 
-    AbstractTask findTaskByIdOrNull(int id);
+    AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory);
 
     boolean deleteTaskById(int id);
 

@@ -411,7 +411,7 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    public AbstractTask findTaskByIdOrNull(int id) {
+    public AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory) {
         AbstractTask foundTask = null;
         // Ищем среди обычных задач
         if (standardTasks.containsKey(id)) {
@@ -432,7 +432,7 @@ public class InMemoryTaskManager implements TaskManager {
                 foundTask = findSubtaskByIdOrNull(id, subtasks);
             }
         }
-        if (foundTask != null) {
+        if (foundTask != null && savedToHistory) {
             addTaskIntoHistory(foundTask);
         }
         return foundTask;
