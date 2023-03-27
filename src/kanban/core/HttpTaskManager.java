@@ -139,7 +139,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public void restoreDataFromServer() {
         String jsonStandardTasks = kvTaskClient.getStandardTasksFromServer();
-        if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("Данные не найдены")) {
+        if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
         Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();

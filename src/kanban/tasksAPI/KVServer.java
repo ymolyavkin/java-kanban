@@ -30,26 +30,29 @@ public class KVServer {
 
     private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
+        String[] pathParts = h.getRequestURI().getPath().split("/");
+        for (String pathPart : pathParts) {
+            System.out.println("pahtPart: " + pathPart);
+        }
+
         String response;
         if (data.isEmpty()) {
-           response="Данные не найдены";
+            response = "response From KVserver: Хранилище пусто";
         } else {
             response = data.get("KEY_TASK");
-            System.out.println("fromKV= " + response);
+            System.out.println("From KVserver: " + response);
         }
         h.sendResponseHeaders(200, 0);
         try (OutputStream os = h.getResponseBody()) {
             os.write(response.getBytes());
         }
-        String[] pathParts = h.getRequestURI().getPath().split("/");
-        for (String pathPart : pathParts) {
-            System.out.println("pahtPart: " + pathPart);
-        }
+
         Headers rmap = h.getRequestHeaders();
         System.out.println("rmap = " + rmap);
         InputStream inputStream = h.getRequestBody();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        System.out.println("From KVserer br: ");
         System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
 
     }
@@ -76,6 +79,7 @@ public class KVServer {
                     return;
                 }
                 data.put(key, value);
+                System.out.println("value = " + value);
                 System.out.println("Значение для ключа " + key + " успешно обновлено!");
                 h.sendResponseHeaders(200, 0);
             } else {

@@ -1,20 +1,24 @@
 package kanban.tasksAPI;
 
-import com.sun.net.httpserver.Headers;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
-import kanban.core.Managers;
 import kanban.model.AbstractTask;
 
 import java.io.*;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import static com.google.gson.JsonParser.parseString;
 import static kanban.tasksAPI.Endpoint.*;
 
 public class HttpTaskServer implements HttpHandler {
@@ -25,12 +29,7 @@ public class HttpTaskServer implements HttpHandler {
     // TODO: 22.03.2023 get key
     //private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
     private HttpTaskManager httpTaskManager;
-    //  private final String key;
 
-    /*  public HttpTaskServer(String key) {
-          //this.key = key;
-          httpTaskManager = HttpTaskManager.load(key);
-      }*/
     public HttpTaskServer(HttpTaskManager httpTaskManager) {
         this.httpTaskManager = httpTaskManager;
     }
@@ -107,13 +106,54 @@ public class HttpTaskServer implements HttpHandler {
             default -> writeResponse(exchange, "Такого эндпоинта не существует", 404);
         }
     }
+private void handPost(HttpExchange httpExchange) {
+    HttpClient client = HttpClient.newHttpClient();
 
+    URI url = URI.create("http://localhost:8078/load/KEY_TASK?API_TOKEN=DEBUG");
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(url)
+            .GET()
+            .build();
+
+    try {
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // проверяем, успешно ли обработан запрос
+        if (response.statusCode() == 200) {
+            JsonElement jsonElement = parseString(response.body());
+            if (!jsonElement.isJsonObject()) { // проверяем, точно ли мы получили JSON-объект
+                System.out.println("Ответ от сервера не соответствует ожидаемому.");
+                return;
+            }
+            // преобразуем результат разбора текста в JSON-объект
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+            // получите курс доллара и евро и запишите в переменные rateUSD и rateEUR
+            JsonObject currenciesObject = jsonObject.get("rates").getAsJsonObject();
+            String rateUSD = currenciesObject.get("USD").getAsString();
+            String rateEUR = currenciesObject.get("EUR").getAsString();
+
+            System.out.println("Стоимость рубля в долларах: " + rateUSD + " USD");
+            System.out.println("Стоимость рубля в евро: " + rateEUR + " EUR");
+        } else {
+            System.out.println("Что-то пошло не так. Сервер вернул код состояния: " + response.statusCode());
+        }
+    } catch (IOException | InterruptedException e) { // обрабатываем ошибки отправки запроса
+        System.out.println("Во время выполнения запроса возникла ошибка.\n" +
+                "Проверьте, пожалуйста, адрес и повторите попытку.");
+    }
+}
     private void handPostAddTask(HttpExchange httpExchange) throws IOException {
 
+        System.out.println("Получаем тело запроса: ");
 
         InputStream inputStream = httpExchange.getRequestBody();
-        System.out.println();
-        String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
+
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String body = bufferedReader.readLine();
+        /*InputStream inputStream = httpExchange.getRequestBody();
+        System.out.println(inputStream);
+        String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);*/
         System.out.println("Тело запроса:\n" + body);
         System.out.println();
 
