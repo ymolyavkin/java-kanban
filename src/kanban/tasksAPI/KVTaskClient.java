@@ -6,8 +6,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import static kanban.tasksAPI.Endpoint.GET_HISTORY;
-
 public class KVTaskClient {
     private final URI url;
     private final HttpClient client;
@@ -31,13 +29,13 @@ Tasks";
     private static final String KEY_HISTORY = "History";
  */
     public void sendDataToStorage(String json, String key) throws IOException, InterruptedException {
-        String url="http://localhost:8080/tasks/";
+        String url="http://localhost:8078/save/";
         switch (key) {
             case "Tasks" -> {
-                url += "addtask";
+                url += "KEY_TASK?API_TOKEN=DEBUG";
             }
             case "Epics" -> {
-                url += "addepic";
+                url += "KEY_EPIC?API_TOKEN=DEBUG";
             }
             case "Prioritized" -> {
                 url += "addprioritized";

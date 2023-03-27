@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import static com.google.gson.JsonParser.parseString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static kanban.tasksAPI.Endpoint.*;
 
 public class HttpTaskServer implements HttpHandler {
@@ -145,16 +146,16 @@ private void handPost(HttpExchange httpExchange) {
     private void handPostAddTask(HttpExchange httpExchange) throws IOException {
 
         System.out.println("Получаем тело запроса: ");
-
-        InputStream inputStream = httpExchange.getRequestBody();
+        String value = readText(httpExchange);
+        /*InputStream inputStream = httpExchange.getRequestBody();
 
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String body = bufferedReader.readLine();
+        String body = bufferedReader.readLine();*/
         /*InputStream inputStream = httpExchange.getRequestBody();
         System.out.println(inputStream);
         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);*/
-        System.out.println("Тело запроса:\n" + body);
+        System.out.println("Тело запроса:\n" + value);
         System.out.println();
 
 
@@ -208,7 +209,9 @@ private void handPost(HttpExchange httpExchange) {
                 // извлеките заголовок
                 Headers requestHeaders = httpExchange.getRequestHeaders();
      */
-
+    private String readText(HttpExchange h) throws IOException {
+        return new String(h.getRequestBody().readAllBytes(), UTF_8);
+    }
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         // реализуйте этот метод
 

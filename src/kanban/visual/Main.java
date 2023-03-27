@@ -502,6 +502,7 @@ public class Main {
         // Создаём эпик
         titleAndDescription = "Понять условие домашнего задания" +
                 "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ|25.02.2023 12:24|30";
+              //  "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ||";
         EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription);
 
         System.out.print(Color.GREEN);
@@ -526,12 +527,13 @@ public class Main {
                 System.out.print(Color.RESET);
             }
         }
-        httpTaskManager.setNeedWriteToFile(true);
+        httpTaskManager.setNeedSendToServer(true);
         httpTaskManager.addEpic(epicTask);
 
         // Создаём эпик
         titleAndDescription = "Прочитать почту" +
-                "|Прочитать все входящие письма и сообщения из мессенджеров|28.02.2023 12:24|45";
+                "|Прочитать все входящие письма и сообщения из мессенджеров|10.02.2023 12:24|45";
+              //  "|Прочитать все входящие письма и сообщения из мессенджеров||";
         epicTask = httpTaskManager.createEpic(titleAndDescription);
 
         System.out.print(Color.GREEN);
@@ -540,9 +542,9 @@ public class Main {
 
         // Создаем список названий и описаний подзадач
         String[] secondaryTitleAndDescriptions = {
-                "Подзадача 1|Прочитать электронную почту|21.02.2023 12:24|15",
-                "Подзадача 2|Прочитать мессенджеры|22.02.2023 12:39|15",
-                "Подзадача 3|Прочитать соцсети|22.02.2023 12:59|15"};
+                "Подзадача 1|Прочитать электронную почту|10.02.2023 12:24|15",
+                "Подзадача 2|Прочитать мессенджеры|11.02.2023 12:39|15",
+                "Подзадача 3|Прочитать соцсети|12.02.2023 12:59|15"};
         for (String titleDescription : secondaryTitleAndDescriptions) {
             // Создаем подзадачу
             Subtask subtask = httpTaskManager.createSubtask(titleDescription, epicTask.getId());
@@ -559,7 +561,7 @@ public class Main {
                 System.out.print(Color.RESET);
             }
         }
-        httpTaskManager.setNeedWriteToFile(true);
+        httpTaskManager.setNeedSendToServer(true);
         httpTaskManager.addEpic(epicTask);
     }
     private static void createSeveralTestTasksOld() {

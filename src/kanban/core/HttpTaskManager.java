@@ -62,12 +62,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     protected void save() {
-
-
         Map<Integer, AbstractTask> tasks = getStandardTasks();
         Map<Integer, AbstractTask> epics = getEpicTasks();
         try {
             sendTasksToKV(tasks);
+            sendEpicsToKV(epics);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -83,13 +82,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
         String jsonStringTasks = gson.toJson(tasks);
         System.out.println(tasks);
-        //URI url = URI.create("http://localhost:8080/tasks/addtask/");
+
         kvTaskClient.sendDataToStorage(jsonStringTasks, KEY_TASKS);
     }
     private void sendEpicsToKV(Map<Integer, AbstractTask> epics) throws IOException, InterruptedException {
         String jsonStringEpics = gson.toJson(epics);
         System.out.println(epics);
-        //URI url = URI.create("http://localhost:8080/tasks/addepic/");
+
         kvTaskClient.sendDataToStorage(jsonStringEpics, KEY_EPICS);
     }
 
