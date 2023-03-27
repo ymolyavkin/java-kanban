@@ -22,6 +22,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_EPICS = "Epics";
     private static final String KEY_PRIORITIZED = "Prioritized";
     private static final String KEY_HISTORY = "History";
+    private static final String KEY_SINGLE_EPIC = "SingleEpic";
     private static Gson gson;
     private boolean needSendToServer;
 
@@ -64,11 +65,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
         Map<Integer, AbstractTask> epics = getEpicTasks();
         TreeSet<AbstractTask> allTasksSorted = getPrioritizedTasks();
         List<AbstractTask> history = getHistory();
+        EpicTask epic = (EpicTask) epics.get(2);
         try {
             sendTasksToKV(tasks);
             sendEpicsToKV(epics);
             sendPrioritizedToKV(allTasksSorted);
             sendHistoryToKV(history);
+            sendSingleEpicToKV(epic);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -91,6 +94,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         kvTaskClient.put(jsonStringEpics, KEY_EPICS);
     }
+    private void sendSingleEpicToKV(EpicTask epic) throws IOException, InterruptedException {
+        String jsonStringSingleEpic = gson.toJson(epic);
+
+        kvTaskClient.put(jsonStringSingleEpic, KEY_SINGLE_EPIC);
+        //kvTaskClient.restoreSingleEpic(jsonStringSingleEpic, KEY_SINGLE_EPIC);
+    }
     private void sendPrioritizedToKV(TreeSet<AbstractTask> prioritized) throws IOException, InterruptedException {
         List<Integer> idPrioritizedTask = new ArrayList<>(prioritized.size());
         for (AbstractTask abstractTask : prioritized) {
@@ -110,87 +119,71 @@ public class HttpTaskManager extends FileBackedTasksManager {
         kvTaskClient.put(jsonIdHistory, KEY_HISTORY);
     }
 
-   /* private void getAndSendTasks(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
-        String jsonStringTasks = gson.toJson(tasks);
-        System.out.println(jsonStringTasks);
-        //  System.out.println();
 
-        sendRequest(jsonStringTasks);
-        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {
-        }.getType();
-        HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStringTasks, taskMapType);
 
-        //  System.out.println(taskHashMap);
-        //  System.out.println();
-    }*/
-
-   /* private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
-
-        String jsonStringEpics = gson.toJson(epics);
-        //   System.out.println(jsonStringEpics);
-        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {
-        }.getType();
-        HashMap<Integer, EpicTask> epicTaskHashMap = gson.fromJson(jsonStringEpics, epicMapType);
-
-        //   System.out.println(epicTaskHashMap);
-        //   System.out.println();
-    }*/
-
-    private String getDataFromKVServer() {
-        return "da";
-    }
-
-    /*private void putDataToKVServer(String data) throws URISyntaxException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8078/save/KEY_TASKS?API_TOKEN=DEBUG"))
-                // .headers("Content-Type", "text/plain;charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(data))
-                .build();
-    }*/
 
 
     public HttpTaskManager load(String key) {
-        restoreDataFromServer();
+        restoreStandardTasksFromServer();
+        restoreEpicsFromServer();
+        restoreSingleEpicFromServer();
+        restoreHistoryFromServer();
+        //отсортированный treeSet задач должен создаться попутно
         return this;
     }
 
-    public void restoreDataFromServer() {
-        String jsonStandardTasks = kvTaskClient.getStandardTasksFromServer();
+    public void restoreStandardTasksFromServer() {
+        String jsonStandardTasks = kvTaskClient.getDataFromServer("Tasks");
         if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
         Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
         HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStandardTasks, taskMapType);
-        //deleteAllTasks();
+
         for (Task task : taskHashMap.values()) {
             addTask(task);
         }
-        System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
-        //save();
+        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
+    }
+    public void restoreSingleEpicFromServer() {
+        String jsonSingleEpic = kvTaskClient.getDataFromServer("SingleEpic");
+        if (jsonSingleEpic.isBlank() || jsonSingleEpic.equals("response From KVserver: Хранилище пусто")) {
+            return;
+        }
+        Type epicTaskType = new TypeToken<EpicTask>() {}.getType();
+        EpicTask epic = gson.fromJson(jsonSingleEpic, epicTaskType);
+        System.out.println(jsonSingleEpic);
+        addEpic(epic);
+        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
+    }
+    public void restoreEpicsFromServer() {
+        String jsonEpics = kvTaskClient.getDataFromServer("Epics");
+        if (jsonEpics.isBlank() || jsonEpics.equals("response From KVserver: Хранилище пусто")) {
+            return;
+        }
+        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {}.getType();
+        HashMap<Integer, EpicTask> epicHashMap = gson.fromJson(jsonEpics, epicMapType);
+        System.out.println();
+
+        for (EpicTask epic : epicHashMap.values()) {
+            addEpic(epic);
+        }
+        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
+    }
+    public void restoreHistoryFromServer() {
+
+        String jsonHistory = kvTaskClient.getDataFromServer("History");
+        if (jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
+            return;
+        }
+        Type historyListType = new TypeToken<ArrayList<Integer>>() {}.getType();
+        ArrayList<Integer> history = gson.fromJson(jsonHistory, historyListType);
+
+        for (int id : history) {
+            findTaskByIdOrNull(id, true);
+        }
     }
 
-
-    /*  private void put(String key, String json) {
-
-      }*/
-    /*private void sendRequest(String resources) throws IOException, InterruptedException {
-
-        String url = "http://localhost:8080/tasks/addtask";
-
-        // добавьте отлов и обработку исключений вокруг кода ниже
-        URI uri = URI.create(url);
-
-
-        kvTaskClient.sendDataToStorage(resources);
-
-    }*/
-   /* @Override
-    public List<AbstractTask> getHistory() {
-        kvTaskClient.doSomething();
-        sendRequest("history");
-        // TODO: 23.03.2023 add return value
-        return new ArrayList<>();
-    }*/
 
     @Override
     public void addEpic(EpicTask epicTask) {
@@ -243,7 +236,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
-        save();
+        //save();
         needSendToServer = false;
 
         return wasDeleted;

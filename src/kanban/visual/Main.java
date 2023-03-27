@@ -88,7 +88,8 @@ public class Main {
     }
 
     static void getListOfAllTasks() {
-        httpTaskManager.restoreDataFromServer();
+        // TODO: 27.03.2023  httpTaskManager.restoreStandardTasksFromServer();
+        httpTaskManager.load("DEBUG");
         var standardTasks = fileBackedTasksManager.getStandardTasks();
         var epicTasks = fileBackedTasksManager.getEpicTasks();
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {

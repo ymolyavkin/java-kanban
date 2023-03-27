@@ -32,14 +32,18 @@ public class KVServer {
         // TODO Добавьте получение значения по ключу
         String[] pathParts = h.getRequestURI().getPath().split("/");
         for (String pathPart : pathParts) {
-            System.out.println("pahtPart: " + pathPart);
+            System.out.println("pathPart: " + pathPart);
+        }
+        for (int i = 0; i < pathParts.length; i++) {
+            System.out.println("request is received");
+            System.out.println(i + " " + pathParts[i]);
         }
 
         String response;
         if (data.isEmpty()) {
             response = "response From KVserver: Хранилище пусто";
         } else {
-            response = data.get("KEY_TASK");
+            response = data.get(pathParts[2]);
             System.out.println("From KVserver: " + response);
         }
         h.sendResponseHeaders(200, 0);

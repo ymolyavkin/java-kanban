@@ -43,8 +43,8 @@ Tasks";
             case "Epics" -> {
                 url += "KEY_EPIC?API_TOKEN=DEBUG";
             }
-            case "Prioritized" -> {
-                url += "KEY_PRIORITIZED?API_TOKEN=DEBUG";
+            case "SingleEpic" -> {
+                url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
             }
             case "History" -> {
                 url += "KEY_HISTORY?API_TOKEN=DEBUG";
@@ -58,60 +58,34 @@ Tasks";
 
     }
 
-   /* public String sendRequest(URI uri) {
-        String answer = "";
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .headers("Content-Type", "text/plain;charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString("Sample request body"))
-                .build();
-
-        //   HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // обработайте указанные в задании коды состояния
-            int status = response.statusCode();
-            switch (status) {
-                case 400:
-                    answer = "В запросе содержится ошибка. Проверьте параметры и повторите запрос.";
-                    break;
-                case 404:
-                    answer = "По указанному адресу нет ресурса. Проверьте URL-адрес ресурса и повторите запрос.";
-                    break;
-                case 500:
-                    answer = "На стороне сервера произошла непредвиденная ошибка.";
-                    break;
-                case 503:
-                    answer = "Сервер временно недоступен. Попробуйте повторить запрос позже.";
-                    break;
-                default:
-                    answer = response.statusCode() + response.body();
-            }
-
-        } catch (IOException | InterruptedException e) { // обрабатываем ошибки отправки запроса
-            answer += "Во время выполнения запроса ресурса по url-адресу: '" + uri + "' возникла ошибка.\n" +
-                    "Проверьте, пожалуйста, адрес и повторите попытку.";
-        }
-        return answer;
-    }*/
-
-
-    /*public void put(String key, String json) {
-
-    }*/
 
     public String load(String key) {
+        //String startUrl = "http://localhost:8078/load/";
+        //KEY_TASK?API_TOKEN=DEBUG
+
         return "Json";
     }
 
-    public void doSomething() {
-        System.out.println("Do Something");
-    }
 
-    public String getStandardTasksFromServer() {
-        String url = "http://localhost:8078/load/KEY_TASK?API_TOKEN=DEBUG";
+
+    public String getDataFromServer(String key) {
+
+        String url="http://localhost:8078/load/";
+        switch (key) {
+            case "Tasks" -> {
+                url += "KEY_TASK?API_TOKEN=DEBUG";
+            }
+            case "Epics" -> {
+                url += "KEY_EPIC?API_TOKEN=DEBUG";
+            }
+            case "SingleEpic" -> {
+                url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
+            }
+            case "History" -> {
+                url += "KEY_HISTORY?API_TOKEN=DEBUG";
+            }
+        }
         URI uri = URI.create(url);
         HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
 
@@ -128,5 +102,8 @@ Tasks";
         System.out.println("Код состояния: " + response.statusCode());
         System.out.println("Тело ответа: " + response.body());
         return response.body();
+    }
+
+    public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {
     }
 }
