@@ -133,7 +133,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void restoreStandardTasksFromServer() {
-        String jsonStandardTasks = kvTaskClient.getDataFromServer("Tasks");
+        String jsonStandardTasks = kvTaskClient.load("Tasks");
         if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -146,7 +146,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
     public void restoreSingleEpicFromServer() {
-        String jsonSingleEpic = kvTaskClient.getDataFromServer("SingleEpic");
+        String jsonSingleEpic = kvTaskClient.load("SingleEpic");
         if (jsonSingleEpic.isBlank() || jsonSingleEpic.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -157,7 +157,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
     public void restoreEpicsFromServer() {
-        String jsonEpics = kvTaskClient.getDataFromServer("Epics");
+        String jsonEpics = kvTaskClient.load("Epics");
         if (jsonEpics.isBlank() || jsonEpics.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -172,7 +172,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
     public void restoreHistoryFromServer() {
 
-        String jsonHistory = kvTaskClient.getDataFromServer("History");
+        String jsonHistory = kvTaskClient.load("History");
         if (jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
             return;
         }

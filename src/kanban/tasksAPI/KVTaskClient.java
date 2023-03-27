@@ -60,16 +60,16 @@ Tasks";
 
 
 
-    public String load(String key) {
+   /* public String load(String key) {
         //String startUrl = "http://localhost:8078/load/";
         //KEY_TASK?API_TOKEN=DEBUG
 
         return "Json";
     }
+*/
 
 
-
-    public String getDataFromServer(String key) {
+    public String load(String key) {
 
         String url="http://localhost:8078/load/";
         switch (key) {

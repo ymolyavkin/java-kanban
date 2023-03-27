@@ -1,6 +1,5 @@
 package kanban.tasksAPI;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -9,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static kanban.visual.Main.KV_PORT;
@@ -31,13 +29,13 @@ public class KVServer {
     private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
         String[] pathParts = h.getRequestURI().getPath().split("/");
-        for (String pathPart : pathParts) {
+        /*for (String pathPart : pathParts) {
             System.out.println("pathPart: " + pathPart);
         }
         for (int i = 0; i < pathParts.length; i++) {
             System.out.println("request is received");
             System.out.println(i + " " + pathParts[i]);
-        }
+        }*/
 
         String response;
         if (data.isEmpty()) {
@@ -51,13 +49,13 @@ public class KVServer {
             os.write(response.getBytes());
         }
 
-        Headers rmap = h.getRequestHeaders();
-        System.out.println("rmap = " + rmap);
+       /* Headers rmap = h.getRequestHeaders();
+        System.out.println("rmap = " + rmap);*/
         InputStream inputStream = h.getRequestBody();
 
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        System.out.println("From KVserer br: ");
-        System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
+       // System.out.println("From KVserer br: ");
+     //   System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
 
     }
 
