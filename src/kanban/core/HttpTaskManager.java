@@ -13,11 +13,9 @@ import kanban.tasksAPI.KVTaskClient;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_TASKS = "Tasks";
@@ -64,15 +62,19 @@ public class HttpTaskManager extends FileBackedTasksManager {
     protected void save() {
         Map<Integer, AbstractTask> tasks = getStandardTasks();
         Map<Integer, AbstractTask> epics = getEpicTasks();
+        TreeSet<AbstractTask> allTasksSorted = getPrioritizedTasks();
+        List<AbstractTask> history = getHistory();
         try {
             sendTasksToKV(tasks);
             sendEpicsToKV(epics);
+            sendPrioritizedToKV(allTasksSorted);
+            sendHistoryToKV(history);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        getAndSendEpics(epics);
+        //getAndSendEpics(epics);
 
         // sendRequest("This is Test");
 
@@ -81,15 +83,31 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
         String jsonStringTasks = gson.toJson(tasks);
-        System.out.println(tasks);
 
-        kvTaskClient.sendDataToStorage(jsonStringTasks, KEY_TASKS);
+        kvTaskClient.put(jsonStringTasks, KEY_TASKS);
     }
     private void sendEpicsToKV(Map<Integer, AbstractTask> epics) throws IOException, InterruptedException {
         String jsonStringEpics = gson.toJson(epics);
-        System.out.println(epics);
 
-        kvTaskClient.sendDataToStorage(jsonStringEpics, KEY_EPICS);
+        kvTaskClient.put(jsonStringEpics, KEY_EPICS);
+    }
+    private void sendPrioritizedToKV(TreeSet<AbstractTask> prioritized) throws IOException, InterruptedException {
+        List<Integer> idPrioritizedTask = new ArrayList<>(prioritized.size());
+        for (AbstractTask abstractTask : prioritized) {
+            idPrioritizedTask.add(abstractTask.getId());
+        }
+        String jsonIdPrioritized = gson.toJson(idPrioritizedTask);
+
+        kvTaskClient.put(jsonIdPrioritized, KEY_PRIORITIZED);
+    }
+    private void sendHistoryToKV(List<AbstractTask> history) throws IOException, InterruptedException {
+        List<Integer> idHistoryTask = new ArrayList<>(history.size());
+        for (AbstractTask abstractTask : history) {
+            idHistoryTask.add(abstractTask.getId());
+        }
+        String jsonIdHistory = gson.toJson(idHistoryTask);
+
+        kvTaskClient.put(jsonIdHistory, KEY_HISTORY);
     }
 
    /* private void getAndSendTasks(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
@@ -106,7 +124,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         //  System.out.println();
     }*/
 
-    private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
+   /* private void getAndSendEpics(Map<Integer, AbstractTask> epics) {
 
         String jsonStringEpics = gson.toJson(epics);
         //   System.out.println(jsonStringEpics);
@@ -116,7 +134,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         //   System.out.println(epicTaskHashMap);
         //   System.out.println();
-    }
+    }*/
 
     private String getDataFromKVServer() {
         return "da";
@@ -186,7 +204,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     public void addTask(Task task) {
-
+        System.out.println("addTask ");
         super.addTask(task);
         if (needSendToServer) {
             save();

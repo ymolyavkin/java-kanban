@@ -28,7 +28,13 @@ Tasks";
     private static final String KEY_SUBTASKS = "Subtasks";
     private static final String KEY_HISTORY = "History";
  */
-    public void sendDataToStorage(String json, String key) throws IOException, InterruptedException {
+    /**
+     * Метод должен сохранять состояние менеджера задач через запрос POST /save/<ключ>?API_TOKEN=.
+     *
+     * @param key
+     * @param json
+     */
+    public void put(String json, String key) throws IOException, InterruptedException {
         String url="http://localhost:8078/save/";
         switch (key) {
             case "Tasks" -> {
@@ -38,10 +44,10 @@ Tasks";
                 url += "KEY_EPIC?API_TOKEN=DEBUG";
             }
             case "Prioritized" -> {
-                url += "addprioritized";
+                url += "KEY_PRIORITIZED?API_TOKEN=DEBUG";
             }
             case "History" -> {
-                url += "addhistory";
+                url += "KEY_HISTORY?API_TOKEN=DEBUG";
             }
         }
         URI allTasksUrl = URI.create(url);
@@ -52,7 +58,7 @@ Tasks";
 
     }
 
-    public String sendRequest(URI uri) {
+   /* public String sendRequest(URI uri) {
         String answer = "";
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -89,17 +95,12 @@ Tasks";
                     "Проверьте, пожалуйста, адрес и повторите попытку.";
         }
         return answer;
-    }
+    }*/
 
-    /**
-     * Метод должен сохранять состояние менеджера задач через запрос POST /save/<ключ>?API_TOKEN=.
-     *
-     * @param key
-     * @param json
-     */
-    public void put(String key, String json) {
 
-    }
+    /*public void put(String key, String json) {
+
+    }*/
 
     public String load(String key) {
         return "Json";
