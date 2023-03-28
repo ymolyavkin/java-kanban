@@ -10,6 +10,7 @@ import kanban.serialization.DurationTypeAdapter;
 import kanban.serialization.LocalDateTimeConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -25,10 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-class HttpTaskServerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+class HttpTaskServerTest {
+private static String kvUrl = "http://localhost:8078/";
+    private static String httpUrl = "http://localhost:8080/tasks/";
     private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
+    private KVTaskClient kvTaskClient;
     private HttpServer httpServer;
     private static Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static Map<Integer, AbstractTask> epicTasks = new HashMap<>();
@@ -89,6 +94,7 @@ class HttpTaskServerTest {
         HttpClient client = HttpClient.newHttpClient();
 
         URI url = URI.create("http://localhost:8080/tasks/alltasks");
+
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("response: " + response);
@@ -137,5 +143,24 @@ class HttpTaskServerTest {
 
         System.out.println("response: " + response);
     }
+    @Test
+    @DisplayName("Подзадача - Delete с некорректным - 404")
+    void shouldDeleteSubtaskWithInvalidId() throws IOException, InterruptedException {
+        httpTaskManager.addEpic(epic);
+        httpTaskManager.addTask(task);
 
+        HttpClient client = HttpClient.newHttpClient();
+        //kvTaskClient = new KVTaskClient(httpUrl);
+        URI testUrl = URI.create(httpUrl+"task/?id=-1");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(testUrl)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode());
+        assertEquals("Not Found", response.body());
+        //assertFalse(taskManager.getAllSubtasks().isEmpty());
+    }
 }
+
+

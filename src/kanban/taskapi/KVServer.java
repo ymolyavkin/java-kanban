@@ -24,6 +24,16 @@ public class KVServer {
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
+        server.createContext("/clear", this::clear);
+    }
+
+    private void clear(HttpExchange h) throws IOException {
+
+        String response = "Все данные удалены из хранилища";
+        h.sendResponseHeaders(200, 0);
+        try (OutputStream os = h.getResponseBody()) {
+            os.write(response.getBytes());
+        }
     }
 
     private void load(HttpExchange h) throws IOException {

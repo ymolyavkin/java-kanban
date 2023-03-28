@@ -92,7 +92,9 @@ Tasks";
         System.out.println("Тело ответа: " + response.body());
         return response.body();
     }
+public void clearStorage() {
 
+}
     public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {
     }
 }
