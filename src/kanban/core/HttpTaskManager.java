@@ -80,8 +80,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         //getAndSendEpics(epics);
 
         // sendRequest("This is Test");
-
-
     }
 
     private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
@@ -89,17 +87,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         kvTaskClient.put(jsonStringTasks, KEY_TASKS);
     }
+
     private void sendEpicsToKV(Map<Integer, AbstractTask> epics) throws IOException, InterruptedException {
         String jsonStringEpics = gson.toJson(epics);
 
         kvTaskClient.put(jsonStringEpics, KEY_EPICS);
     }
+
     private void sendSingleEpicToKV(EpicTask epic) throws IOException, InterruptedException {
         String jsonStringSingleEpic = gson.toJson(epic);
 
         kvTaskClient.put(jsonStringSingleEpic, KEY_SINGLE_EPIC);
         //kvTaskClient.restoreSingleEpic(jsonStringSingleEpic, KEY_SINGLE_EPIC);
     }
+
     private void sendPrioritizedToKV(TreeSet<AbstractTask> prioritized) throws IOException, InterruptedException {
         List<Integer> idPrioritizedTask = new ArrayList<>(prioritized.size());
         for (AbstractTask abstractTask : prioritized) {
@@ -109,6 +110,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         kvTaskClient.put(jsonIdPrioritized, KEY_PRIORITIZED);
     }
+
     private void sendHistoryToKV(List<AbstractTask> history) throws IOException, InterruptedException {
         List<Integer> idHistoryTask = new ArrayList<>(history.size());
         for (AbstractTask abstractTask : history) {
@@ -119,9 +121,21 @@ public class HttpTaskManager extends FileBackedTasksManager {
         kvTaskClient.put(jsonIdHistory, KEY_HISTORY);
     }
 
+    public Task restoreTaskFromJson(String json) {
+        Type taskType = new TypeToken<Task>() {
+        }.getType();
+        Task task = gson.fromJson(json, taskType);
 
+        return task;
+    }
 
+    public EpicTask restoreEpicFromJson(String json) {
+        Type epicTaskType = new TypeToken<EpicTask>() {
+        }.getType();
+        EpicTask epic = gson.fromJson(json, epicTaskType);
 
+        return epic;
+    }
 
     public HttpTaskManager load(String key) {
         restoreStandardTasksFromServer();
@@ -137,7 +151,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
         if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
-        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {}.getType();
+        Type taskMapType = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();
         HashMap<Integer, Task> taskHashMap = gson.fromJson(jsonStandardTasks, taskMapType);
 
         for (Task task : taskHashMap.values()) {
@@ -145,23 +160,27 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
         //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
+
     public void restoreSingleEpicFromServer() {
         String jsonSingleEpic = kvTaskClient.load("SingleEpic");
         if (jsonSingleEpic.isBlank() || jsonSingleEpic.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
-        Type epicTaskType = new TypeToken<EpicTask>() {}.getType();
+        Type epicTaskType = new TypeToken<EpicTask>() {
+        }.getType();
         EpicTask epic = gson.fromJson(jsonSingleEpic, epicTaskType);
         System.out.println(jsonSingleEpic);
         addEpic(epic);
         //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
+
     public void restoreEpicsFromServer() {
         String jsonEpics = kvTaskClient.load("Epics");
         if (jsonEpics.isBlank() || jsonEpics.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
-        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {}.getType();
+        Type epicMapType = new TypeToken<HashMap<Integer, EpicTask>>() {
+        }.getType();
         HashMap<Integer, EpicTask> epicHashMap = gson.fromJson(jsonEpics, epicMapType);
         System.out.println();
 
@@ -170,13 +189,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
         //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
+
     public void restoreHistoryFromServer() {
 
         String jsonHistory = kvTaskClient.load("History");
         if (jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
-        Type historyListType = new TypeToken<ArrayList<Integer>>() {}.getType();
+        Type historyListType = new TypeToken<ArrayList<Integer>>() {
+        }.getType();
         ArrayList<Integer> history = gson.fromJson(jsonHistory, historyListType);
 
         for (int id : history) {
@@ -189,20 +210,22 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void addEpic(EpicTask epicTask) {
         epicTask.calculateTime();
         super.addEpic(epicTask);
-        if (needSendToServer) {
+       /* if (needSendToServer) {
             save();
             needSendToServer = false;
-        }
+        }*/
+        save();
     }
 
     @Override
     public void addTask(Task task) {
         System.out.println("addTask ");
         super.addTask(task);
-        if (needSendToServer) {
+        /*if (needSendToServer) {
             save();
             needSendToServer = false;
-        }
+        }*/
+        save();
     }
 
     @Override
@@ -217,10 +240,12 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory) {
         var foundTask = super.findTaskByIdOrNull(id, savedToHistory);
 
-        needSendToServer = true;
+        /*needSendToServer = true;
         save();
-        needSendToServer = false;
-
+        needSendToServer = false;*/
+        if (savedToHistory) {
+            save();
+        }
         return foundTask;
     }
 

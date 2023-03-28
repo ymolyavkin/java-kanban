@@ -6,6 +6,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
 import kanban.model.AbstractTask;
+import kanban.model.EpicTask;
+import kanban.model.Task;
 
 import java.io.*;
 import java.net.URI;
@@ -135,12 +137,24 @@ public class HttpTaskServer implements HttpHandler {
                 String body = bufferedReader.readLine();
                 System.out.println("body" + body);
 
+                EpicTask epic = httpTaskManager.restoreEpicFromJson(body);
+                httpTaskManager.addEpic(epic);
+
                 writeResponse(httpExchange, "Получен запрос на добавление эпика", 200);
             }
             case POST_ADD_TASK -> {
                 writeResponse(httpExchange, "Получен запрос на добавление задачи", 200);
                 System.out.println("Получен запрос на добавление задачи");
-                handPostAddTask(httpExchange);
+
+                // извлекаем тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+                System.out.println("body" + body);
+
+                Task task = httpTaskManager.restoreTaskFromJson(body);
+                httpTaskManager.addTask(task);
             }
             case POST_ADD_PRIORITIZED -> {
                 writeResponse(httpExchange, "Получен запрос на добавление отсортированного списка", 200);
