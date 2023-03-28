@@ -41,7 +41,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
         gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        gSonBuilder.setPrettyPrinting();
+       // gSonBuilder.setPrettyPrinting();
 
         // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
@@ -267,5 +267,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         return wasDeleted;
     }
 
-// .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
+    // .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
+    //Правильный эпик:
+    //{"subtasks":[{"parentId":2,"title":"Подзадача 1","description":"Прочитать ТЗ","id":3,"status":"NEW","duration":15,"startTime":"26.02.2023 12:20"},{"parentId":2,"title":"Подзадача 2","description":"Понять ТЗ","id":4,"status":"NEW","duration":15,"startTime":"27.02.2023 12:39"}],"endTime":"27.02.2023 12:54","title":"Понять условие домашнего задания","description":"Понять как сделать рефакторинг проекта \u0027Трекер задач\u0027 в соответствии с новым ТЗ","id":2,"status":"NEW","duration":30,"startTime":"26.02.2023 12:20"}
 }
