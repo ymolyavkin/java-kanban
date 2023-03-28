@@ -262,7 +262,7 @@ public class Main {
         System.out.println("Ведите id задачи");
         String stringId = scanner.nextLine();
         int id = stringToInt(stringId);
-        var task = fileBackedTasksManager.findTaskByIdOrNull(id, true);
+        var task = httpTaskManager.findTaskByIdOrNull(id, true);
 
         if (task == null) {
             System.out.print(Color.RED);

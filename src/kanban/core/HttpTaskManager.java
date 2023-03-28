@@ -84,9 +84,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        //getAndSendEpics(epics);
-
-        // sendRequest("This is Test");
     }
 
     private void sendTasksToKV(Map<Integer, AbstractTask> tasks) throws IOException, InterruptedException {
@@ -147,7 +144,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public HttpTaskManager load(String key) {
         restoreStandardTasksFromServer();
         restoreEpicsFromServer();
-        restoreSingleEpicFromServer();
+        //restoreSingleEpicFromServer();
         restoreHistoryFromServer();
         //отсортированный treeSet задач должен создаться попутно
         return this;
