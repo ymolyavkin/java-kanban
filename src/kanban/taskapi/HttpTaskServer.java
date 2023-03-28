@@ -1,4 +1,4 @@
-package kanban.tasksAPI;
+package kanban.taskapi;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static kanban.tasksAPI.Endpoint.*;
+import static kanban.taskapi.Endpoint.*;
 
 public class HttpTaskServer implements HttpHandler {
 

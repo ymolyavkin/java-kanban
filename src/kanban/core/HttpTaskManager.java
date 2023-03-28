@@ -8,7 +8,7 @@ import kanban.model.EpicTask;
 import kanban.model.Task;
 import kanban.serialization.DurationTypeAdapter;
 import kanban.serialization.LocalDateTimeConverter;
-import kanban.tasksAPI.KVTaskClient;
+import kanban.taskapi.KVTaskClient;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -18,11 +18,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private static final String KEY_TASKS = "Tasks";
-    private static final String KEY_EPICS = "Epics";
-    private static final String KEY_PRIORITIZED = "Prioritized";
-    private static final String KEY_HISTORY = "History";
-    private static final String KEY_SINGLE_EPIC = "SingleEpic";
+    private static final String KEY_TASKS = "tasks";
+    private static final String KEY_EPICS = "epics";
+    private static final String KEY_PRIORITIZED = "prioritized";
+    private static final String KEY_HISTORY = "history";
+    private static final String KEY_SINGLE_EPIC = "singleepic";
     private static Gson gson;
     private boolean needSendToServer;
 
@@ -151,7 +151,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void restoreStandardTasksFromServer() {
-        String jsonStandardTasks = kvTaskClient.load("Tasks");
+        String jsonStandardTasks = kvTaskClient.load(KEY_TASKS);
         if (jsonStandardTasks.isBlank() || jsonStandardTasks.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -166,7 +166,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void restoreSingleEpicFromServer() {
-        String jsonSingleEpic = kvTaskClient.load("SingleEpic");
+        String jsonSingleEpic = kvTaskClient.load(KEY_SINGLE_EPIC);
         if (jsonSingleEpic.isBlank() || jsonSingleEpic.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -179,7 +179,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void restoreEpicsFromServer() {
-        String jsonEpics = kvTaskClient.load("Epics");
+        String jsonEpics = kvTaskClient.load(KEY_EPICS);
         if (jsonEpics.isBlank() || jsonEpics.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
@@ -196,7 +196,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     public void restoreHistoryFromServer() {
 
-        String jsonHistory = kvTaskClient.load("History");
+        String jsonHistory = kvTaskClient.load(KEY_HISTORY);
         if (jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
             return;
         }

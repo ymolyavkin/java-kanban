@@ -4,8 +4,8 @@ import com.sun.net.httpserver.HttpServer;
 import kanban.core.HttpTaskManager;
 import kanban.core.Managers;
 import kanban.model.*;
-import kanban.tasksAPI.HttpTaskServer;
-import kanban.tasksAPI.KVServer;
+import kanban.taskapi.HttpTaskServer;
+import kanban.taskapi.KVServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

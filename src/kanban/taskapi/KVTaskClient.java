@@ -1,4 +1,4 @@
-package kanban.tasksAPI;
+package kanban.taskapi;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,16 +37,16 @@ Tasks";
     public void put(String json, String key) throws IOException, InterruptedException {
         String url="http://localhost:8078/save/";
         switch (key) {
-            case "Tasks" -> {
+            case "tasks" -> {
                 url += "KEY_TASK?API_TOKEN=DEBUG";
             }
-            case "Epics" -> {
+            case "epics" -> {
                 url += "KEY_EPIC?API_TOKEN=DEBUG";
             }
-            case "SingleEpic" -> {
+            case "singleepic" -> {
                 url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
             }
-            case "History" -> {
+            case "history" -> {
                 url += "KEY_HISTORY?API_TOKEN=DEBUG";
             }
         }
@@ -58,25 +58,20 @@ Tasks";
 
     }
 
-
-
-
-
-
     public String load(String key) {
 
         String url="http://localhost:8078/load/";
         switch (key) {
-            case "Tasks" -> {
+            case "tasks" -> {
                 url += "KEY_TASK?API_TOKEN=DEBUG";
             }
-            case "Epics" -> {
+            case "epics" -> {
                 url += "KEY_EPIC?API_TOKEN=DEBUG";
             }
-            case "SingleEpic" -> {
+            case "singleepic" -> {
                 url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
             }
-            case "History" -> {
+            case "history" -> {
                 url += "KEY_HISTORY?API_TOKEN=DEBUG";
             }
         }

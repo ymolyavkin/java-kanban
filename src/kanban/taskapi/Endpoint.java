@@ -1,4 +1,4 @@
-package kanban.tasksAPI;
+package kanban.taskapi;
 
 public enum Endpoint {
     GET_HISTORY,
