@@ -2,7 +2,6 @@ package kanban.tasksAPI;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
@@ -39,12 +38,20 @@ public class HttpTaskServer implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response;
+        String response = "answer";
 
         // извлеките метод из запроса
         String method = httpExchange.getRequestMethod();
 
-        switch (method) {
+        URI requestURI = httpExchange.getRequestURI();
+        // Из экземпляра URI получить requestPath.
+        String requestPath = requestURI.getPath();
+
+        // получите информацию об эндпоинте, к которому был запрос
+        Endpoint endpoint = getEndpoint(requestPath, method);
+        System.out.println("endpoint: " + endpoint);
+
+       /* switch (method) {
             // сформируйте ответ в случае, если был вызван POST-метод
             case "POST":
                 System.out.println("Получен POST");
@@ -90,9 +97,74 @@ public class HttpTaskServer implements HttpHandler {
                 break;
             default:
                 response = "Некорректный метод!";
+        }*/
+
+        switch (endpoint) {
+            case GET_HISTORY -> {
+                writeResponse(httpExchange, "Получен запрос на получение истории задач", 200);
+                List<AbstractTask> historyTask = httpTaskManager.getHistory();
+                System.out.println("Test exist httpTaskManager");
+                //sendRequest("history");
+            }
+            case GET_ALL_TASKS -> {
+                writeResponse(httpExchange, "Получен запрос на получение списка всех задач", 200);
+                Map<Integer, AbstractTask> standardTasks = httpTaskManager.getStandardTasks();
+                Map<Integer, AbstractTask> epics = httpTaskManager.getEpicTasks();
+                System.out.println("Test get standard tasks" + standardTasks + " " + epics);
+            }
+            case GET_STANDARD_TASKS -> {
+                writeResponse(httpExchange, "Получен запрос на получение обычных задач", 200);
+            }
+            case GET_EPIC_TASKS -> {
+                writeResponse(httpExchange, "Получен запрос на получение эпиков", 200);
+            }
+            case GET_PRIORITIZED_TASKS -> {
+                writeResponse(httpExchange, "Получен запрос на получение упорядоченного по времени списка задач", 200);
+                TreeSet<AbstractTask> apiTasks = httpTaskManager.getPrioritizedTasks();
+                System.out.println("apiTasks" + apiTasks);
+            }
+            case GET_FIND_TASK_BY_ID -> {
+                writeResponse(httpExchange, "Получен запрос на получение задачи по id", 200);
+            }
+            case POST_ADD_EPIC -> {
+                System.out.println("Ендпоинт POST_ADD_EPIC");
+                // извлекаем тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+                System.out.println("body" + body);
+
+                writeResponse(httpExchange, "Получен запрос на добавление эпика", 200);
+            }
+            case POST_ADD_TASK -> {
+                writeResponse(httpExchange, "Получен запрос на добавление задачи", 200);
+                System.out.println("Получен запрос на добавление задачи");
+                handPostAddTask(httpExchange);
+            }
+            case POST_ADD_PRIORITIZED -> {
+                writeResponse(httpExchange, "Получен запрос на добавление отсортированного списка", 200);
+            }
+            case POST_ADD_HISTORY -> {
+                writeResponse(httpExchange, "Получен запрос на добавление истории просмотров", 200);
+            }
+            case DELETE_DELETE_TASK_BY_ID -> {
+                int id = 0; //requestPath
+                if (id != -1) {
+                    httpTaskManager.deleteTaskById(id);
+                    System.out.println("Удалена задача с id " + id);
+                    httpExchange.sendResponseHeaders(200, 0);
+                } else {
+                    System.out.println("Получен некорректный id: " + id);
+                    httpExchange.sendResponseHeaders(405, 0);
+                }
+                writeResponse(httpExchange, "Получен запрос на удаление задачи по id", 200);
+            }
+            case DELETE_DELETE_ALL_TASKS -> {
+                writeResponse(httpExchange, "Получен запрос на удаление всех задач", 200);
+            }
+            default -> writeResponse(httpExchange, "Такого эндпоинта не существует", 404);
         }
-
-
         httpExchange.sendResponseHeaders(200, 0);
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(response.getBytes());
