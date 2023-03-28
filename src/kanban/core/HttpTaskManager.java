@@ -65,13 +65,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
         Map<Integer, AbstractTask> epics = getEpicTasks();
         TreeSet<AbstractTask> allTasksSorted = getPrioritizedTasks();
         List<AbstractTask> history = getHistory();
-        EpicTask epic = (EpicTask) epics.get(2);
+
         try {
-            sendTasksToKV(tasks);
-            sendEpicsToKV(epics);
-            sendPrioritizedToKV(allTasksSorted);
-            sendHistoryToKV(history);
-            sendSingleEpicToKV(epic);
+            if (!tasks.isEmpty()) {
+                sendTasksToKV(tasks);
+            }
+            if (!epics.isEmpty()) {
+                sendEpicsToKV(epics);
+            }
+            if (!allTasksSorted.isEmpty()) {
+                sendPrioritizedToKV(allTasksSorted);
+            }
+            if (!history.isEmpty()) {
+                sendHistoryToKV(history);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -268,6 +275,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     // .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
+    //http://localhost:8080/tasks/addtask
+    //Task:
+    //{"title":"Физминутка1","description":"Выполнить упражнения1","id":10,"status":"NEW","duration":25,"startTime":"23.03.2023 12:24"}
     //Правильный эпик:
     //{"subtasks":[{"parentId":2,"title":"Подзадача 1","description":"Прочитать ТЗ","id":3,"status":"NEW","duration":15,"startTime":"26.02.2023 12:20"},{"parentId":2,"title":"Подзадача 2","description":"Понять ТЗ","id":4,"status":"NEW","duration":15,"startTime":"27.02.2023 12:39"}],"endTime":"27.02.2023 12:54","title":"Понять условие домашнего задания","description":"Понять как сделать рефакторинг проекта \u0027Трекер задач\u0027 в соответствии с новым ТЗ","id":2,"status":"NEW","duration":30,"startTime":"26.02.2023 12:20"}
 }

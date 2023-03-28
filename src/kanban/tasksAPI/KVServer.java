@@ -29,13 +29,7 @@ public class KVServer {
     private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
         String[] pathParts = h.getRequestURI().getPath().split("/");
-        /*for (String pathPart : pathParts) {
-            System.out.println("pathPart: " + pathPart);
-        }
-        for (int i = 0; i < pathParts.length; i++) {
-            System.out.println("request is received");
-            System.out.println(i + " " + pathParts[i]);
-        }*/
+
 
         String response;
         if (data.isEmpty()) {
@@ -75,7 +69,7 @@ public class KVServer {
                     return;
                 }
                 String value = readText(h);
-                if (value.isEmpty()) {
+                if (value.equals("{}") || value.equals("[]") || value.isBlank() || value == null) {
                     System.out.println("Value для сохранения пустой. value указывается в теле запроса");
                     h.sendResponseHeaders(400, 0);
                     return;
