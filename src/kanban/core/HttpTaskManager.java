@@ -265,7 +265,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
-        //save();
+        save();
         needSendToServer = false;
 
         return wasDeleted;

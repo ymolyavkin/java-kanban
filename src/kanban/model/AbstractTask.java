@@ -96,7 +96,8 @@ public abstract class AbstractTask implements Comparable<AbstractTask>, Serializ
         } else if (this.status == Status.NEW && anotherTask.getStatus() == Status.IN_PROGRESS
                 || this.status == Status.IN_PROGRESS && anotherTask.getStatus() == Status.DONE
                 || this.status == Status.NEW && anotherTask.getStatus() == Status.DONE
-                || this.id < anotherTask.getId()) {
+                || this.id < anotherTask.getId())
+        {
             return -1;
         } else {
             return 1;
