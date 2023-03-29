@@ -10,21 +10,17 @@ public class KVTaskClient {
     private final URI url;
     private final String apiToken;
     private final HttpClient client;
-    //private final String key;
 
     public KVTaskClient(URI url) {
-        // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища
         this.url = url;
         client = HttpClient.newHttpClient();
         apiToken = requestApiToken(url);
-        // key = sendRequest(url);
+
         System.out.println("From consructor client: apiToken = " + apiToken);
     }
 
     private String requestApiToken(URI url) {
-        //String regUrl = url + "register/";
 
-      //  URI uri = URI.create(regUrl);
         HttpRequest request = HttpRequest.newBuilder().GET().uri(url).build();
 
         HttpResponse<String> response = null;
@@ -37,12 +33,7 @@ public class KVTaskClient {
         }
         return response.body();
     }
-/*
-Tasks";
-    private static final String KEY_EPICS = "Epics";
-    private static final String KEY_SUBTASKS = "Subtasks";
-    private static final String KEY_HISTORY = "History";
- */
+
     /**
      * Метод должен сохранять состояние менеджера задач через запрос POST /save/<ключ>?API_TOKEN=.
      *
@@ -50,19 +41,22 @@ Tasks";
      * @param json
      */
     public void put(String json, String key) throws IOException, InterruptedException {
-        String url="http://localhost:8078/save/";
+        String url = "http://localhost:8078/save/";
         switch (key) {
             case "tasks" -> {
-                url += "KEY_TASK?API_TOKEN=DEBUG";
+
+                url += "KEY_TASK?API_TOKEN=" + apiToken;
             }
             case "epics" -> {
-                url += "KEY_EPIC?API_TOKEN=DEBUG";
+
+                url += "KEY_EPIC?API_TOKEN=" + apiToken;
             }
             case "singleepic" -> {
-                url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
+
+                url += "KEY_SINGLE_EPIC?API_TOKEN=" + apiToken;
             }
             case "history" -> {
-                url += "KEY_HISTORY?API_TOKEN=DEBUG";
+                url += "KEY_HISTORY?API_TOKEN=" + apiToken;
             }
         }
         URI allTasksUrl = URI.create(url);
@@ -75,19 +69,23 @@ Tasks";
 
     public String load(String key) {
 
-        String url="http://localhost:8078/load/";
+        String url = "http://localhost:8078/load/";
         switch (key) {
             case "tasks" -> {
-                url += "KEY_TASK?API_TOKEN=DEBUG";
+
+                url += "KEY_TASK?API_TOKEN=" + apiToken;
             }
             case "epics" -> {
-                url += "KEY_EPIC?API_TOKEN=DEBUG";
+
+                url += "KEY_EPIC?API_TOKEN=" + apiToken;
             }
             case "singleepic" -> {
-                url += "KEY_SINGLE_EPIC?API_TOKEN=DEBUG";
+
+                url += "KEY_SINGLE_EPIC?API_TOKEN=" + apiToken;
             }
             case "history" -> {
-                url += "KEY_HISTORY?API_TOKEN=DEBUG";
+
+                url += "KEY_HISTORY?API_TOKEN=" + apiToken;
             }
         }
         URI uri = URI.create(url);
@@ -107,9 +105,11 @@ Tasks";
         System.out.println("Тело ответа: " + response.body());
         return response.body();
     }
-public void clearStorage() {
 
-}
+    public void clearStorage() {
+
+    }
+
     public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {
     }
 }
