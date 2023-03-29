@@ -28,12 +28,50 @@ public class KVServer {
     }
 
     private void clear(HttpExchange h) throws IOException {
-        data.clear();
+        try {
+            System.out.println("\n/clear");
+            if (!hasAuth(h)) {
+                System.out.println("Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
+                h.sendResponseHeaders(403, 0);
+                return;
+            }
+            if ("DELETE".equals(h.getRequestMethod())) {
+                String key = h.getRequestURI().getPath().substring("/clear/".length());
+                System.out.println("Delete key: " + key);
+                /*if (key.isEmpty()) {
+                    System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
+                    h.sendResponseHeaders(400, 0);
+                    return;
+                }
+                String value = readText(h);
+                if (value.equals("{}") || value.equals("[]") || value.isBlank() || value == null) {
+                    System.out.println("Value для сохранения пустой. value указывается в теле запроса");
+                    h.sendResponseHeaders(400, 0);
+                    return;
+                }*/
+                data.clear();
+
+                System.out.println("Все данные из хранилища удалены");
+                h.sendResponseHeaders(200, 0);
+            } else {
+                System.out.println("/clear ждёт DELETE-запрос, а получил: " + h.getRequestMethod());
+                h.sendResponseHeaders(405, 0);
+                String response = "Все данные удалены из хранилища";
+                h.sendResponseHeaders(200, 0);
+                try (OutputStream os = h.getResponseBody()) {
+                    os.write(response.getBytes());
+                }
+            }
+        } finally {
+            h.close();
+        }
+        //**************************
+        /*data.clear();
         String response = "Все данные удалены из хранилища";
         h.sendResponseHeaders(200, 0);
         try (OutputStream os = h.getResponseBody()) {
             os.write(response.getBytes());
-        }
+        }*/
     }
 
     private void load(HttpExchange h) throws IOException {
@@ -62,7 +100,7 @@ public class KVServer {
                     os.write(response.getBytes());
                 }
             } else {
-                System.out.println("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
+                System.out.println("/load ждёт GET-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
         } finally {

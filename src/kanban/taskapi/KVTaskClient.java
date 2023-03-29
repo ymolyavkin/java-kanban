@@ -107,7 +107,22 @@ public class KVTaskClient {
     }
 
     public void clearStorage() {
-        String url = "http://localhost:8078/load/";
+        String url = "http://localhost:8078/clear/";
+        URI uri = URI.create(url);
+        HttpRequest request = HttpRequest.newBuilder().DELETE().uri(uri).build();
+
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // выводим код состояния и тело ответа
+        System.out.println("Код состояния: " + response.statusCode());
+        System.out.println("Тело ответа: " + response.body());
     }
 
     public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {
