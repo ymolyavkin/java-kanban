@@ -3,9 +3,9 @@ package kanban.taskapi;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class KVServer {
     }
 
     private void clear(HttpExchange h) throws IOException {
-
+        data.clear();
         String response = "Все данные удалены из хранилища";
         h.sendResponseHeaders(200, 0);
         try (OutputStream os = h.getResponseBody()) {
@@ -38,7 +38,38 @@ public class KVServer {
 
     private void load(HttpExchange h) throws IOException {
         // TODO Добавьте получение значения по ключу
-        String[] pathParts = h.getRequestURI().getPath().split("/");
+        try {
+            System.out.println("\n/load");
+            if (!hasAuth(h)) {
+                System.out.println("Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
+                h.sendResponseHeaders(403, 0);
+                return;
+            }
+            if ("GET".equals(h.getRequestMethod())) {
+                String[] pathParts = h.getRequestURI().getPath().split("/");
+
+
+                String response;
+                if (data.isEmpty()) {
+                    response = "response From KVserver: Хранилище пусто";
+                } else {
+                    System.out.println("Ключ: " + pathParts[2]);
+                    response = data.get(pathParts[2]);
+                    System.out.println("From KVserver: " + response);
+                }
+                h.sendResponseHeaders(200, 0);
+                try (OutputStream os = h.getResponseBody()) {
+                    os.write(response.getBytes());
+                }
+            } else {
+                System.out.println("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
+                h.sendResponseHeaders(405, 0);
+            }
+        } finally {
+            h.close();
+        }
+        //*****************************************
+        /*String[] pathParts = h.getRequestURI().getPath().split("/");
 
 
         String response;
@@ -51,15 +82,15 @@ public class KVServer {
         h.sendResponseHeaders(200, 0);
         try (OutputStream os = h.getResponseBody()) {
             os.write(response.getBytes());
-        }
+        }*/
 
        /* Headers rmap = h.getRequestHeaders();
         System.out.println("rmap = " + rmap);*/
-        InputStream inputStream = h.getRequestBody();
+        /*InputStream inputStream = h.getRequestBody();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-       // System.out.println("From KVserer br: ");
-     //   System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));*/
+        // System.out.println("From KVserer br: ");
+        //   System.out.println(br.lines().collect(Collectors.joining(System.lineSeparator())));
 
     }
 

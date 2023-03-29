@@ -107,7 +107,7 @@ public class KVTaskClient {
     }
 
     public void clearStorage() {
-
+        String url = "http://localhost:8078/load/";
     }
 
     public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {

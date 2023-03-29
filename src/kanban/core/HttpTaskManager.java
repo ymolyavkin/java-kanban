@@ -141,7 +141,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         return epic;
     }
 
-    public HttpTaskManager load(String key) {
+    public HttpTaskManager load() {
         restoreStandardTasksFromServer();
         restoreEpicsFromServer();
         //restoreSingleEpicFromServer();
@@ -162,7 +162,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         for (Task task : taskHashMap.values()) {
             addTask(task);
         }
-        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
 
     public void restoreSingleEpicFromServer() {
