@@ -122,6 +122,18 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(httpExchange, "Получен запрос на удаление задачи по id", 200);
             }
             case DELETE_DELETE_ALL_TASKS -> {
+                System.out.println("Ендпоинт POST_ADD_TASK");
+                // извлекаем тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+                System.out.println("body" + body);
+
+                Task task = httpTaskManager.restoreTaskFromJson(body);
+                httpTaskManager.addTask(task); System.out.println("Ендпоинт POST_ADD_TASK");
+
+                httpTaskManager.deleteAllTasks();
                 writeResponse(httpExchange, "Получен запрос на удаление всех задач", 200);
             }
             default -> writeResponse(httpExchange, "Такого эндпоинта не существует", 404);
