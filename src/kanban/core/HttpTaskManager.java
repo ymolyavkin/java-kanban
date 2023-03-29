@@ -41,7 +41,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
         gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-       // gSonBuilder.setPrettyPrinting();
+        // gSonBuilder.setPrettyPrinting();
 
         // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
@@ -73,9 +73,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
             if (!epics.isEmpty()) {
                 sendEpicsToKV(epics);
             }
-            if (!allTasksSorted.isEmpty()) {
+            /*if (!allTasksSorted.isEmpty()) {
                 sendPrioritizedToKV(allTasksSorted);
-            }
+            }*/
             if (!history.isEmpty()) {
                 sendHistoryToKV(history);
             }
@@ -208,6 +208,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+    public String abstractTaskToJson(AbstractTask abstractTask) {
+        return gson.toJson(abstractTask);
+    }
 
     @Override
     public void addEpic(EpicTask epicTask) {

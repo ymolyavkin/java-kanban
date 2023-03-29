@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import kanban.core.HttpTaskManager;
 import kanban.model.AbstractTask;
 import kanban.model.EpicTask;
+import kanban.model.Subtask;
 import kanban.model.Task;
 
 import java.io.*;
@@ -36,7 +37,7 @@ public class HttpTaskServer implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response = "answer";
+        String response = "";
 
         // извлеките метод из запроса
         String method = httpExchange.getRequestMethod();
@@ -75,7 +76,23 @@ public class HttpTaskServer implements HttpHandler {
                 System.out.println("apiTasks" + apiTasks);
             }
             case GET_FIND_TASK_BY_ID -> {
-                writeResponse(httpExchange, "Получен запрос на получение задачи по id", 200);
+                String rawQuery = httpExchange.getRequestURI().getRawQuery();
+                // System.lineSeparator()
+                int id = Integer.valueOf(getIdTask(rawQuery));
+                AbstractTask foundTask = httpTaskManager.findTaskByIdOrNull(id, true);
+                if (foundTask != null) {
+                    String jsonTask = httpTaskManager.abstractTaskToJson(foundTask);
+                    if (foundTask instanceof Task) {
+                        response+= "task;" + jsonTask;
+                    } else if (foundTask instanceof EpicTask) {
+                        response+= "epic;" + jsonTask;
+                    } else if (foundTask instanceof Subtask) {
+                        response+= "subtask;" + jsonTask;
+                    }
+                }
+                System.out.println("GET_FIND_TASK_BY_ID -> " + response);
+                writeResponse(httpExchange, response, 200);
+               // writeResponse(httpExchange, "Получен запрос на получение задачи по id", 200);
             }
             case POST_ADD_EPIC -> {
                 System.out.println("Ендпоинт POST_ADD_EPIC");
@@ -112,23 +129,23 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(httpExchange, "Получен запрос на добавление истории просмотров", 200);
             }
             case DELETE_DELETE_TASK_BY_ID -> {
-                String answer;
+
                 String rawQuery = httpExchange.getRequestURI().getRawQuery();
 
                 int id = Integer.valueOf(getIdTask(rawQuery));
                 if (httpTaskManager.deleteTaskById(id)) {
-                    answer = "Удалена задача с id " + String.valueOf(id);
+                    response = "Удалена задача с id " + String.valueOf(id);
                     System.out.println("Удалена задача с id " + id);
                     httpExchange.sendResponseHeaders(200, 0);
                 } else {
-                    answer = "Получен некорректный id: " + String.valueOf(id);
-                    System.out.println("Получен некорректный id: " + id);
+                    response = "Получен некорректный id: " + String.valueOf(id);
+                    System.out.println(response);
                     httpExchange.sendResponseHeaders(405, 0);
                 }
-                writeResponse(httpExchange, answer, 200);
+                writeResponse(httpExchange, response, 200);
             }
             case DELETE_DELETE_ALL_TASKS -> {
-                System.out.println("Ендпоинт POST_ADD_TASK");
+                /*System.out.println("Ендпоинт POST_ADD_TASK");
                 // извлекаем тело запроса
                 InputStream inputStream = httpExchange.getRequestBody();
 
@@ -138,10 +155,13 @@ public class HttpTaskServer implements HttpHandler {
 
                 Task task = httpTaskManager.restoreTaskFromJson(body);
                 httpTaskManager.addTask(task);
-                System.out.println("Ендпоинт POST_ADD_TASK");
-
-                httpTaskManager.deleteAllTasks();
-                writeResponse(httpExchange, "Получен запрос на удаление всех задач", 200);
+                System.out.println("Ендпоинт POST_ADD_TASK");*/
+                String answer;
+                if (httpTaskManager.deleteAllTasks()) {
+                    writeResponse(httpExchange, "Все задачи удалены", 200);
+                } else {
+                    writeResponse(httpExchange, "Задачи удалить не удалось", 405);
+                }
             }
             default -> writeResponse(httpExchange, "Такого эндпоинта не существует", 404);
         }
