@@ -36,8 +36,9 @@ public class KVServer {
                 return;
             }
             if ("DELETE".equals(h.getRequestMethod())) {
-                String key = h.getRequestURI().getPath().substring("/clear/".length());
-                System.out.println("Delete key: " + key);
+                //String key = h.getRequestURI().getPath().substring("/clear/".length());
+                //System.out.println("Delete key: " + key);
+
                 /*if (key.isEmpty()) {
                     System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
                     h.sendResponseHeaders(400, 0);
