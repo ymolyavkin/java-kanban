@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
     private final URI url;
+    private final String apiToken;
     private final HttpClient client;
     //private final String key;
 
@@ -15,13 +16,27 @@ public class KVTaskClient {
         // TODO: 21.03.2023 В конструкторе нужно сделать регистрацию на сервере хранилища
         this.url = url;
         client = HttpClient.newHttpClient();
+        apiToken = requestApiToken(url);
         // key = sendRequest(url);
-        //  System.out.println("From consructor client: key = " + key);
+        System.out.println("From consructor client: apiToken = " + apiToken);
     }
 
-    /*public String getKey() {
-        return key;
-    }*/
+    private String requestApiToken(URI url) {
+        //String regUrl = url + "register/";
+
+      //  URI uri = URI.create(regUrl);
+        HttpRequest request = HttpRequest.newBuilder().GET().uri(url).build();
+
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return response.body();
+    }
 /*
 Tasks";
     private static final String KEY_EPICS = "Epics";
