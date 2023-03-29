@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static kanban.taskapi.Endpoint.*;
@@ -110,16 +112,20 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(httpExchange, "Получен запрос на добавление истории просмотров", 200);
             }
             case DELETE_DELETE_TASK_BY_ID -> {
-                int id = 0; //requestPath
-                if (id != -1) {
-                    httpTaskManager.deleteTaskById(id);
+                String answer;
+                String rawQuery = httpExchange.getRequestURI().getRawQuery();
+
+                int id = Integer.valueOf(getIdTask(rawQuery));
+                if (httpTaskManager.deleteTaskById(id)) {
+                    answer = "Удалена задача с id " + String.valueOf(id);
                     System.out.println("Удалена задача с id " + id);
                     httpExchange.sendResponseHeaders(200, 0);
                 } else {
+                    answer = "Получен некорректный id: " + String.valueOf(id);
                     System.out.println("Получен некорректный id: " + id);
                     httpExchange.sendResponseHeaders(405, 0);
                 }
-                writeResponse(httpExchange, "Получен запрос на удаление задачи по id", 200);
+                writeResponse(httpExchange, answer, 200);
             }
             case DELETE_DELETE_ALL_TASKS -> {
                 System.out.println("Ендпоинт POST_ADD_TASK");
@@ -131,7 +137,8 @@ public class HttpTaskServer implements HttpHandler {
                 System.out.println("body" + body);
 
                 Task task = httpTaskManager.restoreTaskFromJson(body);
-                httpTaskManager.addTask(task); System.out.println("Ендпоинт POST_ADD_TASK");
+                httpTaskManager.addTask(task);
+                System.out.println("Ендпоинт POST_ADD_TASK");
 
                 httpTaskManager.deleteAllTasks();
                 writeResponse(httpExchange, "Получен запрос на удаление всех задач", 200);
@@ -144,9 +151,34 @@ public class HttpTaskServer implements HttpHandler {
         }
     }
 
+    private int handleEndpointDeleteTaskBuId(HttpExchange httpExchange) {
+       /* String key = httpExchange.getRequestURI().getPath().substring("/delete/".length());
+
+        String path = httpExchange.getRequestURI().getPath();
+
+        String rawPath = httpExchange.getRequestURI().getRawPath();*/
+
+        URI deleteUri = httpExchange.getRequestURI();
+        String rawQuery = deleteUri.getRawQuery();
+
+        return Integer.valueOf(getIdTask(rawQuery));
+    }
+
+    private String getIdTask(String rawPath) {
+        String regEx = "^.*id=([\\d]+).*$";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(rawPath);
+        String id = "";
+        if (matcher.find()) {
+            id = matcher.group(1);
+        }
+        return id;
+    }
+
     private String readText(HttpExchange h) throws IOException {
         return new String(h.getRequestBody().readAllBytes(), UTF_8);
     }
+
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         // реализуйте этот метод
 
