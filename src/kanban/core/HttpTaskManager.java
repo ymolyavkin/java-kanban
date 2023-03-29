@@ -196,7 +196,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void restoreHistoryFromServer() {
 
         String jsonHistory = kvTaskClient.load(KEY_HISTORY);
-        if (jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
+        if (!jsonHistory.startsWith("{") || jsonHistory.isBlank() || jsonHistory.equals("response From KVserver: Хранилище пусто")) {
             return;
         }
         Type historyListType = new TypeToken<ArrayList<Integer>>() {
@@ -264,8 +264,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
-        save();
-        needSendToServer = false;
+        kvTaskClient.clearStorage();
+        //save();
+        //needSendToServer = false;
 
         return wasDeleted;
     }
