@@ -75,6 +75,7 @@ class HttpTaskServerTest {
         subtask = new Subtask(title, description, id, parentId, startTime, duration);
         subtask.setStatus(Status.NEW);
         epic.addSubtask(subtask);
+
     }
 
     @AfterEach
@@ -83,9 +84,6 @@ class HttpTaskServerTest {
         kvServer.stop();
     }
 
-    @Test
-    void handle() {
-    }
 
     @Test
     void getAllTasks() throws IOException, InterruptedException {
@@ -165,11 +163,11 @@ class HttpTaskServerTest {
 
     @Test
     void getTask() throws IOException, InterruptedException {
+        httpTaskManager.deleteAllTasks();
         httpTaskManager.addEpic(epic);
         httpTaskManager.addTask(task);
 
         HttpClient client = HttpClient.newHttpClient();
-
 
 
         URI testUrl = URI.create(httpUrl + "task/");
@@ -178,9 +176,29 @@ class HttpTaskServerTest {
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
         assertEquals(200, response.statusCode());
+
+        String actualJsonString = "Map<Integer, Task>;{\"0\":{\"title\":\"Title\",\"description\":\"Description\",\"id\":0,\"status\":\"NEW\",\"duration\"" +
+                ":15,\"startTime\":\"21.03.2021 12:00\"}}";
+
+        assertEquals(actualJsonString, response.body());
     }
 
+    @Test
+    void addTask() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI testUrl = URI.create(httpUrl + "addtask/");
+        String taskJson = "{\"title\":\"Физминутка1\",\"description\":\"Выполнить упражнения1\",\"id\":10,\"status\":\"NEW\",\"duration\":25,\"startTime\":\"23.03.2023 12:24\"}";
+
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(taskJson);
+        HttpRequest request = HttpRequest.newBuilder().uri(testUrl).POST(body).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(200, response.statusCode());
+        String actual = "Получен запрос на добавление задачи";
+        assertEquals(actual, response.body());
+    }
 }
 
 

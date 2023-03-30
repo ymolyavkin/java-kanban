@@ -107,7 +107,7 @@ public class KVTaskClient {
     }
 
     public void clearStorage() {
-        String url = "http://localhost:8078/clear/?API_TOKEN=" + apiToken;//http://localhost:8078/clear/?API_TOKEN=DEBUG
+        String url = "http://localhost:8078/clear/?API_TOKEN=" + apiToken;
         URI uri = URI.create(url);
         HttpRequest request = HttpRequest.newBuilder().DELETE().uri(uri).build();
 
@@ -125,6 +125,4 @@ public class KVTaskClient {
         System.out.println("Тело ответа: " + response.body());
     }
 
-    public void restoreSingleEpic(String jsonStringSingleEpic, String keyEpics) {
-    }
 }

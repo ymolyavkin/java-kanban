@@ -20,7 +20,6 @@ import java.util.*;
 public class HttpTaskManager extends FileBackedTasksManager {
     private static final String KEY_TASKS = "tasks";
     private static final String KEY_EPICS = "epics";
-    private static final String KEY_PRIORITIZED = "prioritized";
     private static final String KEY_HISTORY = "history";
     private static final String KEY_SINGLE_EPIC = "singleepic";
     private static Gson gson;
@@ -45,10 +44,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
-
-        //  restoreDataFromServer();
-
-
     }
 
     public void setNeedSendToServer(boolean needSendToServer) {
@@ -73,9 +68,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
             if (!epics.isEmpty()) {
                 sendEpicsToKV(epics);
             }
-            /*if (!allTasksSorted.isEmpty()) {
-                sendPrioritizedToKV(allTasksSorted);
-            }*/
             if (!history.isEmpty()) {
                 sendHistoryToKV(history);
             }
@@ -96,23 +88,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String jsonStringEpics = gson.toJson(epics);
 
         kvTaskClient.put(jsonStringEpics, KEY_EPICS);
-    }
-
-    private void sendSingleEpicToKV(EpicTask epic) throws IOException, InterruptedException {
-        String jsonStringSingleEpic = gson.toJson(epic);
-
-        kvTaskClient.put(jsonStringSingleEpic, KEY_SINGLE_EPIC);
-        //kvTaskClient.restoreSingleEpic(jsonStringSingleEpic, KEY_SINGLE_EPIC);
-    }
-
-    private void sendPrioritizedToKV(TreeSet<AbstractTask> prioritized) throws IOException, InterruptedException {
-        List<Integer> idPrioritizedTask = new ArrayList<>(prioritized.size());
-        for (AbstractTask abstractTask : prioritized) {
-            idPrioritizedTask.add(abstractTask.getId());
-        }
-        String jsonIdPrioritized = gson.toJson(idPrioritizedTask);
-
-        kvTaskClient.put(jsonIdPrioritized, KEY_PRIORITIZED);
     }
 
     private void sendHistoryToKV(List<AbstractTask> history) throws IOException, InterruptedException {
@@ -144,7 +119,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public HttpTaskManager load() {
         restoreStandardTasksFromServer();
         restoreEpicsFromServer();
-        //restoreSingleEpicFromServer();
         restoreHistoryFromServer();
         //отсортированный treeSet задач должен создаться попутно
         return this;
@@ -164,19 +138,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    public void restoreSingleEpicFromServer() {
-        String jsonSingleEpic = kvTaskClient.load(KEY_SINGLE_EPIC);
-        if (jsonSingleEpic.isBlank() || jsonSingleEpic.equals("response From KVserver: Хранилище пусто")) {
-            return;
-        }
-        Type epicTaskType = new TypeToken<EpicTask>() {
-        }.getType();
-        EpicTask epic = gson.fromJson(jsonSingleEpic, epicTaskType);
-        System.out.println(jsonSingleEpic);
-        addEpic(epic);
-        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
-    }
-
     public void restoreEpicsFromServer() {
         String jsonEpics = kvTaskClient.load(KEY_EPICS);
         if (jsonEpics.isBlank() || jsonEpics.equals("response From KVserver: Хранилище пусто")) {
@@ -190,7 +151,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         for (EpicTask epic : epicHashMap.values()) {
             addEpic(epic);
         }
-        //System.out.println("httpTaskManager/restoreDataFromServer(): " + jsonStandardTasks);
     }
 
     public void restoreHistoryFromServer() {
@@ -207,9 +167,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
             findTaskByIdOrNull(id, true);
         }
     }
+
     public String objectToJson(Object object) {
         return gson.toJson(object);
     }
+
     public String abstractTaskToJson(AbstractTask abstractTask) {
         return gson.toJson(abstractTask);
     }
@@ -218,10 +180,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void addEpic(EpicTask epicTask) {
         epicTask.calculateTime();
         super.addEpic(epicTask);
-       /* if (needSendToServer) {
-            save();
-            needSendToServer = false;
-        }*/
+
         save();
     }
 
@@ -229,10 +188,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public void addTask(Task task) {
         System.out.println("addTask ");
         super.addTask(task);
-        /*if (needSendToServer) {
-            save();
-            needSendToServer = false;
-        }*/
+
         save();
     }
 
@@ -248,9 +204,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public AbstractTask findTaskByIdOrNull(int id, boolean savedToHistory) {
         var foundTask = super.findTaskByIdOrNull(id, savedToHistory);
 
-        /*needSendToServer = true;
-        save();
-        needSendToServer = false;*/
         if (savedToHistory) {
             save();
         }
@@ -270,15 +223,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
     public boolean deleteAllTasks() {
         boolean wasDeleted = super.deleteAllTasks();
         kvTaskClient.clearStorage();
-        //save();
-        //needSendToServer = false;
 
         return wasDeleted;
     }
 
-    // .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + API_KEY))
-    //http://localhost:8080/tasks/addtask
-
-    //Правильный эпик:
-    //{"subtasks":[{"parentId":2,"title":"Подзадача 1","description":"Прочитать ТЗ","id":3,"status":"NEW","duration":15,"startTime":"26.02.2023 12:20"},{"parentId":2,"title":"Подзадача 2","description":"Понять ТЗ","id":4,"status":"NEW","duration":15,"startTime":"27.02.2023 12:39"}],"endTime":"27.02.2023 12:54","title":"Понять условие домашнего задания","description":"Понять как сделать рефакторинг проекта \u0027Трекер задач\u0027 в соответствии с новым ТЗ","id":2,"status":"NEW","duration":30,"startTime":"26.02.2023 12:20"}
 }

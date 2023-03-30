@@ -18,16 +18,13 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static kanban.taskapi.Endpoint.*;
 
 public class HttpTaskServer implements HttpHandler {
 
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final Charset CP1251_CHARSET = Charset.forName("Cp1251");
-    //private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
-    // TODO: 22.03.2023 get key
-    //private static final HttpTaskManager httpTaskManager = HttpTaskManager.load("");
+
     private HttpTaskManager httpTaskManager;
 
     public HttpTaskServer(HttpTaskManager httpTaskManager) {
@@ -185,7 +182,7 @@ public class HttpTaskServer implements HttpHandler {
                 if (httpTaskManager.deleteTaskById(id)) {
                     response = "Удалена задача с id " + String.valueOf(id);
                     System.out.println("Удалена задача с id " + id);
-                   // httpExchange.sendResponseHeaders(200, 0);
+                    // httpExchange.sendResponseHeaders(200, 0);
                 } else {
                     response = "Задача с id: " + String.valueOf(id) + " не найдена";
                     System.out.println(response);
@@ -194,18 +191,7 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(httpExchange, response, 200);
             }
             case DELETE_DELETE_ALL_TASKS -> {
-                /*System.out.println("Ендпоинт POST_ADD_TASK");
-                // извлекаем тело запроса
-                InputStream inputStream = httpExchange.getRequestBody();
 
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String body = bufferedReader.readLine();
-                System.out.println("body" + body);
-
-                Task task = httpTaskManager.restoreTaskFromJson(body);
-                httpTaskManager.addTask(task);
-                System.out.println("Ендпоинт POST_ADD_TASK");*/
-                //String answer;
                 if (httpTaskManager.deleteAllTasks()) {
                     writeResponse(httpExchange, "Все задачи удалены", 200);
                 } else {
@@ -220,18 +206,6 @@ public class HttpTaskServer implements HttpHandler {
         }
     }
 
-    /*private int handleEndpointDeleteTaskBuId(HttpExchange httpExchange) {
-     *//* String key = httpExchange.getRequestURI().getPath().substring("/delete/".length());
-
-        String path = httpExchange.getRequestURI().getPath();
-
-        String rawPath = httpExchange.getRequestURI().getRawPath();*//*
-
-        URI deleteUri = httpExchange.getRequestURI();
-        String rawQuery = deleteUri.getRawQuery();
-
-        return Integer.valueOf(getIdTask(rawQuery));
-    }*/
 
     private String getIdTask(String rawPath) {
         String regEx = "^.*id=([\\d]+).*$";
@@ -242,10 +216,6 @@ public class HttpTaskServer implements HttpHandler {
             id = matcher.group(1);
         }
         return id;
-    }
-
-    private String readText(HttpExchange h) throws IOException {
-        return new String(h.getRequestBody().readAllBytes(), UTF_8);
     }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
