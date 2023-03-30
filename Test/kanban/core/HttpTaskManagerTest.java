@@ -1,17 +1,29 @@
 package kanban.core;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpServer;
+import kanban.model.Task;
+import kanban.serialization.DurationTypeAdapter;
+import kanban.serialization.LocalDateTimeConverter;
 import kanban.taskapi.HttpTaskServer;
 import kanban.taskapi.KVServer;
 import kanban.taskapi.KVTaskClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 //class HttpTaskManagerTest extends TaskManagerTest {
@@ -74,7 +86,23 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         kvServer.stop();
 
     }
+    @Test
+    void restoreTaskFromJson(){
+        GsonBuilder gSonBuilder = new GsonBuilder();
 
+        gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
+        gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
+        gson = gSonBuilder.create();
+        //String taskJson = "{\"title\":\"Физминутка1\",\"description\":\"Выполнить упражнения1\",\"id\":10,\"status\":\"NEW\",\"duration\":25,\"startTime\":\"23.03.2023 12:24\"}";
+        String taskJson = "{\"0\":{\"title\":\"Физминутка\",\"description\":\"Выполнить упражнения\",\"id\":0,\"status\""
+                + ":\"NEW\",\"duration\":15,\"startTime\":\"23.02.2023 12:24\"},\"1\":{\"title\":\"Почитать новости\","
+                + "\"description\":\"Открыть мессенджер\",\"id\":1,\"status\":\"NEW\",\"duration\":15,\"startTime\":\"24.02.2023 12:24\"}}";
+        Type taskType = new TypeToken<HashMap<Integer, Task>>() {
+        }.getType();
+        HashMap<Integer, Task> actualTask = gson.fromJson(taskJson, taskType);
+        Task task = actualTask.get(0);
+        assertEquals(task.getTitle(), "Физминутка");
+    }
     /*@Test
     void restoreStandardTaskWithId() {
         *//*LocalDateTime dateTime = LocalDateTime.of(2023, Month.FEBRUARY, 01, 8, 0);

@@ -32,7 +32,7 @@ class HttpTaskServerTest {
     private static String httpUrl = "http://localhost:8080/tasks/";
     private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
-    private KVTaskClient kvTaskClient;
+    private Gson gson;
     private HttpServer httpServer;
     private static Map<Integer, AbstractTask> standardTasks = new HashMap<>();
     private static Map<Integer, AbstractTask> epicTasks = new HashMap<>();
@@ -152,7 +152,7 @@ class HttpTaskServerTest {
         httpTaskManager.addTask(task);
 
         HttpClient client = HttpClient.newHttpClient();
-        //kvTaskClient = new KVTaskClient(httpUrl);
+
         URI testUrl = URI.create(httpUrl + "task/?id=999");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(testUrl)
@@ -162,6 +162,25 @@ class HttpTaskServerTest {
         assertEquals(200, response.statusCode());
         assertEquals("Задача с id: 999 не найдена", response.body());
     }
+
+    @Test
+    void getTask() throws IOException, InterruptedException {
+        httpTaskManager.addEpic(epic);
+        httpTaskManager.addTask(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+
+
+
+        URI testUrl = URI.create(httpUrl + "task/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(testUrl)
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+    }
+
 }
 
 
