@@ -429,7 +429,10 @@ public class InMemoryTaskManager implements TaskManager {
                 EpicTask epic = (EpicTask) abstractTask;
                 // Получаем подзадачи эпика
                 TreeSet<Subtask> subtasks = epic.getSubtasks();
-                foundTask = findSubtaskByIdOrNull(id, subtasks);
+                if (foundTask==null) {
+                    foundTask = findSubtaskByIdOrNull(id, subtasks);
+                }
+                //foundTask = findSubtaskByIdOrNull(id, subtasks);
             }
         }
         if (foundTask != null && savedToHistory) {
