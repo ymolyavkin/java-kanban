@@ -29,7 +29,7 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HttpTaskServerTest {
-private static String kvUrl = "http://localhost:8078/";
+    private static String kvUrl = "http://localhost:8078/";
     private static String httpUrl = "http://localhost:8080/tasks/";
     private HttpTaskManager httpTaskManager;
     private KVServer kvServer;
@@ -80,7 +80,8 @@ private static String kvUrl = "http://localhost:8078/";
 
     @AfterEach
     void tearDown() {
-       httpServer.stop(1);
+        httpServer.stop(1);
+        kvServer.stop();
 
     }
 
@@ -99,6 +100,7 @@ private static String kvUrl = "http://localhost:8078/";
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("response: " + response);
     }
+
     @Test
     void createTasks() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -109,11 +111,12 @@ private static String kvUrl = "http://localhost:8078/";
 
         gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
         gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        gSonBuilder.setPrettyPrinting();
+        //gSonBuilder.setPrettyPrinting();
 
 
         gson = gSonBuilder.create();
         String json = gson.toJson(task);
+        System.out.println("json: " + json);
 
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
@@ -121,6 +124,7 @@ private static String kvUrl = "http://localhost:8078/";
 
         System.out.println("response: " + response);
     }
+
     @Test
     void createTasksToKV() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
@@ -143,6 +147,7 @@ private static String kvUrl = "http://localhost:8078/";
 
         System.out.println("response: " + response);
     }
+
     @Test
     @DisplayName("Подзадача - Delete с некорректным - 404")
     void shouldDeleteSubtaskWithInvalidId() throws IOException, InterruptedException {
@@ -151,7 +156,7 @@ private static String kvUrl = "http://localhost:8078/";
 
         HttpClient client = HttpClient.newHttpClient();
         //kvTaskClient = new KVTaskClient(httpUrl);
-        URI testUrl = URI.create(httpUrl+"task/?id=-1");
+        URI testUrl = URI.create(httpUrl + "task/?id=-1");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(testUrl)
                 .DELETE()
