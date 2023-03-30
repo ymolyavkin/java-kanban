@@ -55,50 +55,71 @@ public class HttpTaskServer implements HttpHandler {
             case GET_HISTORY -> {
                 List<AbstractTask> history = httpTaskManager.getHistory();
                 String jsonHistory = httpTaskManager.objectToJson(history);
-                response+= "ArrayList<AbstractTask>;" + jsonHistory;
+                response += "ArrayList<AbstractTask>;" + jsonHistory;
 
                 System.out.println("GET_HISTORY -> " + response);
                 writeResponse(httpExchange, response, 200);
-                /*writeResponse(httpExchange, "Получен запрос на получение истории задач", 200);
-                List<AbstractTask> historyTask = httpTaskManager.getHistory();
-                System.out.println("Test exist httpTaskManager");*/
-                //sendRequest("history");
             }
             case GET_ALL_TASKS -> {
-                writeResponse(httpExchange, "Получен запрос на получение списка всех задач", 200);
                 Map<Integer, AbstractTask> standardTasks = httpTaskManager.getStandardTasks();
                 Map<Integer, AbstractTask> epics = httpTaskManager.getEpicTasks();
-                System.out.println("Test get standard tasks" + standardTasks + " " + epics);
+
+                String jsonTasks = httpTaskManager.objectToJson(standardTasks);
+                response += "Map<Integer, Task>;" + jsonTasks;
+
+                String jsonEpics = httpTaskManager.objectToJson(epics);
+                response += ";Map<Integer, EpicTask>;" + jsonEpics;
+
+                System.out.println("GET_ALL_TASKS -> " + response);
+                writeResponse(httpExchange, response, 200);
             }
             case GET_STANDARD_TASKS -> {
-                writeResponse(httpExchange, "Получен запрос на получение обычных задач", 200);
+                Map<Integer, AbstractTask> standardTasks = httpTaskManager.getStandardTasks();
+
+                String jsonTasks = httpTaskManager.objectToJson(standardTasks);
+                response += "Map<Integer, Task>;" + jsonTasks;
+
+                System.out.println("GET_STANDARD_TASKS -> " + response);
+                writeResponse(httpExchange, response, 200);
             }
             case GET_EPIC_TASKS -> {
-                writeResponse(httpExchange, "Получен запрос на получение эпиков", 200);
+                Map<Integer, AbstractTask> epics = httpTaskManager.getEpicTasks();
+
+                String jsonEpics = httpTaskManager.objectToJson(epics);
+                response += "Map<Integer, EpicTask>;" + jsonEpics;
+
+                System.out.println("GET_EPIC_TASKS -> " + response);
+                writeResponse(httpExchange, response, 200);
             }
             case GET_PRIORITIZED_TASKS -> {
-                writeResponse(httpExchange, "Получен запрос на получение упорядоченного по времени списка задач", 200);
-                TreeSet<AbstractTask> apiTasks = httpTaskManager.getPrioritizedTasks();
-                System.out.println("apiTasks" + apiTasks);
+                TreeSet<AbstractTask> prioritized = httpTaskManager.getPrioritizedTasks();
+
+                String jsonPrioritized = httpTaskManager.objectToJson(prioritized);
+                response += "TreeSet<AbstractTask>;" + jsonPrioritized;
+
+                System.out.println("GET_PRIORITIZED_TASKS -> " + response);
+                writeResponse(httpExchange, response, 200);
             }
             case GET_FIND_TASK_BY_ID -> {
                 String rawQuery = httpExchange.getRequestURI().getRawQuery();
                 // System.lineSeparator()
+                //System.out.println(rawQuery);
                 int id = Integer.valueOf(getIdTask(rawQuery));
                 AbstractTask foundTask = httpTaskManager.findTaskByIdOrNull(id, true);
                 if (foundTask != null) {
                     String jsonTask = httpTaskManager.abstractTaskToJson(foundTask);
                     if (foundTask instanceof Task) {
-                        response+= "task;" + jsonTask;
+                        response += "task;" + jsonTask;
                     } else if (foundTask instanceof EpicTask) {
-                        response+= "epic;" + jsonTask;
+                        response += "epic;" + jsonTask;
                     } else if (foundTask instanceof Subtask) {
-                        response+= "subtask;" + jsonTask;
+                        response += "subtask;" + jsonTask;
                     }
+                } else {
+                    response = "Задача с id " + id + "не найдена";
                 }
                 System.out.println("GET_FIND_TASK_BY_ID -> " + response);
                 writeResponse(httpExchange, response, 200);
-               // writeResponse(httpExchange, "Получен запрос на получение задачи по id", 200);
             }
             case POST_ADD_EPIC -> {
                 System.out.println("Ендпоинт POST_ADD_EPIC");
@@ -128,12 +149,6 @@ public class HttpTaskServer implements HttpHandler {
 
                 writeResponse(httpExchange, "Получен запрос на добавление задачи", 200);
             }
-            case POST_ADD_PRIORITIZED -> {
-                writeResponse(httpExchange, "Получен запрос на добавление отсортированного списка", 200);
-            }
-            case POST_ADD_HISTORY -> {
-                writeResponse(httpExchange, "Получен запрос на добавление истории просмотров", 200);
-            }
             case DELETE_DELETE_TASK_BY_ID -> {
 
                 String rawQuery = httpExchange.getRequestURI().getRawQuery();
@@ -142,11 +157,11 @@ public class HttpTaskServer implements HttpHandler {
                 if (httpTaskManager.deleteTaskById(id)) {
                     response = "Удалена задача с id " + String.valueOf(id);
                     System.out.println("Удалена задача с id " + id);
-                    httpExchange.sendResponseHeaders(200, 0);
+                   // httpExchange.sendResponseHeaders(200, 0);
                 } else {
                     response = "Получен некорректный id: " + String.valueOf(id);
                     System.out.println(response);
-                    httpExchange.sendResponseHeaders(405, 0);
+                   // httpExchange.sendResponseHeaders(405, 0);
                 }
                 writeResponse(httpExchange, response, 200);
             }
@@ -162,7 +177,7 @@ public class HttpTaskServer implements HttpHandler {
                 Task task = httpTaskManager.restoreTaskFromJson(body);
                 httpTaskManager.addTask(task);
                 System.out.println("Ендпоинт POST_ADD_TASK");*/
-                String answer;
+                //String answer;
                 if (httpTaskManager.deleteAllTasks()) {
                     writeResponse(httpExchange, "Все задачи удалены", 200);
                 } else {
@@ -177,18 +192,18 @@ public class HttpTaskServer implements HttpHandler {
         }
     }
 
-    private int handleEndpointDeleteTaskBuId(HttpExchange httpExchange) {
-       /* String key = httpExchange.getRequestURI().getPath().substring("/delete/".length());
+    /*private int handleEndpointDeleteTaskBuId(HttpExchange httpExchange) {
+     *//* String key = httpExchange.getRequestURI().getPath().substring("/delete/".length());
 
         String path = httpExchange.getRequestURI().getPath();
 
-        String rawPath = httpExchange.getRequestURI().getRawPath();*/
+        String rawPath = httpExchange.getRequestURI().getRawPath();*//*
 
         URI deleteUri = httpExchange.getRequestURI();
         String rawQuery = deleteUri.getRawQuery();
 
         return Integer.valueOf(getIdTask(rawQuery));
-    }
+    }*/
 
     private String getIdTask(String rawPath) {
         String regEx = "^.*id=([\\d]+).*$";
@@ -206,8 +221,6 @@ public class HttpTaskServer implements HttpHandler {
     }
 
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
-        // реализуйте этот метод
-
         String[] splitStrings = requestPath.split("/");
         String lastPart = splitStrings[splitStrings.length - 1];
         switch (requestMethod) {
@@ -241,12 +254,12 @@ public class HttpTaskServer implements HttpHandler {
                     case "addtask" -> {
                         return POST_ADD_TASK;
                     }
-                    case "addprioritized" -> {
+                    /*case "addprioritized" -> {
                         return POST_ADD_PRIORITIZED;
-                    }
-                    case "addhistory" -> {
+                    }*/
+                    /*case "addhistory" -> {
                         return POST_ADD_HISTORY;
-                    }
+                    }*/
                 }
             }
             case "DELETE" -> {
