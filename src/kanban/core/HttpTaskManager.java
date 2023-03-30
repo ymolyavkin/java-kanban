@@ -207,7 +207,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
             findTaskByIdOrNull(id, true);
         }
     }
-
+    public String objectToJson(Object object) {
+        return gson.toJson(object);
+    }
     public String abstractTaskToJson(AbstractTask abstractTask) {
         return gson.toJson(abstractTask);
     }

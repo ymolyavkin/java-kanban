@@ -53,9 +53,15 @@ public class HttpTaskServer implements HttpHandler {
 
         switch (endpoint) {
             case GET_HISTORY -> {
-                writeResponse(httpExchange, "Получен запрос на получение истории задач", 200);
+                List<AbstractTask> history = httpTaskManager.getHistory();
+                String jsonHistory = httpTaskManager.objectToJson(history);
+                response+= "ArrayList<AbstractTask>;" + jsonHistory;
+
+                System.out.println("GET_HISTORY -> " + response);
+                writeResponse(httpExchange, response, 200);
+                /*writeResponse(httpExchange, "Получен запрос на получение истории задач", 200);
                 List<AbstractTask> historyTask = httpTaskManager.getHistory();
-                System.out.println("Test exist httpTaskManager");
+                System.out.println("Test exist httpTaskManager");*/
                 //sendRequest("history");
             }
             case GET_ALL_TASKS -> {
