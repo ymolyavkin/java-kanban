@@ -82,7 +82,6 @@ class HttpTaskServerTest {
     void tearDown() {
         httpServer.stop(1);
         kvServer.stop();
-
     }
 
     @Test
