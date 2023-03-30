@@ -187,9 +187,9 @@ public class HttpTaskServer implements HttpHandler {
                     System.out.println("Удалена задача с id " + id);
                    // httpExchange.sendResponseHeaders(200, 0);
                 } else {
-                    response = "Получен некорректный id: " + String.valueOf(id);
+                    response = "Задача с id: " + String.valueOf(id) + " не найдена";
                     System.out.println(response);
-                   // httpExchange.sendResponseHeaders(405, 0);
+
                 }
                 writeResponse(httpExchange, response, 200);
             }

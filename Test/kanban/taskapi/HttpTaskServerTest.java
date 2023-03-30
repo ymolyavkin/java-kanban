@@ -10,7 +10,6 @@ import kanban.serialization.DurationTypeAdapter;
 import kanban.serialization.LocalDateTimeConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -148,21 +147,20 @@ class HttpTaskServerTest {
     }
 
     @Test
-    @DisplayName("Подзадача - Delete с некорректным - 404")
-    void shouldDeleteSubtaskWithInvalidId() throws IOException, InterruptedException {
+    void shouldAnswer200ToDeleteTaskWithNotFoundId() throws IOException, InterruptedException {
         httpTaskManager.addEpic(epic);
         httpTaskManager.addTask(task);
 
         HttpClient client = HttpClient.newHttpClient();
         //kvTaskClient = new KVTaskClient(httpUrl);
-        URI testUrl = URI.create(httpUrl + "task/?id=-1");
+        URI testUrl = URI.create(httpUrl + "task/?id=999");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(testUrl)
                 .DELETE()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(404, response.statusCode());
-        assertEquals("Not Found", response.body());
+        assertEquals(200, response.statusCode());
+        assertEquals("Задача с id: 999 не найдена", response.body());
     }
 }
 
