@@ -229,6 +229,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
         Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
 
+        assertNotNull(firstTask);
         assertNull(secondTask);
         String titleAndDescription = title + "|" + description;
         EpicTask epicTask = taskManager.createEpic(titleAndDescription);
@@ -263,7 +264,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertTrue(secondTask.isOverlap(subtask));
     }
     @Test
-    void shouldGetMessageAboutOverlapTasksWhenUpdateupdateStandardTask() {
+    void shouldGetMessageAboutOverlapTasksWhenUpdateStandardTask() {
         Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 06:00|20");
         Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
 
@@ -275,7 +276,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         taskManager.updateStandardTask(firstTask, newTitleAndDescription, newTime, mustChangeStatus);
 
-        assertTrue(firstTask.isOverlap(secondTask));
+        LocalDateTime oldStartTime = LocalDateTime.parse(newTime[0], formatter);
+        assertEquals(firstTask.getStartTime(),oldStartTime);
     }
 
 }

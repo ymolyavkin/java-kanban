@@ -45,6 +45,7 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");
+        taskManager.deleteAllTasks();
         /*String url = "http://localhost:8080/tasks/";
 
         URI uri = URI.create(url);
@@ -74,7 +75,36 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
     }
 
-    void someMethod() {
+    /*@Test
+    void restoreStandardTaskWithId() {
+        *//*LocalDateTime dateTime = LocalDateTime.of(2023, Month.FEBRUARY, 01, 8, 0);
+        Status status = Status.IN_PROGRESS;
+        Task task = taskManager.createStandardTask("title|description|01.01.2023 08:00|15");
 
-    }
+        assertNotNull(task);
+        assertEquals("title", task.getTitle());
+        assertEquals("description", task.getDescription());
+
+        assertEquals(Duration.parse("PT15M"), task.getDuration());
+        assertEquals(Status.NEW, task.getStatus());
+
+        if (task.getStatus() != status) {
+            task.setStatus(status);
+        }
+        assertEquals(Status.IN_PROGRESS, task.getStatus());*//*
+    }*/
+    /*@Test
+    void shouldGetMessageAboutOverlapTasksWhenCreateTasks() {
+        Task firstTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:00|20");
+        Task secondTask = taskManager.createStandardTask("Title|Description|01.01.2023 08:10|20");
+
+        assertNull(secondTask);
+        String titleAndDescription = title + "|" + description;
+        EpicTask epicTask = taskManager.createEpic(titleAndDescription);
+
+        String titleAndDescriptionSubtask = title + "|" + description + "|01.01.2023 07:50|15";
+        Subtask subtask = taskManager.createSubtask(titleAndDescriptionSubtask, epicTask.getId());
+
+        assertNull(subtask);
+    }*/
 }

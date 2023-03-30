@@ -163,7 +163,6 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(404, response.statusCode());
         assertEquals("Not Found", response.body());
-        //assertFalse(taskManager.getAllSubtasks().isEmpty());
     }
 }
 

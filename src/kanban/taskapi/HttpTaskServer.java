@@ -149,6 +149,34 @@ public class HttpTaskServer implements HttpHandler {
 
                 writeResponse(httpExchange, "Получен запрос на добавление задачи", 200);
             }
+            case POST_UPDATE_TASK -> {
+                System.out.println("Ендпоинт POST_UPDATE_TASK");
+                // извлекаем тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+                System.out.println("body" + body);
+
+                Task task = httpTaskManager.restoreTaskFromJson(body);
+                httpTaskManager.addTask(task);
+
+                writeResponse(httpExchange, "Получен запрос на обновление задачи", 200);
+            }
+            case POST_UPDATE_EPIC -> {
+                System.out.println("Ендпоинт POST_UPDATE_EPIC");
+                // извлекаем тело запроса
+                InputStream inputStream = httpExchange.getRequestBody();
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String body = bufferedReader.readLine();
+                System.out.println("body" + body);
+
+                EpicTask epic = httpTaskManager.restoreEpicFromJson(body);
+                httpTaskManager.addEpic(epic);
+
+                writeResponse(httpExchange, "Получен запрос на обновление эпика", 200);
+            }
             case DELETE_DELETE_TASK_BY_ID -> {
 
                 String rawQuery = httpExchange.getRequestURI().getRawQuery();
@@ -232,7 +260,7 @@ public class HttpTaskServer implements HttpHandler {
                     case "alltasks" -> {
                         return GET_ALL_TASKS;
                     }
-                    case "standardtasks" -> {
+                    case "task" -> {
                         return GET_STANDARD_TASKS;
                     }
                     case "epics" -> {
@@ -254,20 +282,20 @@ public class HttpTaskServer implements HttpHandler {
                     case "addtask" -> {
                         return POST_ADD_TASK;
                     }
-                    /*case "addprioritized" -> {
-                        return POST_ADD_PRIORITIZED;
-                    }*/
-                    /*case "addhistory" -> {
-                        return POST_ADD_HISTORY;
-                    }*/
+                    case "task" -> {
+                        return POST_UPDATE_TASK;
+                    }
+                    case "epic" -> {
+                        return POST_UPDATE_EPIC;
+                    }
                 }
             }
             case "DELETE" -> {
                 switch (lastPart) {
-                    case "deletetaskbyid" -> {
+                    case "task" -> {
                         return DELETE_DELETE_TASK_BY_ID;
                     }
-                    case "deletealltasks" -> {
+                    case "alltasks" -> {
                         return DELETE_DELETE_ALL_TASKS;
                     }
                 }
@@ -291,13 +319,4 @@ public class HttpTaskServer implements HttpHandler {
             }
         }
     }
-
-  /*  private void sendRequest(String resources) {
-        // используем код состояния как часть URL-адреса
-       // URI uri = URI.create("http://localhost:8078/register/" + resources);
-        URI uri = URI.create("http://localhost:8078/register/");
-        KVTaskClient kvTaskClient = new KVTaskClient(uri);
-        String response = kvTaskClient.sendRequest(uri);
-        System.out.println("response = " + response);
-    }*/
 }
