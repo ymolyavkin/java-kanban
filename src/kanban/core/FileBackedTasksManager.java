@@ -209,7 +209,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                                 startTimeSubtask = LocalDateTime.parse(taskInfoSub[4], formatter);
                                 long minutes = Long.parseLong(taskInfo[5]);
                                 durationSubtask = Duration.ofMinutes(minutes);
-                              //  durationSubtask = Duration.parse(taskInfo[5]);
                             }
 
                             Subtask subtask = createSubtaskWithId(idSubtask,

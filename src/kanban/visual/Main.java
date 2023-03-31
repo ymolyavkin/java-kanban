@@ -19,13 +19,6 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static Scanner scanner;
-
-    // static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
-
-   /* private static final FileBackedTasksManager fileBackedTasksManager
-            = FileBackedTasksManager.loadFromFile(Path.of("taskbacket.txt"));*/
-
-   // private static final HttpTaskManager httpTaskManager = (HttpTaskManager) Managers.getDefault();
     private static HttpTaskManager httpTaskManager;
     public static final int KV_PORT = 8078;
     public static final int TASK_PORT = 8080;
@@ -39,13 +32,12 @@ public class Main {
 
         HttpServer httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(TASK_PORT), 0);
-        //httpServer.createContext("/tasks", new HttpTaskServer(key));
+
         httpServer.createContext("/tasks", new HttpTaskServer(httpTaskManager));
         httpServer.start();
 
         System.out.println("HTTP-сервер запущен на " + TASK_PORT + " порту!");
 
-       // httpTaskManager = (HttpTaskManager) Managers.getDefault();
 
         scanner = new Scanner(System.in);
         String userInput;
@@ -71,7 +63,7 @@ public class Main {
 
     static void getProritizedTask() {
         TreeSet<AbstractTask> myTasks = httpTaskManager.getPrioritizedTasks();
-       // TreeSet<AbstractTask> myTasks = fileBackedTasksManager.getPrioritizedTasks();
+
         if (myTasks.isEmpty()) {
             System.out.print(Color.RED);
             System.out.println("У Вас нет задач");
@@ -84,8 +76,6 @@ public class Main {
     }
 
     static void getListOfAllTasks() {
-        // TODO: 27.03.2023  httpTaskManager.restoreStandardTasksFromServer();
-       // httpTaskManager.load("DEBUG");
         var standardTasks = httpTaskManager.getStandardTasks();
         var epicTasks = httpTaskManager.getEpicTasks();
         if (standardTasks.isEmpty() && epicTasks.isEmpty()) {
@@ -171,7 +161,6 @@ public class Main {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         try {
             LocalDateTime startTime = LocalDateTime.parse(stringStartTime, formatter);
-            //long duration = Long.parseLong(stringDuration);
         } catch (DateTimeParseException exception) {
             System.out.println("Некорректный ввод. Время не введено");
             stringStartTime = "0";
@@ -212,9 +201,8 @@ public class Main {
         int typeTask = userMenu("Выберите тип создаваемой задачи:", menuItems, values);
 
         if (typeTask == 1) {
-            //fileBackedTasksManager.setNeedWriteToFile(true);
             httpTaskManager.setNeedSendToServer(true);
-           // Task task = fileBackedTasksManager.createStandardTask(titleAndDescription());
+
             Task task = httpTaskManager.createStandardTask(titleAndDescription());
             if (task != null) {
                 System.out.print(Color.GREEN);
@@ -226,7 +214,6 @@ public class Main {
                 System.out.print(Color.RESET);
             }
         } else if (typeTask == 2) {
-           // EpicTask epicTask = fileBackedTasksManager.createEpic(titleAndDescription());
             EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription());
             System.out.print(Color.GREEN);
             System.out.println("Создан эпик с id = " + (epicTask.getId()));
@@ -235,10 +222,8 @@ public class Main {
             List<String> titleAndDescriptions = createSubtaskItemInfo();
             for (String titleAndDescription : titleAndDescriptions) {
                 // Создаем подзадачу
-                //Subtask subtask = fileBackedTasksManager.createSubtask(titleAndDescription, epicTask.getId());
                 Subtask subtask = httpTaskManager.createSubtask(titleAndDescription, epicTask.getId());
                 if (subtask != null) {
-                   // fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
                     httpTaskManager.addSubtaskToEpic(epicTask, subtask);
                 } else {
                     System.out.print(Color.RED);
@@ -247,9 +232,7 @@ public class Main {
                 }
 
             }
-           // fileBackedTasksManager.setNeedWriteToFile(true);
             httpTaskManager.setNeedWriteToFile(true);
-           // fileBackedTasksManager.addEpic(epicTask);
             httpTaskManager.addEpic(epicTask);
         }
     }
@@ -300,7 +283,7 @@ public class Main {
                 System.out.println("Это обычная задача");
                 String[] newTime = updateTime(startTime, duration);
                 boolean statusWasChanged = mustChangeStatus();
-                //boolean taskIsUpdated = fileBackedTasksManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, mustChangeStatus());
+
                 boolean taskIsUpdated = httpTaskManager.updateStandardTask((Task) task, newTitleAndDescription, newTime, statusWasChanged);
                 if (taskIsUpdated) {
                     System.out.print(Color.GREEN);
@@ -360,9 +343,7 @@ public class Main {
                                 System.out.print(Color.RESET);
                             }
                         }
-
                         // Отправляем для добавления в мапу эпиков
-                       // fileBackedTasksManager.setNeedWriteToFile(true);
                         httpTaskManager.addEpic(epicTask);
                     }
                 }
@@ -468,6 +449,7 @@ public class Main {
             System.out.print(Color.RESET);
         }
     }
+
     private static void createSeveralTestTasks() {
         // Создаём стандартную задачу
         String titleAndDescription = "Физминутка|Выполнить десять приседаний|23.02.2023 12:24|15";
@@ -499,7 +481,7 @@ public class Main {
         // Создаём эпик
         titleAndDescription = "Понять условие домашнего задания" +
                 "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ|25.02.2023 12:24|30";
-              //  "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ||";
+        //  "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ||";
         EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription);
 
         System.out.print(Color.GREEN);
@@ -530,7 +512,7 @@ public class Main {
         // Создаём эпик
         titleAndDescription = "Прочитать почту" +
                 "|Прочитать все входящие письма и сообщения из мессенджеров|10.02.2023 12:24|45";
-              //  "|Прочитать все входящие письма и сообщения из мессенджеров||";
+        //  "|Прочитать все входящие письма и сообщения из мессенджеров||";
         epicTask = httpTaskManager.createEpic(titleAndDescription);
 
         System.out.print(Color.GREEN);
@@ -559,98 +541,6 @@ public class Main {
             }
         }
         httpTaskManager.setNeedSendToServer(true);
-        httpTaskManager.addEpic(epicTask);
-    }
-    private static void createSeveralTestTasksOld() {
-        // Создаём стандартную задачу
-        String titleAndDescription = "Физминутка|Выполнить десять приседаний|23.02.2023 12:24|15";
-        Task task = httpTaskManager.createStandardTask(titleAndDescription);
-        if (task != null) {
-            System.out.print(Color.GREEN);
-            System.out.println("Создана обычная задача с id = " + task.getId());
-            System.out.print(Color.RESET);
-        } else {
-            System.out.print(Color.RED);
-            System.out.println("Задача не создана");
-            System.out.print(Color.RESET);
-        }
-
-        // Создаём стандартную задачу
-        titleAndDescription = "Почитать новости|Открыть мессенджер и просмотреть новые сообщения|24.02.2023 12:24|15";
-        task = httpTaskManager.createStandardTask(titleAndDescription);
-
-        if (task != null) {
-            System.out.print(Color.GREEN);
-            System.out.println("Создана обычная задача с id = " + task.getId());
-            System.out.print(Color.RESET);
-        } else {
-            System.out.print(Color.RED);
-            System.out.println("Задача не создана");
-            System.out.print(Color.RESET);
-        }
-
-        // Создаём эпик
-        titleAndDescription = "Понять условие домашнего задания" +
-                "|Понять как сделать рефакторинг проекта 'Трекер задач' в соответствии с новым ТЗ|25.02.2023 12:24|30";
-        EpicTask epicTask = httpTaskManager.createEpic(titleAndDescription);
-
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
-
-
-        String[] importantTitleAndDescriptions = {
-                "Подзадача 1|Прочитать ТЗ|26.02.2023 12:20|15"
-                , "Подзадача 2|Понять ТЗ|27.02.2023 12:39|15"};
-        for (String titleDescription : importantTitleAndDescriptions) {
-
-            Subtask subtask = httpTaskManager.createSubtask(titleDescription, epicTask.getId());
-            if (subtask != null) {
-                httpTaskManager.addSubtaskToEpic(epicTask, subtask);
-                System.out.print(Color.GREEN);
-                System.out.println("Создана подзадача с id = " + subtask.getId());
-                System.out.print(Color.RESET);
-            } else {
-                System.out.print(Color.RED);
-                System.out.println("Подзадача не создана");
-                System.out.print(Color.RESET);
-            }
-        }
-       // fileBackedTasksManager.setNeedWriteToFile(true);
-        httpTaskManager.addEpic(epicTask);
-
-        // Создаём эпик
-        titleAndDescription = "Прочитать почту" +
-                "|Прочитать все входящие письма и сообщения из мессенджеров|28.02.2023 12:24|45";
-        epicTask = httpTaskManager.createEpic(titleAndDescription);
-
-        System.out.print(Color.GREEN);
-        System.out.println("Создан эпик с id = " + (epicTask.getId()));
-        System.out.print(Color.RESET);
-
-        // Создаем список названий и описаний подзадач
-        String[] secondaryTitleAndDescriptions = {
-                "Подзадача 1|Прочитать электронную почту|21.02.2023 12:24|15",
-                "Подзадача 2|Прочитать мессенджеры|22.02.2023 12:39|15",
-                "Подзадача 3|Прочитать соцсети|22.02.2023 12:59|15"};
-        for (String titleDescription : secondaryTitleAndDescriptions) {
-            // Создаем подзадачу
-            Subtask subtask = httpTaskManager.createSubtask(titleDescription, epicTask.getId());
-            // Добавляем её к эпику
-            //  epicTask = fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-            // fileBackedTasksManager.addSubtaskToEpic(epicTask, subtask);
-            if (subtask != null) {
-                httpTaskManager.addSubtaskToEpic(epicTask, subtask);
-                System.out.print(Color.GREEN);
-                System.out.println("Создана подзадача с id = " + subtask.getId());
-                System.out.print(Color.RESET);
-            } else {
-                System.out.print(Color.RED);
-                System.out.println("Подзадача не создана");
-                System.out.print(Color.RESET);
-            }
-        }
-      //  fileBackedTasksManager.setNeedWriteToFile(true);
         httpTaskManager.addEpic(epicTask);
     }
 

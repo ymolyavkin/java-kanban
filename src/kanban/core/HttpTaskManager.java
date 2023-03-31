@@ -40,9 +40,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
         gSonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter());
         gSonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        // gSonBuilder.setPrettyPrinting();
 
-        // gSonBuilder.excludeFieldsWithoutExposeAnnotation();
         gson = gSonBuilder.create();
     }
 
